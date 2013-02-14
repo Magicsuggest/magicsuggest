@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#tabs {
+    font-size: 90%;
+    margin: 20px 0;
+}
+
+#tabs ul {
+	margin-bottom: 0;
+    float: left;
+    padding-top: 4px;
+}
+
+#tabs li {
+	margin-left: 3px;
+	list-style: none;
+	background: #DDD;
+	padding-right: 20px;
+}
+
+* html #tabs li {
+    display: inline;
+}
+
+#tabs li,#tabs li a {
+    float: left;
+}
+
+#tabs ul li.active {
+    background: #F9F9F9;
+    border: 1px solid #CCC;
+	border-width: 1px 1px 0;
+	top: 1px;
+	position: relative;
+}
+
+#tabs ul li.active a {
+    color: #333333;
+}
+
+#tabs .tab-content {
+	border: 1px solid #CCC;
+    background: #F9F9F9;
+    clear: both;
+    padding: 15px;
+    min-height: 300px;
+}
+
+#tabs .tab-content h3 {
+    margin-bottom: 12px;
+}
+
+#tabs .tab-content p {
+    line-height: 150%;
+}
+
+#tabs ul li a {
+    text-decoration: none;
+    padding: 8px;
+    color: #000;
+    font-weight: bold;
+}
+
+#tabs .tab-content li{
+	margin-top: 2px;
+	background: #FFF;
+}
+
+.thumbs {
+    float: left;
+    border: #000 solid 1px;
+    margin-bottom: 20px;
+    margin-right: 20px;
+}
+
+.conf{
+	margin-bottom: 20px;
+}
+.conf .opt-name{
+	font-weight: bold;
+	float: left;
+	font-size: 15px;
+}
+.conf code{
+	font-size: 10px;
+	background: #888;
+	color: #EEE;
+	padding: 1px 8px;
+	top: 5px;
+	position: relative;
+	margin-left: 10px;
+	float: right;
+	right: -3px;
+}
+.conf .opt-desc{
+	line-height: 15px;
+	background: #EEE;
+	padding: 5px;
+	font-size: 12px;
+	border: 1px dotted #CCC;	
+}
+.conf .opt-desc em{
+	font-weight: bold;
+	font-style: normal;
+}
+.conf .opt-ex{
+	color: #999;
+	float: right;
+	font-size: 11px;
+	cursor: pointer;
+}
+.conf .opt-desc code{
+    right: -9px;
+}
+.conf .opt-desc code pre{
+    padding: 6px;
+    font-size: 11px;
+    font-family: monospace;
+    overflow: hidden;
+    background: #333;
+    color: #DDD;
+    display: block;
+    width: 580px;
+}
+
+/** EXAMPLES **/
+.custom, .custom input{
+    color: red;
+    background: #ffecf3;
+}
+.customEmptyTextCls{
+    color: #333;
+    font-style: italic;
+}
+.customSelection{
+    background: maroon !important;
+}

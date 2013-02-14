@@ -7,8 +7,10 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
-    <title>Magicsuggest</title>
+    <title>MagicSuggest</title>
   </head>
 
   <body>
@@ -18,7 +20,7 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/nicolasbize/magicsuggest">View on GitHub</a>
 
-          <h1 id="project_title">Magicsuggest</h1>
+          <h1 id="project_title">MagicSuggest</h1>
           <h2 id="project_tagline">Auto-suggest combo with bootstrap theme using jQuery</h2>
 
             <section id="downloads">
@@ -31,32 +33,384 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+        <p>I needed to create a highly flexible auto suggest combo box in the line of Bootstrap themes.<br/>
+        All the combos I've seen didn't have all the options I needed so I went and rolled my own.<br/>
+        You're free to do whatever you wish with it. (permissive MIT licence)</p>
+        
+      <div id="tabs">
+         <ul>
+           <li><a href="#tab-1">Demo</a></li>
+           <li><a href="#tab-2">Installation</a></li>
+           <li><a href="#tab-3">Documentation</a></li>
+           <li><a href="#tab-4">Licence</a></li>
+         </ul>
+         <div id="tab-1" class='tab-content'>
+           <p>This combo was generated with the default options.</p>
+           <div id="ms1"></div>
+           <p>With no configuration options set, you have the following behaviour:</p>
+            <div>- the side trigger is visible and the selected items appear within the combo itself.</div>
+            <div>- suggestions will appear as the user starts typing</div>
+            <div>- the user can toggle the suggestions using the down arrow key</div>
+            <div>- the user can delete selected items by using backspace</div>
+            <div>- the user is free to enter new input using the enter key after having entered text</div>
+            <p>There are many configuration options that allow you to customize the component.</p>
+         </div>
+         <div id="tab-2" class='tab-content'>
+        <h3>Installation Guide</h3>
+        <p>1. Download the latest version of the project using one of the two links above.</p>
+        <p>2. Copy the content of the <code>bin</code> folder into your project to use the minified version.</p>
+        <p>3. Add the following lines in your <code>HEAD</code> contents</p>
+        <pre><code>&lt;link rel="stylesheet" href="magicsuggest-min.css"&gt;
+&lt;script type="text/javascript" src="jquery-1.8.3-min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="class-0.0.2-min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="magicsuggest-min.js"&gt;&lt;/script&gt;</code></pre>
+        <p>4. To transform any DOM element into a MagicSuggest combo, simply include this after jQuery has been initialized:
+        <pre><code>new MagicSuggest({options});</code></pre>
+         </div>
+         <div id="tab-3" class='tab-content'>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+          <h4>Configuration Properties</h4>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+          <div class="conf">
+            <div class="opt-name">allowFreeEntries</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Restricts or allows the user to validate typed entries.<br/>Defaults to <em>true</em>
+                <a class="opt-ex cfg_allowFreeEntries_false">View an example</a>
+            </div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">cls</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">A custom CSS class to apply to the field's underlying element.<br/>Defaults to <em>''</em>
+            <a class="opt-ex cfg_cls_custom">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">data</div>
+            <code>array / string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">JSON Data source used to populate the combo box. 3 options are available here:<br/>
+            <p><u>No Data Source (default)</u><br/>
+               When left null, the combo box will not suggest anything. It can still enable the user to enter multiple entries if allowFreeEntries is set to true (default).</p>
+            <p><u>Static Source</u><br/>
+               You can pass an array of JSON objects, an array of strings or even a single CSV string as the data source.<br/>For ex. data: [{id:0,name:"Paris"}, {id: 1, name: "New York"}]</p>
+            <p><u>Url</u><br/>
+                You can pass the url from which the component will fetch its JSON data.<br/>Data will be fetched using a POST ajax request that will include the entered text as 'query' parameter</p>
+            Defaults to <em>null</em>
+            <a class="opt-ex cfg_data_red,orange,blue,green,yellow,black,white">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">disabled</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Start the component in a disabled state. <br/>Defaults to <em>false</em>.
+            <a class="opt-ex cfg_disabled_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">displayField</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">name of JSON object property displayed in the combo list.<br/>Defaults to <em>name</em>
+            </div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">editable</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Set to false if you only want mouse interaction. In that case the combo will automatically expand on focus.<br/>Defaults to <em>true</em>
+            <a class="opt-ex cfg_editable_false">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">emptyText</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">The default placeholder text when nothing has been entered.<br/>Defaults to <em>'Type or click here'</em> or just <em>'Click here'</em> if not editable.
+            <a class="opt-ex cfg_emptyText_Empty!">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">emptyTextCls</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">A custom CSS class to style the empty text.<br/>Defaults to <em>'ms-empty-text'</em>
+            <a class="opt-ex cfg_emptyTextCls_customEmptyTextCls">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">expanded</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Set starting state for combo.<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_expanded_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">expandOnFocus</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Automatically expands combo on focus.<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_expandOnFocus_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">hideTrigger</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Set to true to hide the trigger on the right.<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_hideTrigger_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">highlight</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Set to true to highlight search input within displayed suggestions.<br/>Defaults to <em>true</em>
+            <a class="opt-ex cfg_highlight_false">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">matchCase</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Set to true to filter data results according to case. Useless if the data is fetched remotely.<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_matchCase_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">maxDropHeight</div>
+            <code>integer</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Once expanded, the combo's height will take as much room as the # of available results. In case there are too many results displayed, this will fix the drop down height.<br/>Defaults to <em>300</em> px
+            <a class="opt-ex cfg_maxDropHeight_100">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">maxResults</div>
+            <code>integer</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">The maximum number of results displayed in the combo drop down at once. Set to false to remove the limit.<br/>Defaults to <em>10</em>
+            <a class="opt-ex cfg_maxResults_5">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">maxSelection</div>
+            <code>integer</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">The maximum number of items the user can select if multiple selection is allowed. Set to false to remove the limit.<br/>Defaults to <em>10</em>
+            <a class="opt-ex cfg_maxSelection_2">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">minChars</div>
+            <code>integer</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">The minimum number of characters the user must type before the combo expands and offers suggestions. You can set this to 0 if you want the drop down to expand as soon as the component gains focus.<br/>Defaults to <em>0</em> when data is null or set to local storage, <em>2</em> otherwise.
+            <a class="opt-ex cfg_minChars_1">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">preselectSingleSuggestion</div>
+              <code>boolean</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">If a single suggestion comes out, it is preselected.<br/>Defaults to <em>true</em>
+                  <a class="opt-ex cfg_preselectSingleSuggestion_false">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">renderTo</div>
+            <code>element</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">If set, the combobox will be rendered within the given element.<br/>Defaults to <em>null</em>
+            </div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">selectionCls</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">A custom CSS class to add to a selected item.<br/>Defaults to <em>''</em>
+            <a class="opt-ex cfg_selectionCls_customSelection">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">selectionPosition</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Where the selected items will be displayed. Only 'right', 'bottom' and 'inner' (within the combo) are valid values<br/>Defaults to <em>'inner'</em>
+            <a class="opt-ex cfg_selectionPosition_bottom">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">selectionStacked</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Set to true to stack the selectioned items when positioned on the bottom. Requires the selectionPosition to be set to 'bottom'<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_selectionStacked_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">sortDir</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Direction used for sorting. Only 'asc' and 'desc' are valid values.<br/>Defaults to <em>'asc'</em>
+            <a class="opt-ex cfg_sortDir_desc">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">sortOrder</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">name of JSON object property for local result sorting. Leave null if you do not wish the results to be ordered or if they are already ordered remotely.<br/>Defaults to <em>null</em>
+            <a class="opt-ex cfg_sortOrder_name">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">useTabKey</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">If set to true, tab won't blur the component but will be registered as the ENTER key.<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_useTabKey_true">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">useZebraStyle</div>
+            <code>boolean</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Determines whether or not the results will be displayed with a zebra table style.<br/>Defaults to <em>true</em>
+            <a class="opt-ex cfg_useZebraStyle_false">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">value</div>
+              <code>array / object</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">initial value for the field.<br/>Defaults to <em>null</em>
+                  <a class="opt-ex cfg_value_['San Diego','Dallas']">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">valueField</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">name of JSON object property that represents its underlying value.<br/>Defaults to <em>id</em>
+              </div>
+          </div>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+          <h4>Public Methods</h4>
 
-<h3>Designer Templates</h3>
+          <div class="conf">
+              <div class="opt-name">addToSelection(object / array[object])</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Add one or multiple json items to the current selection.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">collapse()</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Expand the drop drown part of the combo.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">disable()</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Set the component in a disabled state.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">enable()</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Set the component in a enable state.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">expand()</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Expand the drop drown part of the combo.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">isDisabled() : boolean</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Retrieve component enabled status.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">isRendered() : boolean</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Check whether or not the component has been rendered.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">getSelectedItems() : array[object]</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Retrieve an array of selected json objects.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">getValue() : array[int / string]</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Retrieve an array of selected values.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">removeFromSelection(object / array[object])</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Remove one or multiples json items from the current selection.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">render(domElement)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">If not rendered, the component will dynamically render itself in the given element.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">setValue(object / array[object])</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Sets the value for the combo box.</div>
+          </div>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+          <h4>Events</h4>
 
-<h3>Rather Drive Stick?</h3>
+          <div class="conf">
+              <div class="opt-name">afterrender(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the component has finished rendering.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">beforerender(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired before the component renders.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">blur(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the component looses focus.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">collapse(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the combo is collapsed.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">expand(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the combo is expanded.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">focus(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the component gains focus.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">onbeforeload(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired prior to an ajax request.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">onkeydown(this, e: keyEvent)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when a key is pressed down within the component.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">onkeyup(this, e: keyEvent)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when a key is released within the component.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">onload(this, loadedRecords: array[object])</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired once the ajax request has successfully finished.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">ontriggerclick(this)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the user clicks the side trigger.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">selectionchange(this, newSelection: array[object])</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Fired when the selected values have changed.</div>
+          </div>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+         </div>
+         <div id="tab-4" class='tab-content'>
+            <h3>MIT Licence</h3>
+            <p>Copyright (C) 2013 Nicolas Bize</p>
+            <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+            <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+            <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+         </div>
+       </div>
       </section>
     </div>
 
@@ -68,7 +422,10 @@ $ git checkout gh-pages
       </footer>
     </div>
 
-    
+    <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
+    <script type="text/javascript" src="bin/class-0.0.2-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-min.js"></script>
+    <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
 </html>
