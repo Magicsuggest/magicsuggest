@@ -19,8 +19,8 @@
                 maxResults: null,
                 selectionPosition: 'right',
                 maxDropHeight: 200,
-                disabled: true,
-                useTabKey: true
+                useTabKey: true,
+                value: [2,3]
             });
 
             var ms2 = new MagicSuggest({
@@ -35,7 +35,7 @@
                 selectionPosition: 'bottom',
                 minChars: 1,
                 selectionStacked: true,
-                data: 'data.json'
+                data: jsonData
             });
             var ms4 = new MagicSuggest({
                 renderTo: $('#ms4'),
@@ -46,13 +46,8 @@
             var ms5 = new MagicSuggest({
                 renderTo: $('#ms5'),
                 data: 'New York, Los Angeles,Chicago ,Houston,Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville',
-                editable: false
+                value: ['New York','Los Angeles']
             });
-            var ms6 = new MagicSuggest({
-                data: ['New York','Los Angeles','Chicago'],
-                single: true
-            });
-            ms6.render($('#ms6'));
         });
     </script>
 </head>
@@ -73,9 +68,6 @@
         <div style="clear:both;"></div>
         <h3>Non editable, multiple selection</h3>
         <input id="ms5" style="width:400px;" type="text"/>
-        <div style="clear:both;"></div>
-        <h3>Single selection</h3>
-        <input id="ms6" style="width:400px;" type="text"/>
     </div>
 </body>
 </html>

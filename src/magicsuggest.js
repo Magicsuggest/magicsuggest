@@ -235,6 +235,13 @@ var MagicSuggest = Class.create({
         this.useZebraStyle = cfg.useZebraStyle !== undefined ? cfg.useZebraStyle : true;
 
         /**
+         * @cfg {String/Object/Array} value
+         * <p>initial value for the field</p>
+         * Defaults to <code>null</code>.
+         */
+        this.value = cfg.value !== undefined ? cfg.value : null;
+
+        /**
          * @cfg {String} valueField
          * <p>name of JSON object property that represents its underlying value</p>
          * Defaults to <code>id</code>.
@@ -491,10 +498,22 @@ var MagicSuggest = Class.create({
     },
 
     /**
-     * Sets a value for the combo box.
+     * Sets a value for the combo box. Value must be a value or an array of value with data type matching valueField one.
      * @param data
      */
     setValue: function(data){
+        var values = $.isArray(data) ? data : [data],
+            ref = this,
+            items = [];
+        $.each(this.combobox.children(), function(index, suggestion){
+            var obj = $(suggestion).data('json');
+            if(values.indexOf(obj[ref.valueField]) > -1){
+                items.push(obj);
+            }
+        });
+        if(items.length > 0){
+            this.addToSelection(items);
+        }
 
     },
 
@@ -585,6 +604,10 @@ var MagicSuggest = Class.create({
             }
 
             this._rendered = true;
+            this._processSuggestions();
+            if(this.value !== null){
+                this.setValue(this.value);
+            }
             $(this).trigger('afterrender', [this]);
             var ref = this;
             $("body").click(function(e) {
