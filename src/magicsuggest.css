@@ -23,6 +23,10 @@
 .ms-ctn-readonly{
     cursor: pointer;
 }
+.ms-ctn-disabled{
+    cursor: not-allowed;
+    background-color: #eeeeee;
+}
 .ms-ctn-bootstrap-focus,
 .ms-ctn-bootstrap-focus .ms-res-ctn{
     border-color: rgba(82, 168, 236, 0.8) !important;
@@ -45,6 +49,10 @@
     overflow: hidden;
     float: left;
     margin-left: 2px;
+}
+.ms-ctn-disabled input{
+    cursor: not-allowed;
+    background-color: #eeeeee;
 }
 .ms-ctn .ms-input-readonly{
     cursor: pointer;
@@ -80,7 +88,10 @@
 .ms-ctn .ms-trigger:hover .ms-trigger-ico{
     background-position: 0 -4px;
 }
-
+.ms-ctn-disabled .ms-trigger{
+    cursor: not-allowed;
+    background-color: #eeeeee;
+}
 .ms-ctn-bootstrap-focus{
     border-bottom: 1px solid #CCC;
 }

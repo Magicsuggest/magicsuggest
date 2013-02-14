@@ -6,6 +6,7 @@
  *
  * Author: Nicolas Bize
  * Date: Feb. 8th 2013
+ * Version: 1.0
  * Licence: MagicSuggest is licenced under MIT licence (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -15,6 +16,7 @@ var MagicSuggest = Class.create({
      * @param cfg - see config below
      */
     init: function(cfg){
+        /**********  CONFIGURATION PROPERTIES ************/
         /**
          * @cfg {Boolean} allowFreeEntries
          * <p>Restricts or allows the user to validate typed entries </p>
@@ -38,21 +40,28 @@ var MagicSuggest = Class.create({
 
         /**
          * @cfg {Array / String} data
-         * <p>JSON Data source used to populate the combo box. 3 options are available here:</p>
-         * <p><b>No Data Source (default)</b></p><br/>
-         * <p>When left null, the combo box will not suggest anything. It can still enable the user to enter
-         *    multiple entries if allowFreeEntries is set to true (default).</p>
-         * <p><b>Static Source</b></p><br/>
-         * <p>(If this is defined, you <b>must</b> define the nameField and valueField config properties.)</p>
-         *    You can pass directly an array of JSON objects as the data source.<br/>
-         *    For ex. data: [{id:0,name:"Paris"}, {id: 1, name: "New York"}]<br/></p>
-         * <p><b>Url</b></p><br/>
-         * <p>(If this is defined, you <b>must</b> define the nameField and valueField config properties.)</p>
-         *    You can pass the url from which the component will fetch its JSON data.<br/>
-         *    Data will be fetched using a POST ajax request that will include the entered text as 'query' parameter<br/></p>
-         * Optional. Defaults to <code>null</code>, will only serve as a multiple free-choice component.
+         * JSON Data source used to populate the combo box. 3 options are available here:<br/>
+         * <p><u>No Data Source (default)</u><br/>
+         *    When left null, the combo box will not suggest anything. It can still enable
+         *    the user to enter multiple entries if allowFreeEntries is set to true (default).</p>
+         * <p><u>Static Source</u><br/>
+         *    You can pass an array of JSON objects, an array of strings or even a single
+         *    CSV string as the data source.<br/>
+         *    For ex. data: [{id:0,name:"Paris"}, {id: 1, name: "New York"}]</p>
+         * <p><u>Url</u><br/>
+         *     You can pass the url from which the component will fetch its JSON data.<br/>
+         *     Data will be fetched using a POST ajax request that will include the entered
+         *     text as 'query' parameter</p>
+         * Defaults to <em>null</em>
          */
         this.data = cfg.data !== undefined ? cfg.data : null;
+
+        /**
+         * @cfg {Boolean} disabled
+         * <p>Start the component in a disabled state.</p>
+         * Defaults to <code>false</code>.
+         */
+        this.disabled = !!cfg.disabled;
 
         /**
          * @cfg {String} displayField
@@ -63,8 +72,8 @@ var MagicSuggest = Class.create({
 
         /**
          * @cfg {Boolean} editable
-         * <p>Set to false if you only want mouse interaction
-         *    When set to false, the combo will automatically expand on focus</p>
+         * <p>Set to false if you only want mouse interaction. In that case the combo will
+         * automatically expand on focus.</p>
          * Defaults to <code>true</code>.
          */
         this.editable = cfg.editable !== undefined ? cfg.editable : true;
@@ -138,7 +147,7 @@ var MagicSuggest = Class.create({
          * @cfg {Integer} maxSelection
          * <p>The maximum number of items the user can select if multiple selection is allowed.
          *    Set to false to remove the limit.</p>
-         * Defaults to false.
+         * Defaults to 10.
          */
         this.maxSelection = cfg.maxSelection || 10;
 
@@ -148,17 +157,13 @@ var MagicSuggest = Class.create({
          *    You can set this to 0 if you want the drop down to expand as soon as the component gains focus.</p>
          * Defaults to <code>0</code> when <code>data</code> is not set or set to a local array, <code>2</code> otherwise.
          */
-        this.minChars = $.isNumeric(cfg.minChars) ? cfg.minChars : (typeof(this.data) === 'string' ? 2 : 0);
+        this.minChars = $.isNumeric(cfg.minChars) ? cfg.minChars : ((typeof(this.data) === 'string' && this.data.indexOf(',') < 0) ? 2 : 0);
 
         /**
          * @cfg (input DOM Element) renderTo
          * <p>The input tag that will be transformed into the component</p>
-         * <b>Required</b>
          */
-        this.renderTo = cfg.renderTo;
-        if(this.renderTo === undefined){
-            throw "Missing renderTo parameter";
-        }
+        this.renderTo = cfg.renderTo || null;
 
         /**
          * @cfg {String} selectionCls
@@ -189,15 +194,8 @@ var MagicSuggest = Class.create({
          */
         this.selectionStacked = !!cfg.selectionStacked;
         if(this.selectionStacked === true && this.selectionPosition !== 'bottom'){
-            throw "Selection cannot be stacked elsewhere than at the bottom";
+            this.selectionPosition = 'bottom';
         }
-
-        /**
-         * @cfg {Boolean} single
-         * <p>Determines whether or not the component allows multiple or single selection</p>
-         * Defaults to <code>false</code>.
-         */
-        this.single = !!cfg.single;
 
         /**
          * @cfg {String} sortDir
@@ -250,45 +248,96 @@ var MagicSuggest = Class.create({
          */
         this.width = cfg.width || $(this.renderTo).width();
 
+        /**********  EVENT LIST ************/
         this._events = [
         /**
          * @event afterrender
-         * Fires when the component has finished rendering.
+         * Fired when the component has finished rendering.
          * @param this
          */
             'afterrender',
 
         /**
+         * @event beforerender
+         * Fired before the component renders.
+         * @param this
+         */
+            'beforerender',
+
+        /**
          * @event blur
-         * Fires when the component looses focus.
+         * Fired when the component looses focus.
          * @param this
          */
             'blur',
 
         /**
          * @event collapse
-         * Fires when the combo is collapsed.
+         * Fired when the combo is collapsed.
          * @param this
          */
             'collapse',
 
         /**
          * @event expand
-         * Fires when the combo is expanded.
+         * Fired when the combo is expanded.
          * @param this
          */
             'expand',
 
         /**
          * @event focus
-         * Fires when the component gains focus.
+         * Fired when the component gains focus.
          * @param this
          */
             'focus',
 
         /**
+         * @event onbeforeload
+         * Fired prior to an ajax request.
+         * @param this
+         */
+            'onbeforeload',
+
+        /**
+         * @event onload
+         * Fired when a key is pressed down within the component.
+         * @param this
+         */
+            'onkeydown',
+
+        /**
+         * @event onkeydown
+         * Fired when a key is pressed down within the component.
+         * @param this
+         */
+            'onkeydown',
+
+        /**
+         * @event onkeyup
+         * Fired when a key is released within the component.
+         * @param this
+         */
+            'onkeyup',
+
+        /**
+         * @event onload
+         * Fired once the ajax request has successfully finished.
+         * @param this
+         * @param json records
+         */
+            'onload',
+
+        /**
+         * @event ontriggerclick
+         * Fired when the user clicks the side trigger.
+         * @param this
+         */
+            'ontriggerclick',
+
+        /**
          * @event selectionchange
-         * Fires when the selected values have changed.
+         * Fired when the selected values have changed.
          * @param this
          * @param selected items
          */
@@ -300,19 +349,35 @@ var MagicSuggest = Class.create({
         // private array holder for our selected objects
         this._selection = [];
 
-        // This is the starting point where all the magic happens
-        this._doRender();
+        if(this.renderTo !== null){
+            this._doRender();
+        }
+        return this;
     },
 
+
+    /**********  PUBLIC METHODS ************/
     /**
-     * Expand the drop drown part of the combo.
+     * Add one or multiple json items to the current selection
+     * @param items - json object or array of json objects
      */
-    expand: function(){
-        if(!this.expanded && this.input.val().length >= this.minChars){
-            this._processSuggestions();
-            this.combobox.appendTo(this.container);
-            this.expanded = true;
-            $(this).trigger('expand', [this]);
+    addToSelection: function(items){
+        if(this.maxSelection === false || this._selection.length < this.maxSelection){
+            if(!$.isArray(items)){
+                items = [items];
+            }
+            var ref = this, valuechanged = false;
+            $.each(items, function(index, json){
+                if(ref.getValue().indexOf(json[ref.valueField]) === -1){
+                    ref._selection.push(json);
+                    valuechanged = true;
+                }
+            });
+            if(valuechanged === true){
+                this._renderSelection();
+                this.input.val('');
+                $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
+            }
         }
     },
 
@@ -329,25 +394,64 @@ var MagicSuggest = Class.create({
     },
 
     /**
-     * Add one or multiple json items to the current selection
-     * @param items - json object or array of json objects
+     * Set the component in a disabled state.
      */
-    addToSelection: function(items){
-        if(!$.isArray(items)){
-            items = [items];
+    disable: function(){
+        this.container.addClass('ms-ctn-disabled');
+        this.disabled = true;
+    },
+
+    /**
+     * Set the component in a enable state.
+     */
+    enable: function(){
+        this.container.removeClass('ms-ctn-disabled');
+        this.disabled = false;
+    },
+
+    /**
+     * Expand the drop drown part of the combo.
+     */
+    expand: function(){
+        if(!this.expanded && this.input.val().length >= this.minChars){
+            this._processSuggestions();
+            this.combobox.appendTo(this.container);
+            this.expanded = true;
+            $(this).trigger('expand', [this]);
         }
-        var ref = this, valuechanged = false;
-        $.each(items, function(index, json){
-            if(ref.getSelectedValues().indexOf(json[ref.valueField]) === -1){
-                ref._selection.push(json);
-                valuechanged = true;
-            }
+    },
+
+    /**
+     * Retrieve component enabled status
+     */
+    isDisabled: function(){
+        return this.disabled;
+    },
+
+    /**
+     * Check whether or not the component has been rendered.
+     * @return {boolean}
+     */
+    isRendered: function(){
+        return this._rendered === true;
+    },
+
+    /**
+     * Retrieve an array of selected json objects
+     * @return {Array}
+     */
+    getSelectedItems: function(){
+        return this._selection;
+    },
+
+    /**
+     * Retrieve an array of selected values
+     */
+    getValue: function(){
+        var ref = this;
+        return $.map(this._selection, function(o) {
+            return o[ref.valueField];
         });
-        if(valuechanged === true){
-            this._renderSelection();
-            this.input.val('');
-            $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
-        }
     },
 
     /**
@@ -360,7 +464,7 @@ var MagicSuggest = Class.create({
         }
         var ref = this, valuechanged = false;
         $.each(items, function(index, json){
-            var i = ref.getSelectedValues().indexOf(json[ref.valueField]);
+            var i = ref.getValue().indexOf(json[ref.valueField]);
             if(i > -1){
                 ref._selection.splice(i, 1);
                 valuechanged = true;
@@ -376,109 +480,119 @@ var MagicSuggest = Class.create({
     },
 
     /**
-     * Retrieve an array of selected json objects
-     * @return {Array}
+     * If not rendered, the component will dynamically render itself in the given element.
+     * @param el
      */
-    getSelectedItems: function(){
-        return this._selection;
+    render: function(el){
+        if(this.isRendered() === false){
+            this.renderTo = el;
+            this._doRender();
+        }
     },
 
     /**
-     * Retrieve an array of selected values
+     * Sets a value for the combo box.
+     * @param data
      */
-    getSelectedValues: function(){
-        var ref = this;
-        return $.map(this._selection, function(o) {
-            return o[ref.valueField];
-        });
+    setValue: function(data){
+
     },
+
+    /**********  PRIVATE ************/
 
     /**
      * Render the component to the given input DOM element
      * @private
      */
     _doRender: function(){
-        // holds the main div, will relay the focus events to the contained input element.
-        this.container = $('<div/>', {
-            id: 'ms-ctn-' + $('div[id^="ms-ctn"]').length, // auto-increment IDs in case of multiple suggest components
-            // class is a reserved word
-            'class': 'ms-ctn ' + this.cls +
-                (this.editable === true ? '' : ' ms-ctn-readonly'),
-            style: 'width: ' + this.width + 'px;'
-        });
-        this.container.focus($.proxy(this._onContainerFocus, this));
-        this.container.blur($.proxy(this._onContainerBlur, this));
-        this.container.keydown($.proxy(this._onHandleKeyDown, this));
-        this.container.keyup($.proxy(this._onHandleKeyUp, this));
+        if(this.isRendered() === false){
 
-        // holds the input field
-        this.input = $('<input/>', {
-            id: 'ms-input-' + $('input[id^="ms-input"]').length,
-            type: 'text',
-            'class': this.emptyTextCls + (this.editable === true ? '' : ' ms-input-readonly'),
-            value: this.emptyText,
-            readonly: !this.editable,
-            style: 'width: ' + (this.width - (this.hideTrigger ? 16 : 38)) + 'px;'
-        });
-        this.input.focus($.proxy(this._onInputFocus, this));
+            $(this).trigger('beforerender', [this]);
 
-        // holds the trigger on the right side
-        if(this.hideTrigger === false){
-            this.trigger = $('<div/>', {
-                id: 'ms-trigger-' + $('div[id^="ms-trigger"]').length,
-                'class': 'ms-trigger',
-                html: '<div class="ms-trigger-ico"></div>'
+            // holds the main div, will relay the focus events to the contained input element.
+            this.container = $('<div/>', {
+                id: 'ms-ctn-' + $('div[id^="ms-ctn"]').length, // auto-increment IDs in case of multiple suggest components
+                // class is a reserved word
+                'class': 'ms-ctn ' + this.cls +
+                    (this.disabled === true ? ' ms-ctn-disabled' : '') +
+                    (this.editable === true ? '' : ' ms-ctn-readonly'),
+                style: 'width: ' + this.width + 'px;'
             });
-            this.trigger.click($.proxy(this._onTriggerClick, this));
-            this.container.append(this.trigger);
-        }
+            this.container.focus($.proxy(this._onContainerFocus, this));
+            this.container.blur($.proxy(this._onContainerBlur, this));
+            this.container.keydown($.proxy(this._onHandleKeyDown, this));
+            this.container.keyup($.proxy(this._onHandleKeyUp, this));
 
-        // holds the suggestions. will always be placed on focus
-        this.combobox = $('<div/>', {
-            id: 'ms-res-ctn-' + $('div[id^="ms-res-ctn"]').length,
-            'class': 'ms-res-ctn',
-            style: 'width: ' + this.width + 'px; height: ' + this.maxDropHeight + 'px;'
-        });
+            // holds the input field
+            this.input = $('<input/>', {
+                id: 'ms-input-' + $('input[id^="ms-input"]').length,
+                type: 'text',
+                'class': this.emptyTextCls + (this.editable === true ? '' : ' ms-input-readonly'),
+                value: this.emptyText,
+                readonly: !this.editable,
+                style: 'width: ' + (this.width - (this.hideTrigger ? 16 : 38)) + 'px;'
+            });
+            this.input.focus($.proxy(this._onInputFocus, this));
 
-        this.selectionContainer = $('<div/>', {
-            id: 'ms-sel-ctn-' +  $('div[id^="ms-sel-ctn"]').length,
-            'class': 'ms-sel-ctn'
-        });
-        this.selectionContainer.click($.proxy(this._onContainerFocus, this));
-
-        if(this.selectionPosition === 'inner'){
-            this.selectionContainer.append(this.input);
-        } else {
-            this.container.append(this.input);
-        }
-
-        // Render the whole thing
-        $(this.renderTo).replaceWith(this.container);
-
-        switch(this.selectionPosition){
-            case 'bottom':
-                this.selectionContainer.insertAfter(this.container);
-                if(this.selectionStacked === true){
-                    this.selectionContainer.width(this.container.width());
-                    this.selectionContainer.addClass('ms-stacked');
-                }
-                break;
-            case 'right':
-                this.selectionContainer.insertAfter(this.container);
-                this.container.css('float', 'left');
-                break;
-            default:
-                this.container.append(this.selectionContainer);
-                break;
-        }
-
-        $(this).trigger('afterrender', [this]);
-        var ref = this;
-        $("body").click(function(e) {
-            if(ref.container.has(e.target).length === 0){
-                ref._onContainerBlur();
+            // holds the trigger on the right side
+            if(this.hideTrigger === false){
+                this.trigger = $('<div/>', {
+                    id: 'ms-trigger-' + $('div[id^="ms-trigger"]').length,
+                    'class': 'ms-trigger',
+                    html: '<div class="ms-trigger-ico"></div>'
+                });
+                this.trigger.click($.proxy(this._onTriggerClick, this));
+                this.container.append(this.trigger);
             }
-        });
+
+            // holds the suggestions. will always be placed on focus
+            this.combobox = $('<div/>', {
+                id: 'ms-res-ctn-' + $('div[id^="ms-res-ctn"]').length,
+                'class': 'ms-res-ctn',
+                style: 'width: ' + this.width + 'px; height: ' + this.maxDropHeight + 'px;'
+            });
+
+            this.selectionContainer = $('<div/>', {
+                id: 'ms-sel-ctn-' +  $('div[id^="ms-sel-ctn"]').length,
+                'class': 'ms-sel-ctn'
+            });
+            this.selectionContainer.click($.proxy(this._onContainerFocus, this));
+
+            if(this.selectionPosition === 'inner'){
+                this.selectionContainer.append(this.input);
+            } else {
+                this.container.append(this.input);
+            }
+
+            // Render the whole thing
+            $(this.renderTo).replaceWith(this.container);
+
+            switch(this.selectionPosition){
+                case 'bottom':
+                    this.selectionContainer.insertAfter(this.container);
+                    if(this.selectionStacked === true){
+                        this.selectionContainer.width(this.container.width());
+                        this.selectionContainer.addClass('ms-stacked');
+                    }
+                    break;
+                case 'right':
+                    this.selectionContainer.insertAfter(this.container);
+                    this.container.css('float', 'left');
+                    break;
+                default:
+                    this.container.append(this.selectionContainer);
+                    break;
+            }
+
+            this._rendered = true;
+            $(this).trigger('afterrender', [this]);
+            var ref = this;
+            $("body").click(function(e) {
+                if(ref.container.has(e.target).length === 0){
+                    ref._onContainerBlur();
+                }
+            });
+        }
     },
 
     /**
@@ -494,16 +608,18 @@ var MagicSuggest = Class.create({
      * @private
      */
     _onInputFocus: function(){
-        this.container.addClass('ms-ctn-bootstrap-focus');
-        if(this.input.val() === this.emptyText){
-            this.input.removeClass(this.emptyTextCls);
-            this.input.val('');
+        if(this.isDisabled() === false){
+            this.container.addClass('ms-ctn-bootstrap-focus');
+            if(this.input.val() === this.emptyText){
+                this.input.removeClass(this.emptyTextCls);
+                this.input.val('');
+            }
+            if((this.expandOnFocus === true && this.input.val().length === 0) ||
+                this.input.val().length > this.minChars){
+                this.expand();
+            }
+            $(this).trigger('focus', [this]);
         }
-        if((this.expandOnFocus === true && this.input.val().length === 0) ||
-            this.input.val().length > this.minChars){
-            this.expand();
-        }
-        $(this).trigger('focus', [this]);
     },
 
     /**
@@ -541,6 +657,9 @@ var MagicSuggest = Class.create({
         // check how tab should be handled
         var active = this.combobox.find('.ms-res-item-active:first'),
             freeInput = this.input.val() !== this.emptyText ? this.input.val() : '';
+
+        $(this).trigger('onkeydown', [this, e]);
+
         if(e.keyCode === 9 && (this.useTabKey === false ||
             (this.useTabKey === true && active.length === 0 && this.input.val().length === 0))){
             this._forceBlur();
@@ -581,6 +700,9 @@ var MagicSuggest = Class.create({
             selected,
             obj = {},
             ref = this;
+
+        $(this).trigger('onkeyup', [this, e]);
+
         // ignore a bunch of keys
         if((e.keyCode === 9 && this.useTabKey === false) || (e.keyCode > 13 && e.keyCode < 32)){
             return;
@@ -621,11 +743,16 @@ var MagicSuggest = Class.create({
      * @private
      */
     _onTriggerClick: function(){
-        if(this.expanded === true){
-            this.collapse();
-        } else {
-            this.input.focus();
-            this.expand();
+        if(this.isDisabled() === false){
+
+            $(this).trigger('ontriggerclick', [this]);
+
+            if(this.expanded === true){
+                this.collapse();
+            } else {
+                this.input.focus();
+                this.expand();
+            }
         }
     },
 
@@ -635,28 +762,50 @@ var MagicSuggest = Class.create({
      */
     _processSuggestions: function(){
         if(this.data !== null){
-            if(typeof(this.data) === 'string'){ // get results from ajax
+            if(typeof(this.data) === 'string' && this.data.indexOf(',') < 0){ // get results from ajax
+                $(this).trigger('onbeforeload', [this]);
                 var ref = this;
                 $.ajax({
                     type: 'post',
                     url: this.data,
                     data: JSON.stringify({query: this.input.val()}),
                     success: function(items){
-                        ref._displaySuggestions(ref._sortAndTrim(JSON.parse(items)));
+                        var json = JSON.parse(items);
+                        $(this).trigger('onload', [ref, json]);
+                        ref._displaySuggestions(ref._sortAndTrim(json));
                     },
                     error: function(){
                         throw("Could not reach server");
                     }
                 });
-            } else { // local array
-                this._displaySuggestions(this._sortAndTrim(this.data));
+            } else if(typeof(this.data) === 'string' && this.data.indexOf(',') > -1) { // results from csv string
+                this._displaySuggestions(this._sortAndTrim(this._getEntriesFromStringArray(this.data.split(','))));
+            } else { // results from local array
+                if(this.data.length > 0 && typeof(this.data[0]) === 'string'){ // results from array of strings
+                    this._displaySuggestions(this._sortAndTrim(this._getEntriesFromStringArray(this.data)));
+                } else { // regular json array
+                    this._displaySuggestions(this._sortAndTrim(this.data));
+                }
             }
         }
     },
 
     /**
+     * Returns an array of json objects from an array of strings.
+     * @private
+     */
+    _getEntriesFromStringArray: function(data){
+        var json = [], ref = this;
+        $.each(data, function(index, s){
+            var entry = {};
+            entry[ref.displayField] = entry[ref.valueField] = s.trim();
+            json.push(entry);
+        });
+        return json;
+    },
+
+    /**
      * Sorts the results and cut them down to max # of displayed results at once
-     * @param data
      * @private
      */
     _sortAndTrim: function(data){
@@ -664,7 +813,7 @@ var MagicSuggest = Class.create({
             q = this.input.val() !== this.emptyText ? this.input.val() : '',
             filtered = [],
             newSuggestions = [],
-            selectedValues = this.getSelectedValues();
+            selectedValues = this.getValue();
         // filter the data according to given input
         if(q.length > 0){
             $.each(data, function(index, obj){
@@ -704,7 +853,6 @@ var MagicSuggest = Class.create({
 
     /**
      * Empties the result container and refills it with the array of json results in input
-     * @param data
      * @private
      */
     _displaySuggestions: function(data){
