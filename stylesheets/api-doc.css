@@ -138,3 +138,6 @@
 .customSelection{
     background: maroon !important;
 }
+.customInvalidCls{
+    border: 2px solid #000;
+}

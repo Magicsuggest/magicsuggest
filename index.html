@@ -164,6 +164,13 @@
             <a class="opt-ex cfg_highlight_false">View an example</a></div>
           </div>
           <div class="conf">
+            <div class="opt-name">invalidCls</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">The class that is applied to show that the field is invalid.<br/>Defaults to <em>ms-ctn-invalid</em>
+            </div>
+          </div>
+          <div class="conf">
             <div class="opt-name">matchCase</div>
             <code>boolean</code>
             <div style="clear:both;"></div>
@@ -211,6 +218,13 @@
             <div style="clear:both;"></div>
             <div class="opt-desc">If set, the combobox will be rendered within the given element.<br/>Defaults to <em>null</em>
             </div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">required</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Whether or not this field should be required.<br/>Defaults to <em>false</em>
+            <a class="opt-ex cfg_required_true">View an example</a></div>
           </div>
           <div class="conf">
               <div class="opt-name">resultAsString</div>
@@ -326,6 +340,11 @@
               <div class="opt-name">isRendered() : boolean</div>
               <div style="clear:both;"></div>
               <div class="opt-desc">Check whether or not the component has been rendered.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">isValid() : boolean</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Check whether or not the component is valid.</div>
           </div>
           <div class="conf">
               <div class="opt-name">getSelectedItems() : array[object]</div>
