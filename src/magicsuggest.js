@@ -166,6 +166,13 @@ var MagicSuggest = Class.create({
         this.renderTo = cfg.renderTo || null;
 
         /**
+         * @cfg {Boolean} resultAsString
+         * <p>Set to true to render selection as comma separated string</p>
+         * Defaults to <code>false</code>.
+         */
+        this.resultAsString = !!cfg.resultAsString;
+
+        /**
          * @cfg {String} selectionCls
          * <p>A custom CSS class to add to a selected item</p>
          * Defaults to <code>''</code>.
@@ -226,6 +233,14 @@ var MagicSuggest = Class.create({
          * Defaults to <code>false</code>.
          */
         this.useTabKey = !!cfg.useTabKey;
+
+        /**
+         * @cfg {Boolean} useCommaKey
+         * <p>If set to true, using comma will validate the user's choice</p>
+         * Defaults to <code>true</code>.
+         */
+        this.useCommaKey = cfg.useCommaKey !== undefined ? cfg.useCommaKey : true;
+
 
         /**
          * @cfg {Boolean} useZebraStyle
@@ -381,7 +396,7 @@ var MagicSuggest = Class.create({
                 }
             });
             if(valuechanged === true){
-                this._renderSelection();
+                this._renderSelection(this.resultAsString);
                 this.input.val('');
                 $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
             }
@@ -478,7 +493,7 @@ var MagicSuggest = Class.create({
             }
         });
         if(valuechanged === true){
-            this._renderSelection();
+            this._renderSelection(this.resultAsString);
             $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
             if(this.expanded){
                 this._processSuggestions();
@@ -607,6 +622,10 @@ var MagicSuggest = Class.create({
             this._processSuggestions();
             if(this.value !== null){
                 this.setValue(this.value);
+
+                if(this.resultAsString === true){
+                    this._renderSelection(true);
+                }
             }
             $(this).trigger('afterrender', [this]);
             var ref = this;
@@ -641,6 +660,10 @@ var MagicSuggest = Class.create({
                 this.input.val().length > this.minChars){
                 this.expand();
             }
+
+            if(this.resultAsString === true){
+                this._renderSelection();
+            }
             $(this).trigger('focus', [this]);
         }
     },
@@ -666,6 +689,10 @@ var MagicSuggest = Class.create({
             this.input.val(this.emptyText);
         }
         this.collapse();
+
+        if(this.resultAsString === true){
+            this._renderSelection(true);
+        }
         $(this).trigger('blur', [this]);
     },
 
@@ -701,6 +728,9 @@ var MagicSuggest = Class.create({
             case 9: // tab
                 e.preventDefault();
                 break;
+            case 188:
+                e.preventDefault();
+                break;
             case 40: // down
                 e.preventDefault();
                 this._moveSelectedRow("down");
@@ -734,23 +764,25 @@ var MagicSuggest = Class.create({
             case 40:case 38: // up, down
                 e.preventDefault();
                 break;
-            case 13:case 9:// enter, tab
-                e.preventDefault();
-                if(this.expanded){ // if a selection is performed, select it and reset field
-                    selected = this.combobox.find('.ms-res-item-active:first');
-                    if(selected.length > 0){
-                        selected.click();
-                        return;
+            case 13:case 9:case 188:// enter, tab, comma
+                if(e.keyCode !== 188 || this.useCommaKey === true){
+                    e.preventDefault();
+                    if(this.expanded){ // if a selection is performed, select it and reset field
+                        selected = this.combobox.find('.ms-res-item-active:first');
+                        if(selected.length > 0){
+                            selected.click();
+                            return;
+                        }
                     }
+                    // if no selection or if freetext entered and free entries allowed, add new obj to selection
+                    if(inputValid === true && this.allowFreeEntries === true){
+                        obj[this.displayField] = obj[this.valueField] = freeInput;
+                        this.addToSelection(obj);
+                        this.collapse(); // cause the combo suggestions to reset
+                        ref.input.focus();
+                    }
+                    break;
                 }
-                // if no selection or if freetext entered and free entries allowed, add new obj to selection
-                if(inputValid === true && this.allowFreeEntries === true){
-                    obj[this.displayField] = obj[this.valueField] = freeInput;
-                    this.addToSelection(obj);
-                    this.collapse(); // cause the combo suggestions to reset
-                    ref.input.focus();
-                }
-                break;
             default:
                 if(this.expanded === true){
                     this._processSuggestions();
@@ -947,26 +979,35 @@ var MagicSuggest = Class.create({
      * Renders the selected items into their container.
      * @private
      */
-    _renderSelection: function(){
+    _renderSelection: function(asText){
         var ref = this, w = 0, inputOffset = 0;
         if(this.selectionPosition === 'inner'){
             this.input.detach();
         }
         this.selectionContainer.empty();
+
         $.each(this._selection, function(index, value){
+
             var selectedItemEl, delItemEl;
             // tag representing selected value
-            selectedItemEl = $('<div/>', {
-                'class': 'ms-sel-item ' + ref.selectionCls,
-                html: value[ref.displayField]
-            }).data('json', value);
+            if(asText === true){
+                selectedItemEl = $('<div/>', {
+                    'class': 'ms-sel-item ms-sel-text ' + ref.selectionCls,
+                    html: value[ref.displayField] + (index === (ref._selection.length - 1) ? '' : ',')
+                }).data('json', value);
+            } else {
+                selectedItemEl = $('<div/>', {
+                    'class': 'ms-sel-item ' + ref.selectionCls,
+                    html: value[ref.displayField]
+                }).data('json', value);
 
-            // small cross img
-            delItemEl = $('<span/>', {
-                'class': 'ms-close-btn'
-            }).data('json', value).appendTo(selectedItemEl);
+                // small cross img
+                delItemEl = $('<span/>', {
+                    'class': 'ms-close-btn'
+                }).data('json', value).appendTo(selectedItemEl);
+                delItemEl.click($.proxy(ref._onRemoveFromSelection, ref));
+            }
 
-            delItemEl.click($.proxy(ref._onRemoveFromSelection, ref));
             ref.selectionContainer.append(selectedItemEl);
         });
         if(this.selectionPosition === 'inner'){

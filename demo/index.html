@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MagicSuggest Demo</title>
+    <title>MagicSuggest Test Sandbox</title>
     <link rel="stylesheet" href="../src/magicsuggest.css">
     <link rel="stylesheet" href="demo.css">
     <script type="text/javascript" src="../src/jquery-1.8.3-min.js"></script>
@@ -46,6 +46,7 @@
             var ms5 = new MagicSuggest({
                 value: ['San Diego','Dallas'],
                 renderTo: $('#ms5'),
+                resultAsString: true,
                 width: 590,
                 data: 'Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville'
             });
@@ -54,7 +55,7 @@
 </head>
 <body>
     <div class="content">
-        <h2>MagicSuggest demo page</h2>
+        <h2>MagicSuggest Test Sandbox</h2>
         <h3>Replacing an INPUT field</h3>
         <input id="ms1" style="width:400px;" type="text"/>
         <div style="clear:both;"></div>
@@ -67,7 +68,7 @@
         <h3>Filter style, auto open, right side</h3>
         <input id="ms4" style="width:200px;" type="text"/>
         <div style="clear:both;"></div>
-        <h3>Non editable, multiple selection</h3>
+        <h3>Result as string</h3>
         <input id="ms5" style="width:400px;" type="text"/>
     </div>
 </body>

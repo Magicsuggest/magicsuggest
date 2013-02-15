@@ -152,6 +152,14 @@
     margin-top: 4px;
     cursor: pointer;
 }
+.ms-sel-ctn .ms-sel-text{
+    background: #FFF;
+    color: #666;
+    padding-right: 0;
+    margin-left: 0;
+    font-size: 14px;
+    font-weight: normal;
+}
 .ms-res-ctn .ms-res-item em{
     font-style: normal;
     background: #565656;
@@ -159,6 +167,9 @@
 }
 .ms-sel-ctn .ms-sel-item:hover{
     background: #565656;
+}
+.ms-sel-ctn .ms-sel-text:hover{
+    background: #FFF;
 }
 .ms-sel-ctn .ms-sel-item-active{
     border: 1px solid red;
