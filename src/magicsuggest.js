@@ -574,8 +574,8 @@ var MagicSuggest = Class.create({
                     (this.editable === true ? '' : ' ms-ctn-readonly'),
                 style: 'width: ' + this.width + 'px;'
             });
-            this.container.focus($.proxy(this._onContainerFocus, this));
-            this.container.blur($.proxy(this._onContainerBlur, this));
+            this.container.focus($.proxy(this._onFocus, this));
+            this.container.blur($.proxy(this._onBlur, this));
             this.container.keydown($.proxy(this._onHandleKeyDown, this));
             this.container.keyup($.proxy(this._onHandleKeyUp, this));
 
@@ -612,7 +612,7 @@ var MagicSuggest = Class.create({
                 id: 'ms-sel-ctn-' +  $('div[id^="ms-sel-ctn"]').length,
                 'class': 'ms-sel-ctn'
             });
-            this.selectionContainer.click($.proxy(this._onContainerFocus, this));
+            this.selectionContainer.click($.proxy(this._onFocus, this));
 
             if(this.selectionPosition === 'inner'){
                 this.selectionContainer.append(this.input);
@@ -653,7 +653,7 @@ var MagicSuggest = Class.create({
             var ref = this;
             $("body").click(function(e) {
                 if(ref.container.has(e.target).length === 0){
-                    ref._onContainerBlur();
+                    ref._onBlur();
                 }
             });
         }
@@ -663,7 +663,7 @@ var MagicSuggest = Class.create({
      * Triggered when focusing on the container div. Will focus on the input field instead.
      * @private
      */
-    _onContainerFocus: function(){
+    _onFocus: function(){
         this.input.focus();
     },
 
@@ -692,20 +692,10 @@ var MagicSuggest = Class.create({
     },
 
     /**
-     * Triggered when blurring out of the component.
+     * Triggered when blurring out of the component
      * @private
      */
-    _onContainerBlur: function(){
-        if(this.input.is(":focus")){
-            this._forceBlur();
-        }
-    },
-
-    /**
-     * Force the component to blur itself
-     * @private
-     */
-    _forceBlur: function(){
+    _onBlur: function(){
         this.container.removeClass('ms-ctn-bootstrap-focus');
         if(this.input.val() === ''){
             this.input.addClass(this.emptyTextCls);
@@ -716,11 +706,12 @@ var MagicSuggest = Class.create({
         if(this.resultAsString === true){
             this._renderSelection(true);
         }
-        console.debug(this.isValid());
         if(this.isValid() === false){
             this.container.addClass('ms-ctn-invalid');
         }
-        $(this).trigger('blur', [this]);
+        if(this.input.is(":focus")){
+            $(this).trigger('blur', [this]);
+        }
     },
 
     /**
@@ -739,7 +730,7 @@ var MagicSuggest = Class.create({
 
         if(e.keyCode === 9 && (this.useTabKey === false ||
             (this.useTabKey === true && active.length === 0 && this.input.val().length === 0))){
-            this._forceBlur();
+            this._onBlur();
             return;
         }
         switch(e.keyCode) {
