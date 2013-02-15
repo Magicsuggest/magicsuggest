@@ -121,6 +121,13 @@ var MagicSuggest = Class.create({
         this.highlight = cfg.highlight !== undefined ? cfg.highlight : true;
 
         /**
+         * @cfg {String} invalidCls
+         * <p>The class that is applied to show that the field is invalid</p>
+         * Defaults to ms-ctn-invalid
+         */
+        this.invalidCls = cfg.invalidCls || 'ms-ctn-invalid';
+
+        /**
          * @cfg {Boolean} matchCase
          * <p>Set to true to filter data results according to case. Useless if the data is fetched remotely</p>
          * Defaults to <code>false</code>.
@@ -164,6 +171,13 @@ var MagicSuggest = Class.create({
          * <p>The input tag that will be transformed into the component</p>
          */
         this.renderTo = cfg.renderTo || null;
+
+        /**
+         * @cfg {Boolean} required
+         * <p>Whether or not this field should be required</p>
+         * Defaults to false
+         */
+        this.required = !!cfg.required;
 
         /**
          * @cfg {Boolean} resultAsString
@@ -459,6 +473,14 @@ var MagicSuggest = Class.create({
     },
 
     /**
+     * Checks whether the field is valid or not
+     * @return {boolean}
+     */
+    isValid: function(){
+        return this.required === false || this._selection.length > 0;
+    },
+
+    /**
      * Retrieve an array of selected json objects
      * @return {Array}
      */
@@ -652,6 +674,7 @@ var MagicSuggest = Class.create({
     _onInputFocus: function(){
         if(this.isDisabled() === false){
             this.container.addClass('ms-ctn-bootstrap-focus');
+            this.container.removeClass(this.invalidCls);
             if(this.input.val() === this.emptyText){
                 this.input.removeClass(this.emptyTextCls);
                 this.input.val('');
@@ -673,7 +696,7 @@ var MagicSuggest = Class.create({
      * @private
      */
     _onContainerBlur: function(){
-        if(!this.input.is(":focus")){
+        if(this.input.is(":focus")){
             this._forceBlur();
         }
     },
@@ -692,6 +715,10 @@ var MagicSuggest = Class.create({
 
         if(this.resultAsString === true){
             this._renderSelection(true);
+        }
+        console.debug(this.isValid());
+        if(this.isValid() === false){
+            this.container.addClass('ms-ctn-invalid');
         }
         $(this).trigger('blur', [this]);
     },
@@ -810,6 +837,9 @@ var MagicSuggest = Class.create({
             }
         }
     },
+
+    /**
+     * Reset the invalid stat
 
     /**
      * According to given data and query, sort and add suggestions in their container

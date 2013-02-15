@@ -20,6 +20,9 @@
     cursor: default;
     display: block;
 }
+.ms-ctn-invalid{
+    border: 1px solid #CC0000;
+}
 .ms-ctn-readonly{
     cursor: pointer;
 }
