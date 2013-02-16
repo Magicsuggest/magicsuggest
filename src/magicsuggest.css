@@ -81,12 +81,12 @@
     width: 8px;
     height: 4px;
     background-repeat: no-repeat;
+    cursor: pointer;
     margin: 13px 7px;
 }
 .ms-ctn .ms-trigger:hover{
     background: -moz-linear-gradient(100% 100% 90deg, #e3e3e3, #f1f1f1);
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f1f1f1), to(#e3e3e3));
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr=#FFF1F1F1, endColorstr=#FFE3E3E3);
 }
 .ms-ctn .ms-trigger:hover .ms-trigger-ico{
     background-position: 0 -4px;

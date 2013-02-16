@@ -249,6 +249,13 @@ var MagicSuggest = Class.create({
         this.sortOrder = cfg.sortOrder !== undefined ? cfg.sortOrder : null;
 
         /**
+         * @cfg {Boolean} strictSuggest
+         * <p>If set to true, suggestions will have to start by user input (and not simply contain it as a substring)</p>
+         * Defaults to <code>false</code>.
+         */
+        this.strictSuggest = !!cfg.strictSuggest;        
+
+        /**
          * @cfg {Boolean} useTabKey
          * <p>If set to true, tab won't blur the component but will be registered as the ENTER key</p>
          * Defaults to <code>false</code>.
@@ -659,7 +666,8 @@ var MagicSuggest = Class.create({
             $(this).trigger('afterrender', [this]);
             var ref = this;
             $("body").click(function(e) {
-                if(ref.container.has(e.target).length === 0){
+                if(ref.container.has(e.target).length === 0 && e.target.className.indexOf('ms-res-item') < 0 &&
+                    ref.container[0] !== e.target){
                     ref._onBlur();
                 }
             });
@@ -704,10 +712,7 @@ var MagicSuggest = Class.create({
      */
     _onBlur: function(){
         this.container.removeClass('ms-ctn-bootstrap-focus');
-        if(this.input.val() === ''){
-            this.input.addClass(this.emptyTextCls);
-            this.input.val(this.emptyText);
-        }
+
         this.collapse();
 
         if(this.resultAsString === true){
@@ -715,6 +720,11 @@ var MagicSuggest = Class.create({
         }
         if(this.isValid() === false){
             this.container.addClass('ms-ctn-invalid');
+        }
+
+        if(this.input.val() === ''){
+            this.input.addClass(this.emptyTextCls);
+            this.input.val(this.emptyText);
         }
         if(this.input.is(":focus")){
             $(this).trigger('blur', [this]);
@@ -911,7 +921,9 @@ var MagicSuggest = Class.create({
                 var name = obj[ref.displayField];
                 if((ref.matchCase === true && name.indexOf(q) > -1) ||
                    (ref.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)){
-                    filtered.push(obj);
+                    if(ref.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0){
+                        filtered.push(obj);
+                    }
                 }
             });
         } else {
@@ -1004,11 +1016,10 @@ var MagicSuggest = Class.create({
      * @private
      */
     _onComboItemSelected: function(e){
-        var ref = this;
         this.addToSelection($(e.currentTarget).data('json'));
         $(e.currentTarget).removeClass('ms-res-item-active');
         this.collapse();
-        ref.input.focus();
+        this.input.focus();
     },
 
     /**
