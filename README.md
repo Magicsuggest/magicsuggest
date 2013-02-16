@@ -5,6 +5,12 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.0.3 ie compatibility
+=======================
+- (fix) blur event now registers correctly when selecting an element from the combo
+- (fix) flicker in IE when hovering trigger
+- (cfg) strictSuggest : set how suggestions will be proposed
+
 v1.0.2 bugfixing
 ================
 - (fix) maxResults is now correctly interpreted
