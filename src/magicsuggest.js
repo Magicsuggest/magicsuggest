@@ -148,7 +148,7 @@ var MagicSuggest = Class.create({
          *    Set to false to remove the limit.</p>
          * Defaults to 10.
          */
-        this.maxResults = cfg.maxResults || 10;
+        this.maxResults = cfg.maxResults !== undefined ? cfg.maxResults : 10;
 
         /**
          * @cfg {Integer} maxSelection
@@ -156,7 +156,10 @@ var MagicSuggest = Class.create({
          *    Set to false to remove the limit.</p>
          * Defaults to 10.
          */
-        this.maxSelection = cfg.maxSelection || 10;
+        this.maxSelection = cfg.maxSelection !== undefined ? cfg.maxSelection : 10;
+
+        this.method = cfg.method || 'POST';
+        
 
         /**
          * @cfg {Integer} minChars
@@ -837,6 +840,7 @@ var MagicSuggest = Class.create({
      * @private
      */
     _processSuggestions: function(){
+        var json = null;
         if(this.data !== null){
             if(typeof(this.data) === 'string' && this.data.indexOf(',') < 0){ // get results from ajax
                 $(this).trigger('onbeforeload', [this]);
@@ -844,8 +848,15 @@ var MagicSuggest = Class.create({
                 $.ajax({
                     type: 'post',
                     url: this.data,
-                    data: JSON.stringify({query: this.input.val()}),
+                    data: {query: this.input.val()},
                     success: function(items){
+                        if(typeof(items) === 'string'){
+                            json = JSON.parse(items);
+                        } else if(items.results !== undefined){
+                            json = items.results;
+                        } else if($.isArray(items)){
+                            json = items;
+                        }
                         var json = JSON.parse(items);
                         $(this).trigger('onload', [ref, json]);
                         ref._displaySuggestions(ref._sortAndTrim(json));
