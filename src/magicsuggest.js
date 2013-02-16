@@ -158,8 +158,12 @@ var MagicSuggest = Class.create({
          */
         this.maxSelection = cfg.maxSelection !== undefined ? cfg.maxSelection : 10;
 
+        /**
+         * @cfg {String} method
+         * <p>The method used by the ajax request.</p>
+         * Defaults to 'POST'
+         */
         this.method = cfg.method || 'POST';
-        
 
         /**
          * @cfg {Integer} minChars
@@ -846,7 +850,7 @@ var MagicSuggest = Class.create({
                 $(this).trigger('onbeforeload', [this]);
                 var ref = this;
                 $.ajax({
-                    type: 'post',
+                    type: this.method,
                     url: this.data,
                     data: {query: this.input.val()},
                     success: function(items){
