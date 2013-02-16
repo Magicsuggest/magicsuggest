@@ -96,7 +96,10 @@
             <p><u>Static Source</u><br/>
                You can pass an array of JSON objects, an array of strings or even a single CSV string as the data source.<br/>For ex. data: [{id:0,name:"Paris"}, {id: 1, name: "New York"}]</p>
             <p><u>Url</u><br/>
-                You can pass the url from which the component will fetch its JSON data.<br/>Data will be fetched using a POST ajax request that will include the entered text as 'query' parameter</p>
+                You can pass the url from which the component will fetch its JSON data.<br/>Data will be fetched using a POST ajax request that will include the entered text as 'query' parameter. The results fetched from the server can be: <br/>
+                - an array of JSON objects (ex: [{id:...,name:...},{...}])<br/>
+                - a string containing an array of JSON objects ready to be parsed (ex: "[{id:...,name:...},{...}]")<br/>
+                - a JSON object whose data will be contained in the results property (ex: {results: [{id:...,name:...},{...}]</p>
             Defaults to <em>null</em>
             <a class="opt-ex cfg_data_red,orange,blue,green,yellow,black,white">View an example</a></div>
           </div>
@@ -197,6 +200,13 @@
             <div style="clear:both;"></div>
             <div class="opt-desc">The maximum number of items the user can select if multiple selection is allowed. Set to false to remove the limit.<br/>Defaults to <em>10</em>
             <a class="opt-ex cfg_maxSelection_2">View an example</a></div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">method</div>
+            <code>string</code>
+            <div style="clear:both;"></div>
+            <div class="opt-desc">Method used by the ajax request.<br/>Defaults to <em>'POST'</em>
+            </div>
           </div>
           <div class="conf">
             <div class="opt-name">minChars</div>
