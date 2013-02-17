@@ -42,7 +42,7 @@ $(document).ready(function(){
                 "  " + cfg + ": " + val + ",<br/>" +
                 (cfg !== 'renderTo' ? "  renderTo: $('#" + id + "'),<br/>" : '') +
                 (cfg !== 'width' ? "  width: 590,<br/>" : '') +
-                (cfg !== 'data' ? "  data: 'Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville'<br/>" : '') +
+                (cfg !== 'data' ? "  data: 'data.json'<br/>" : '') +
                 "});";
             $('<div/>', {
                 html: "<br/><hr/><div>Example with <em>"+cfg+"</em> set to <em>" + val + "</em></div>" +
