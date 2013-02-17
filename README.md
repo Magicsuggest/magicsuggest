@@ -5,6 +5,10 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.0.4 Grouping ability
+=======================
+- (cfg) groupBy : allows grouping within the combo box listing.
+
 v1.0.3 ie compatibility
 =======================
 - (fix) blur event now registers correctly when selecting an element from the combo
@@ -28,5 +32,5 @@ v1.0. initial component release
 - choose to allow free entries or not
 - keyboard management
 - theme ability
-- static and dynamic data processing 
+- static and dynamic data processing
 - positionning
