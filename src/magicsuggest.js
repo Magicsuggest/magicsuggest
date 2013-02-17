@@ -128,6 +128,13 @@ var MagicSuggest = Class.create({
         this.invalidCls = cfg.invalidCls || 'ms-ctn-invalid';
 
         /**
+         * @cfg {String} groupBy
+         * <p>JSON property by which the list should be grouped</p>
+         * Defaults to null
+         */
+        this.groupBy = cfg.groupBy !== undefined ? cfg.groupBy : null;
+
+        /**
          * @cfg {Boolean} matchCase
          * <p>Set to true to filter data results according to case. Useless if the data is fetched remotely</p>
          * Defaults to <code>false</code>.
@@ -168,10 +175,9 @@ var MagicSuggest = Class.create({
         /**
          * @cfg {Integer} minChars
          * <p>The minimum number of characters the user must type before the combo expands and offers suggestions.
-         *    You can set this to 0 if you want the drop down to expand as soon as the component gains focus.</p>
-         * Defaults to <code>0</code> when <code>data</code> is not set or set to a local array, <code>2</code> otherwise.
+         * Defaults to <code>0</code>.
          */
-        this.minChars = $.isNumeric(cfg.minChars) ? cfg.minChars : ((typeof(this.data) === 'string' && this.data.indexOf(',') < 0) ? 2 : 0);
+        this.minChars = $.isNumeric(cfg.minChars) ? cfg.minChars : 0;
 
         /**
          * @cfg (input DOM Element) renderTo
@@ -395,9 +401,8 @@ var MagicSuggest = Class.create({
 
         ];
 
-
-        // private array holder for our selected objects
-        this._selection = [];
+        this._selection = []; // private array holder for our selected objects
+        this._comboItemHeight = 0; // private height for each combo item.
 
         if(this.renderTo !== null){
             this._doRender();
@@ -464,8 +469,9 @@ var MagicSuggest = Class.create({
      */
     expand: function(){
         if(!this.expanded && this.input.val().length >= this.minChars){
-            this._processSuggestions();
             this.combobox.appendTo(this.container);
+            this._processSuggestions();
+
             this.expanded = true;
             $(this).trigger('expand', [this]);
         }
@@ -847,9 +853,6 @@ var MagicSuggest = Class.create({
     },
 
     /**
-     * Reset the invalid stat
-
-    /**
      * According to given data and query, sort and add suggestions in their container
      * @private
      */
@@ -871,7 +874,6 @@ var MagicSuggest = Class.create({
                         } else if($.isArray(items)){
                             json = items;
                         }
-                        var json = JSON.parse(items);
                         $(this).trigger('onload', [ref, json]);
                         ref._displaySuggestions(ref._sortAndTrim(json));
                     },
@@ -951,6 +953,17 @@ var MagicSuggest = Class.create({
         if(this.maxResults !== false && this.maxResults > 0){
             newSuggestions = newSuggestions.slice(0, this.maxResults);
         }
+        // build groups
+        if(this.groupBy !== null){
+            this._groups = {};
+            $.each(newSuggestions, function(index, value){
+                if(ref._groups[value[ref.groupBy]] === undefined){
+                    ref._groups[value[ref.groupBy]] = {title: value[ref.groupBy], items: [value]};
+                } else {
+                    ref._groups[value[ref.groupBy]].items.push(value);
+                }
+            });
+        }
         return newSuggestions;
     },
 
@@ -962,16 +975,21 @@ var MagicSuggest = Class.create({
         this.combobox.empty();
         var ref = this,    // i hate the way jQuery handles scopes
             resHeight = 0; // total height taken by displayed results.
-        $.each(data, function(index, value){
-            var resultItemEl = $('<div/>', {
-                'class': 'ms-res-item ' + (index % 2 === 1 && ref.useZebraStyle === true ? 'ms-res-odd' : ''),
-                html: ref.highlight === true ? ref._highlightSuggestion(value[ref.displayField]) : value[ref.displayField]
-            }).data('json', value);
-            resultItemEl.click($.proxy(ref._onComboItemSelected, ref));
-            resultItemEl.mouseover($.proxy(ref._onComboItemMouseOver, ref));
-            ref.combobox.append(resultItemEl);
-            resHeight += 29;
-        });
+
+        if(this._groups === undefined){
+            this._renderComboItems(data);
+            resHeight = ref._comboItemHeight * data.length;
+        } else {
+            for(var grpName in this._groups){
+                $('<div/>', {
+                    'class': 'ms-res-group',
+                    html: grpName
+                }).appendTo(ref.combobox);
+                this._renderComboItems(this._groups[grpName].items, true);
+            }
+            resHeight = ref._comboItemHeight * (data.length + this._groups.length);
+        }
+
         if(resHeight < this.combobox.height() || resHeight < this.maxDropHeight){
             this.combobox.height(resHeight);
         } else if(resHeight >= this.combobox.height() && resHeight > this.maxDropHeight){
@@ -980,6 +998,21 @@ var MagicSuggest = Class.create({
         if(data.length === 1 && this.preselectSingleSuggestion === true){
             this.combobox.children().addClass('ms-res-item-active');
         }
+    },
+
+    _renderComboItems: function(items, isGrouped){
+        var ref = this;
+        $.each(items, function(index, value){
+            var resultItemEl = $('<div/>', {
+                'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ':'') +
+                    (index % 2 === 1 && ref.useZebraStyle === true ? 'ms-res-odd' : ''),
+                html: ref.highlight === true ? ref._highlightSuggestion(value[ref.displayField]) : value[ref.displayField]
+            }).data('json', value);
+            resultItemEl.click($.proxy(ref._onComboItemSelected, ref));
+            resultItemEl.mouseover($.proxy(ref._onComboItemMouseOver, ref));
+            ref.combobox.append(resultItemEl);
+        });
+        this._comboItemHeight = this.combobox.find('.ms-res-item:first').outerHeight();
     },
 
     /**
@@ -1098,23 +1131,23 @@ var MagicSuggest = Class.create({
         active = this.combobox.find('.ms-res-item-active:first');
         if(active.length > 0){
             if(dir === 'down'){
-                start = active.next();
+                start = active.nextAll('.ms-res-item').first();
                 if(start.length === 0){
                     start = list.eq(0);
                 }
                 scrollPos = this.combobox.scrollTop();
                 this.combobox.scrollTop(0);
-                if(start[0].offsetTop + start.height() > this.combobox.height()){
-                    this.combobox.scrollTop(scrollPos + 29);
+                if(start[0].offsetTop + start.outerHeight() > this.combobox.height()){
+                    this.combobox.scrollTop(scrollPos + this._comboItemHeight);
                 }
             } else {
-                start = active.prev();
+                start = active.prevAll('.ms-res-item').first();
                 if(start.length === 0){
                     start = list.filter(':last');
-                    this.combobox.scrollTop(29 * list.length);
+                    this.combobox.scrollTop(this._comboItemHeight * list.length);
                 }
                 if(start[0].offsetTop < this.combobox.scrollTop()){
-                    this.combobox.scrollTop(this.combobox.scrollTop() - 29);
+                    this.combobox.scrollTop(this.combobox.scrollTop() - this._comboItemHeight);
                 }
             }
         }

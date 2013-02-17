@@ -10,18 +10,16 @@
     <script type="text/javascript">
         $(document).ready(function() {
             var jsonData = [];
-            var cities = 'New York,Los Angeles,Chicago,Houston,Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville'.split(',');
-            for(var i=0; i<cities.length;i++) jsonData.push({id:i,name:cities[i]});
+            var cities = 'New York,Los Angeles,Chicago,Houston,Paris,Marseille,Toulouse,Lyon,Bordeaux,Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville'.split(',');
+            for(var i=0; i<cities.length;i++) jsonData.push({id:i,name:cities[i],status:i%2?'Already Visited':'Planned for visit'});
             var ms1 = new MagicSuggest({
                 renderTo: $('#ms1'),
-                data: jsonData,
+                data: 'data.json',
                 sortOrder: 'name',
-                maxResults: null,
+                maxResults: false,
                 selectionPosition: 'right',
-                maxDropHeight: 200,
-                strictSuggest: true,
-                useTabKey: true,
-                value: [2,3]
+                groupBy: 'country',
+                maxDropHeight: 200
             });
 
             var ms2 = new MagicSuggest({

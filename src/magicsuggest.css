@@ -119,12 +119,25 @@
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+.ms-res-ctn .ms-res-group{
+    line-height: 23px;
+    text-align: left;
+    padding: 2px 5px;
+    font-weight: bold;
+    border-bottom: 1px dotted #CCC;
+    border-top: 1px solid #CCC;
+    background: #f3edff;
+    color: #333;
+}
 .ms-res-ctn .ms-res-item{
     line-height: 25px;
     text-align: left;
     padding: 2px 5px;
     color: #666;
     cursor: pointer;
+}
+.ms-res-ctn .ms-res-item-grouped{
+    padding-left: 15px;
 }
 .ms-res-ctn .ms-res-odd{
     background: #F3F3F3;

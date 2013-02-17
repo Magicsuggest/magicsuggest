@@ -1,34 +1,69 @@
 [{
     "id": 1,
-    "name": "New York"
+    "name": "New York",
+    "country": "United States"
 },{
     "id": 2,
-    "name": "Los Angeles"
+    "name": "Los Angeles",
+    "country": "United States"
 },{
     "id": 3,
-    "name": "Chicago"
+    "name": "Chicago",
+    "country": "United States"
 },{
     "id": 4,
-    "name": "Houston"
+    "name": "Houston",
+    "country": "United States"
 },{
     "id": 5,
-    "name": "Philadelphia"
+    "name": "Philadelphia",
+    "country": "United States"
 },{
     "id": 6,
-    "name": "Phoenix"
+    "name": "Paris",
+    "country": "France"
 },{
     "id": 7,
-    "name": "San Antonio"
+    "name": "Marseille",
+    "country": "France"
 },{
     "id": 8,
-    "name": "San Diego"
+    "name": "Toulouse",
+    "country": "France"
 },{
     "id": 9,
-    "name": "Dallas"
+    "name": "Lyon",
+    "country": "France"
 },{
     "id": 10,
-    "name": "San Jose"
+    "name": "Bordeaux",
+    "country": "France"
 },{
     "id": 11,
-    "name": "Jacksonville"
+    "name": "Montpellier",
+    "country": "France"
+},{
+    "id": 16,
+    "name": "Phoenix",
+    "country": "United States"
+},{
+    "id": 17,
+    "name": "San Antonio",
+    "country": "United States"
+},{
+    "id": 18,
+    "name": "San Diego",
+    "country": "United States"
+},{
+    "id": 19,
+    "name": "Dallas",
+    "country": "United States"
+},{
+    "id": 20,
+    "name": "San Jose",
+    "country": "United States"
+},{
+    "id": 21,
+    "name": "Jacksonville",
+    "country": "United States"
 }]
