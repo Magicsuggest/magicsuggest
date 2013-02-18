@@ -5,6 +5,10 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.0.5 Custom rendering
+=======================
+- (cfg) renderer : allows custom rendering within the combo.
+
 v1.0.4 Grouping ability
 =======================
 - (cfg) groupBy : allows grouping within the combo box listing.

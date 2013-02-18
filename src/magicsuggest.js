@@ -180,8 +180,16 @@ var MagicSuggest = Class.create({
         this.minChars = $.isNumeric(cfg.minChars) ? cfg.minChars : 0;
 
         /**
+         * @cfg (function) renderer
+         * <p>A function used to define how the items will be presented in the combo</p>
+         * Defaults to <code>null</code>.
+         */
+        this.renderer = cfg.renderer || null;
+
+        /**
          * @cfg (input DOM Element) renderTo
          * <p>The input tag that will be transformed into the component</p>
+         * Defaults to <code>null</code>.
          */
         this.renderTo = cfg.renderTo || null;
 
@@ -1003,10 +1011,11 @@ var MagicSuggest = Class.create({
     _renderComboItems: function(items, isGrouped){
         var ref = this;
         $.each(items, function(index, value){
+            var displayed = ref.renderer !== null ? ref.renderer.call(ref, value) : value[ref.displayField];
             var resultItemEl = $('<div/>', {
                 'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ':'') +
                     (index % 2 === 1 && ref.useZebraStyle === true ? 'ms-res-odd' : ''),
-                html: ref.highlight === true ? ref._highlightSuggestion(value[ref.displayField]) : value[ref.displayField]
+                html: ref.highlight === true ? ref._highlightSuggestion(displayed) : displayed
             }).data('json', value);
             resultItemEl.click($.proxy(ref._onComboItemSelected, ref));
             resultItemEl.mouseover($.proxy(ref._onComboItemMouseOver, ref));
