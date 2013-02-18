@@ -145,17 +145,17 @@ var MagicSuggest = Class.create({
          * @cfg {Integer} maxDropHeight (in px)
          * <p>Once expanded, the combo's height will take as much room as the # of available results.
          *    In case there are too many results displayed, this will fix the drop down height.</p>
-         * Defaults to 300 px.
+         * Defaults to 290 px.
          */
-        this.maxDropHeight = cfg.maxDropHeight || 300;
+        this.maxDropHeight = cfg.maxDropHeight || 290;
 
         /**
          * @cfg {Integer} maxResults
          * <p>The maximum number of results displayed in the combo drop down at once.
          *    Set to false to remove the limit.</p>
-         * Defaults to 10.
+         * Defaults to false.
          */
-        this.maxResults = cfg.maxResults !== undefined ? cfg.maxResults : 10;
+        this.maxResults = cfg.maxResults !== undefined ? cfg.maxResults : false;
 
         /**
          * @cfg {Integer} maxSelection
@@ -685,6 +685,11 @@ var MagicSuggest = Class.create({
                     ref._onBlur();
                 }
             });
+
+            if(this.expanded === true){
+                this.expanded = false;
+                this.expand();
+            }
         }
     },
 

@@ -27,7 +27,8 @@
                 allowFreeEntries: false,
                 data: jsonData,
                 useTabKey: true,
-                required: true
+                required: true,
+                expanded: true
             });
 
             var ms3 = new MagicSuggest({
@@ -46,11 +47,11 @@
             var ms4 = new MagicSuggest({
                 renderTo: $('#ms4'),
                 data: jsonData,
+                value: [1,2],
                 selectionPosition: 'right',
                 expandOnFocus: true
             });
             var ms5 = new MagicSuggest({
-                value: ['San Diego','Dallas'],
                 renderTo: $('#ms5'),
                 resultAsString: true,
                 width: 590,
