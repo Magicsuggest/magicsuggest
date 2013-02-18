@@ -230,6 +230,15 @@
                   <a class="opt-ex cfg_preselectSingleSuggestion_false">View an example</a></div>
           </div>
           <div class="conf">
+              <div class="opt-name">renderer</div>
+              <code>function</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">A function used to define how the items will be presented in the combo.<br/>
+                  One can write custom HTML to add arbitrary rendering, images or other. The function parameter is the object itself<br/>
+                  Defaults to <em>null</em>
+                  <a class="opt-ex cfg_renderer_function(a){return a.country=='France'?('French ' + a.name):a.name;}">View an example</a></div>
+          </div>
+          <div class="conf">
             <div class="opt-name">renderTo</div>
             <code>element</code>
             <div style="clear:both;"></div>

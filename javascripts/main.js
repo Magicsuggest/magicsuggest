@@ -33,6 +33,8 @@ $(document).ready(function(){
             } else {
                 if(rawval[0] === '[' || rawval[0] === '{'){
                     val = rawval;
+                } else if (rawval.indexOf('function') === 0){
+                    val = eval('a=' + rawval);
                 } else {
                     val = ("'" + rawval + "'");
                 }
