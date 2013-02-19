@@ -121,6 +121,13 @@ var MagicSuggest = Class.create({
         this.highlight = cfg.highlight !== undefined ? cfg.highlight : true;
 
         /**
+         * @cfg {Object} inputCfg
+         * <p>Additional parameters passed out to the INPUT tag. Enables usage of AngularJS's custom tags for ex.</p>
+         * Defaults to <code>{}</code>
+         */
+        this.inputCfg = cfg.inputCfg || {};
+
+        /**
          * @cfg {String} invalidCls
          * <p>The class that is applied to show that the field is invalid</p>
          * Defaults to ms-ctn-invalid
@@ -608,14 +615,14 @@ var MagicSuggest = Class.create({
             this.container.keyup($.proxy(this._onHandleKeyUp, this));
 
             // holds the input field
-            this.input = $('<input/>', {
+            this.input = $('<input/>', $.extend({
                 id: 'ms-input-' + $('input[id^="ms-input"]').length,
                 type: 'text',
                 'class': this.emptyTextCls + (this.editable === true ? '' : ' ms-input-readonly'),
                 value: this.emptyText,
                 readonly: !this.editable,
                 style: 'width: ' + (this.width - (this.hideTrigger ? 16 : 38)) + 'px;'
-            });
+            }, this.inputCfg));
             this.input.focus($.proxy(this._onInputFocus, this));
 
             // holds the trigger on the right side

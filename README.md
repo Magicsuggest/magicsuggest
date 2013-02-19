@@ -5,6 +5,10 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.0.6 Custom Input Tag
+=======================
+- (cfg) inputCfg : allows additional parameters passed out to the INPUT tag. Enables usage of AngularJS's custom tags for ex.
+
 v1.0.5 Custom rendering
 =======================
 - (cfg) renderer : allows custom rendering within the combo.
