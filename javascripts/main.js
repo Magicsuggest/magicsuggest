@@ -124,7 +124,7 @@ $(document).ready(function(){
                 "});";
             $('<div/>', {
                 html: "<br/><hr/><div>Example with <b>"+cfg+"</b> set to <b>" + dispVal + "</b></div>" +
-                    "<code><pre>" + foo + "</pre></code><br/><div style='clear:both'></div><br/>"
+                    "<code><pre>" + foo + "</pre></code><br/><div style='clear:both'></div><br/><br/>"
             }).hide().insertBefore(this).fadeIn();
             var exDiv = $('<div/>',{id: id});
             exDiv.insertBefore(this);

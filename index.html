@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.1.0-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -50,7 +50,7 @@
            <p>With no configuration options set, you have the following behaviour:</p>
             <div>- the side trigger is visible and the selected items appear within the combo itself.</div>
             <div>- suggestions will appear as the user starts typing</div>
-            <div>- the user can toggle the suggestions using the down arrow key</div>
+            <div>- the user can toggle the suggestions using arrow keys</div>
             <div>- the user can delete selected items by using backspace</div>
             <div>- the user is free to enter new input using the enter key after having entered text</div>
             <p>There are many configuration options that allow you to customize the component.</p>
@@ -60,10 +60,10 @@
         <p>1. Download the latest version of the project using one of the two links above.</p>
         <p>2. Copy the content of the <code>bin</code> folder into your project to use the minified version.</p>
         <p>3. Add the following lines in your <code>HEAD</code> contents</p>
-        <pre><code>&lt;link rel="stylesheet" href="magicsuggest-min.css"&gt;
+        <pre><code>&lt;link rel="stylesheet" href="magicsuggest-x.y.z-min.css"&gt;
 &lt;script type="text/javascript" src="jquery-1.8.3-min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="class-0.0.2-min.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="magicsuggest-min.js"&gt;&lt;/script&gt;</code></pre>
+&lt;script type="text/javascript" src="magicsuggest-x.y.z-min.js"&gt;&lt;/script&gt;</code></pre>
         <p>4. To transform any DOM element into a MagicSuggest combo, simply include this after jQuery has been initialized:
         <pre><code>new MagicSuggest({options});</code></pre></p>
          </div>
@@ -174,6 +174,20 @@
                   <a class="opt-ex cfg_highlight_false">View an example</a></div>
           </div>
           <div class="conf">
+              <div class="opt-name">id</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">A custom ID for this component.<br/>Defaults to <b>'ms-ctn-{n}'</b>  with n positive integer.
+                  <a class='opt-ex cfg_id_customId'>View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">infoMsgCls</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">A class that is added to the info message appearing on the top-right part of the component.<br/>Defaults to <b>''</b>
+                  <a class='opt-ex cfg_infoMsgCls_customMsgCls'>View an example</a></div>
+          </div>
+          <div class="conf">
               <div class="opt-name">inputCfg</div>
               <code>object</code>
               <div style="clear:both;"></div>
@@ -203,17 +217,32 @@
             <a class="opt-ex cfg_maxDropHeight_145">View an example</a></div>
           </div>
           <div class="conf">
-            <div class="opt-name">maxResults</div>
+              <div class="opt-name">maxEntryLength</div>
+              <code>integer</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Defines how long the user free entry can be. Set to null for no limit.<br/>Defaults to <b>null</b>
+                  <a class="opt-ex cfg_maxEntryLength_5">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">maxEntryRenderer</div>
+              <code>function</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">A function that defines the helper text when the max entry length has been surpassed.<br/>
+                  Defaults to <b>function(v){return 'Please reduce your entry by ' + v + ' character' + (v > 1 ? 's':'');}</b>
+                  </div>
+          </div>
+          <div class="conf">
+            <div class="opt-name">maxSuggestions</div>
             <code>integer</code>
             <div style="clear:both;"></div>
-            <div class="opt-desc">The maximum number of results displayed in the combo drop down at once. Set to false to remove the limit.<br/>Defaults to <b>false</b>
-            <a class="opt-ex cfg_maxResults_5">View an example</a></div>
+            <div class="opt-desc">The maximum number of results displayed in the combo drop down at once.<br/>Defaults to <b>null</b>
+            <a class="opt-ex cfg_maxSuggestions_5">View an example</a></div>
           </div>
           <div class="conf">
             <div class="opt-name">maxSelection</div>
             <code>integer</code>
             <div style="clear:both;"></div>
-            <div class="opt-desc">The maximum number of items the user can select if multiple selection is allowed. Set to false to remove the limit.<br/>Defaults to <b>10</b>
+            <div class="opt-desc">The maximum number of items the user can select if multiple selection is allowed. Set to null to remove the limit.<br/>Defaults to <b>10</b>
             <a class="opt-ex cfg_maxSelection_2">View an example</a></div>
           </div>
           <div class="conf">
@@ -229,6 +258,22 @@
             <div style="clear:both;"></div>
             <div class="opt-desc">The minimum number of characters the user must type before the combo expands and offers suggestions.<br/>Defaults to <b>0</b>.
             <a class="opt-ex cfg_minChars_2">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">minCharsRenderer</div>
+              <code>function</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">A function that defines the helper text when not enough letters are set. The function has a single
+                  parameter which is the difference between the required amount of letters and the current one.<br/>
+                  Defaults to <b>function(v){return 'Please type ' + v + ' more character' + (v > 1 ? 's':'');}</b>
+                  </div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">noSuggestionText</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">The text displayed when there are no suggestions.<br/>Defaults to <b>'No suggestions'</b>
+                  <a class="opt-ex cfg_noSuggestionText_Nothing...">View an example</a></div>
           </div>
           <div class="conf">
               <div class="opt-name">preselectSingleSuggestion</div>
@@ -301,6 +346,13 @@
             <div style="clear:both;"></div>
             <div class="opt-desc">name of JSON object property for local result sorting. Leave null if you do not wish the results to be ordered or if they are already ordered remotely.<br/>Defaults to <b>null</b>
             <a class="opt-ex cfg_sortOrder_name">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">style</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Custom style added to the component container.<br/>Defaults to <b>''</b>
+                  <a class='opt-ex cfg_style_border-radius: 0 !important;'>View an example</a></div>
           </div>
           <div class="conf">
               <div class="opt-name">useTabKey</div>
@@ -491,7 +543,7 @@
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
     <script type="text/javascript" src="bin/class-0.0.2-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.1.0-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
