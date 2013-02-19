@@ -121,6 +121,20 @@ var MagicSuggest = Class.create({
         this.highlight = cfg.highlight !== undefined ? cfg.highlight : true;
 
         /**
+         * @cfg {String} id
+         * <p>A custom ID for this component</p>
+         * Defaults to 'ms-ctn-{n}' with n positive integer
+         */
+        this.id = cfg.id || ('ms-ctn-' + $('div[id^="ms-ctn"]').length);
+
+        /**
+         * @cfg {String} infoMsgCls
+         * <p>A class that is added to the info message appearing on the top-right part of the component</p>
+         * Defaults to ''
+         */
+        this.infoMsgCls = cfg.infoMsgCls || '';
+
+        /**
          * @cfg {Object} inputCfg
          * <p>Additional parameters passed out to the INPUT tag. Enables usage of AngularJS's custom tags for ex.</p>
          * Defaults to <code>{}</code>
@@ -157,20 +171,44 @@ var MagicSuggest = Class.create({
         this.maxDropHeight = cfg.maxDropHeight || 290;
 
         /**
-         * @cfg {Integer} maxResults
-         * <p>The maximum number of results displayed in the combo drop down at once.
-         *    Set to false to remove the limit.</p>
-         * Defaults to false.
+         * @cfg {Integer} maxEntryLength
+         * <p>Defines how long the user free entry can be. Set to null for no limit.</p>
+         * Defaults to null.
          */
-        this.maxResults = cfg.maxResults !== undefined ? cfg.maxResults : false;
+        this.maxEntryLength = cfg.maxEntryLength !== undefined ? cfg.maxEntryLength : null;
+
+        /**
+         * @cfg {String} maxEntryRenderer
+         * <p>A function that defines the helper text when the max entry length has been surpassed.</p>
+         * Defaults to <code>function(v){return 'Please reduce your entry by ' + v + ' character' + (v > 1 ? 's':'');}</code>
+         */
+        this.maxEntryRenderer = cfg.maxEntryRenderer ||
+            function(v){return 'Please reduce your entry by ' + v + ' character' + (v > 1 ? 's':'');};
+
+
+        /**
+         * @cfg {Integer} maxSuggestions
+         * <p>The maximum number of results displayed in the combo drop down at once.</p>
+         * Defaults to null.
+         */
+        this.maxSuggestions = cfg.maxSuggestions !== undefined ? cfg.maxSuggestions : null;
 
         /**
          * @cfg {Integer} maxSelection
          * <p>The maximum number of items the user can select if multiple selection is allowed.
-         *    Set to false to remove the limit.</p>
+         *    Set to null to remove the limit.</p>
          * Defaults to 10.
          */
         this.maxSelection = cfg.maxSelection !== undefined ? cfg.maxSelection : 10;
+
+        /**
+         * @cfg {Function} maxSelectionRenderer
+         * <p>A function that defines the helper text when the max selection amount has been reached. The function has a single
+         *    parameter which is the number of selected elements.</p>
+         * Defaults to <code>function(v){return 'You cannot choose more than ' + v + ' item' + (v > 1 ? 's':'');}</code>
+         */
+        this.maxSelectionRenderer = cfg.maxSelectionRenderer ||
+            function(v){return 'You cannot choose more than ' + v + ' item' + (v > 1 ? 's':'');};
 
         /**
          * @cfg {String} method
@@ -185,6 +223,22 @@ var MagicSuggest = Class.create({
          * Defaults to <code>0</code>.
          */
         this.minChars = $.isNumeric(cfg.minChars) ? cfg.minChars : 0;
+
+        /**
+         * @cfg {Function} minCharsRenderer
+         * <p>A function that defines the helper text when not enough letters are set. The function has a single
+         *    parameter which is the difference between the required amount of letters and the current one.</p>
+         * Defaults to <code>function(v){return 'Please type ' + v + ' more character' + (v > 1 ? 's':'');}</code>
+         */
+        this.minCharsRenderer = cfg.minCharsRenderer ||
+            function(v){return 'Please type ' + v + ' more character' + (v > 1 ? 's':'');};
+
+        /**
+         * @cfg {String} noSuggestionText
+         * <p>The text displayed when there are no suggestions.</p>
+         * Defaults to 'No suggestions"
+         */
+        this.noSuggestionText = cfg.noSuggestionText || 'No suggestions';
 
         /**
          * @cfg (function) renderer
@@ -274,7 +328,15 @@ var MagicSuggest = Class.create({
          * <p>If set to true, suggestions will have to start by user input (and not simply contain it as a substring)</p>
          * Defaults to <code>false</code>.
          */
-        this.strictSuggest = !!cfg.strictSuggest;        
+        this.strictSuggest = !!cfg.strictSuggest;
+
+        /**
+         * @cfg {String} style
+         * <p>Custom style added to the component container.</p>
+         *
+         * Defaults to <code>''</code>.
+         */
+        this.style = cfg.style || '';
 
         /**
          * @cfg {Boolean} useTabKey
@@ -432,7 +494,7 @@ var MagicSuggest = Class.create({
      * @param items - json object or array of json objects
      */
     addToSelection: function(items){
-        if(this.maxSelection === false || this._selection.length < this.maxSelection){
+        if(!this.maxSelection || this._selection.length < this.maxSelection){
             if(!$.isArray(items)){
                 items = [items];
             }
@@ -602,12 +664,11 @@ var MagicSuggest = Class.create({
 
             // holds the main div, will relay the focus events to the contained input element.
             this.container = $('<div/>', {
-                id: 'ms-ctn-' + $('div[id^="ms-ctn"]').length, // auto-increment IDs in case of multiple suggest components
-                // class is a reserved word
+                id: this.id,
                 'class': 'ms-ctn ' + this.cls +
                     (this.disabled === true ? ' ms-ctn-disabled' : '') +
                     (this.editable === true ? '' : ' ms-ctn-readonly'),
-                style: 'width: ' + this.width + 'px;'
+                style: 'width: ' + this.width + 'px;' + this.style
             });
             this.container.focus($.proxy(this._onFocus, this));
             this.container.blur($.proxy(this._onBlur, this));
@@ -621,7 +682,7 @@ var MagicSuggest = Class.create({
                 'class': this.emptyTextCls + (this.editable === true ? '' : ' ms-input-readonly'),
                 value: this.emptyText,
                 readonly: !this.editable,
-                style: 'width: ' + (this.width - (this.hideTrigger ? 16 : 38)) + 'px;'
+                style: 'width: ' + (this.width - (this.hideTrigger ? 16 : 44)) + 'px;'
             }, this.inputCfg));
             this.input.focus($.proxy(this._onInputFocus, this));
 
@@ -639,7 +700,7 @@ var MagicSuggest = Class.create({
             // holds the suggestions. will always be placed on focus
             this.combobox = $('<div/>', {
                 id: 'ms-res-ctn-' + $('div[id^="ms-res-ctn"]').length,
-                'class': 'ms-res-ctn',
+                'class': 'ms-res-ctn ',
                 style: 'width: ' + this.width + 'px; height: ' + this.maxDropHeight + 'px;'
             });
 
@@ -654,6 +715,13 @@ var MagicSuggest = Class.create({
             } else {
                 this.container.append(this.input);
             }
+
+            this.helper = $('<div/>', {
+                'class': 'ms-helper ' + this.infoMsgCls
+            });
+            this._updateHelper();
+            this.container.append(this.helper);
+
 
             // Render the whole thing
             $(this.renderTo).replaceWith(this.container);
@@ -720,11 +788,15 @@ var MagicSuggest = Class.create({
                 this.input.removeClass(this.emptyTextCls);
                 this.input.val('');
             }
-            if((this.expandOnFocus === true && this.input.val().length === 0) ||
-                this.input.val().length > this.minChars){
+            var curLength = this.input.val().length;
+            if((this.expandOnFocus === true && curLength === 0) || curLength > this.minChars){
                 this.expand();
             }
-
+            if(this._selection.length === this.maxSelection){
+                this._updateHelper(this.maxSelectionRenderer.call(this, this._selection.length));
+            } else if(curLength < this.minChars){
+                this._updateHelper(this.minCharsRenderer.call(this, this.minChars - curLength));
+            }
             if(this.resultAsString === true){
                 this._renderSelection();
             }
@@ -800,6 +872,11 @@ var MagicSuggest = Class.create({
                 e.preventDefault();
                 this._moveSelectedRow("up");
                 break;
+            default:
+                if(this._selection.length === this.maxSelection){
+                    e.preventDefault();
+                }
+                break;
         }
     },
 
@@ -810,13 +887,17 @@ var MagicSuggest = Class.create({
      */
     _onHandleKeyUp: function(e){
         var freeInput = this.input.val() !== this.emptyText ? this.input.val() : '',
-            inputValid = this.input.val().length > 0 && this.input.val() !== this.emptyText,
+            inputValid = this.input.val().trim().length > 0 && this.input.val() !== this.emptyText &&
+                (!this.maxEntryLength || this.input.val().trim().length < this.maxEntryLength),
             selected,
             obj = {},
             ref = this;
-
         $(this).trigger('onkeyup', [this, e]);
 
+        // collapse if escape, but keep focus.
+        if(e.keyCode === 27 && this.expanded){
+            this.combobox.height(0);
+        }
         // ignore a bunch of keys
         if((e.keyCode === 9 && this.useTabKey === false) || (e.keyCode > 13 && e.keyCode < 32)){
             return;
@@ -828,7 +909,7 @@ var MagicSuggest = Class.create({
             case 13:case 9:case 188:// enter, tab, comma
                 if(e.keyCode !== 188 || this.useCommaKey === true){
                     e.preventDefault();
-                    if(this.expanded){ // if a selection is performed, select it and reset field
+                    if(this.combobox.height() > 0){ // if a selection is performed, select it and reset field
                         selected = this.combobox.find('.ms-res-item-active:first');
                         if(selected.length > 0){
                             selected.click();
@@ -845,10 +926,27 @@ var MagicSuggest = Class.create({
                     break;
                 }
             default:
-                if(this.expanded === true){
-                    this._processSuggestions();
-                } else if(freeInput.length >= this.minChars && this.expanded === false){
-                    this.expand();
+                if(this._selection.length === this.maxSelection){
+                    this._updateHelper(this.maxSelectionRenderer.call(this, this._selection.length));
+                } else {
+                    if(freeInput.length < this.minChars){
+                        this._updateHelper(this.minCharsRenderer.call(this, this.minChars - freeInput.length));
+                        if(this.expanded === true){
+                            this.combobox.height(0);
+                        }
+                    } else if(this.maxEntryLength && freeInput.length > this.maxEntryLength){
+                        this._updateHelper(this.maxEntryRenderer.call(this, freeInput.length - this.maxEntryLength));
+                        if(this.expanded === true){
+                            this.combobox.height(0);
+                        }
+                    } else {
+                        this.helper.hide();
+                        if(this.expanded === true){
+                            this._processSuggestions();
+                        } else if(freeInput.length >= this.minChars && this.expanded === false){
+                            this.expand();
+                        }
+                    }
                 }
                 break;
         }
@@ -970,8 +1068,8 @@ var MagicSuggest = Class.create({
             });
         }
         // trim it down
-        if(this.maxResults !== false && this.maxResults > 0){
-            newSuggestions = newSuggestions.slice(0, this.maxResults);
+        if(this.maxSuggestions && this.maxSuggestions > 0){
+            newSuggestions = newSuggestions.slice(0, this.maxSuggestions);
         }
         // build groups
         if(this.groupBy !== null){
@@ -994,20 +1092,22 @@ var MagicSuggest = Class.create({
     _displaySuggestions: function(data){
         this.combobox.empty();
         var ref = this,    // i hate the way jQuery handles scopes
-            resHeight = 0; // total height taken by displayed results.
+            resHeight = 0, // total height taken by displayed results.
+            nbGroups = 0;
 
         if(this._groups === undefined){
             this._renderComboItems(data);
             resHeight = ref._comboItemHeight * data.length;
         } else {
             for(var grpName in this._groups){
+                nbGroups += 1;
                 $('<div/>', {
                     'class': 'ms-res-group',
                     html: grpName
                 }).appendTo(ref.combobox);
                 this._renderComboItems(this._groups[grpName].items, true);
             }
-            resHeight = ref._comboItemHeight * (data.length + this._groups.length);
+            resHeight = ref._comboItemHeight * (data.length + nbGroups);
         }
 
         if(resHeight < this.combobox.height() || resHeight < this.maxDropHeight){
@@ -1016,7 +1116,11 @@ var MagicSuggest = Class.create({
             this.combobox.height(this.maxDropHeight);
         }
         if(data.length === 1 && this.preselectSingleSuggestion === true){
-            this.combobox.children().addClass('ms-res-item-active');
+            this.combobox.children().filter(':last').addClass('ms-res-item-active');
+        }
+        if(data.length === 0){
+            this._updateHelper(this.noSuggestionText);
+            this.combobox.height(0);
         }
     },
 
@@ -1117,7 +1221,7 @@ var MagicSuggest = Class.create({
             this.input.width(0);
             if(this.editable === true || this._selection.length === 0){
                 inputOffset = this.input.offset().left - this.selectionContainer.offset().left;
-                w = this.container.width() - inputOffset - 32 - (this.hideTrigger === true ? 0 : 36);
+                w = this.container.width() - inputOffset - 32 - (this.hideTrigger === true ? 0 : 42);
                 this.input.width(w < 100 ? 100 : w);
             }
             this.container.height(this.selectionContainer.height());
@@ -1174,6 +1278,17 @@ var MagicSuggest = Class.create({
         }
         list.removeClass("ms-res-item-active");
         start.addClass("ms-res-item-active");
+    },
+
+    /**
+     * Update the helper text
+     * @private
+     */
+    _updateHelper: function(html){
+        this.helper.html(html);
+        if(!this.helper.is(":visible")){
+            this.helper.fadeIn();
+        }
     }
 
 

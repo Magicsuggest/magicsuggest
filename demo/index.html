@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>MagicSuggest Test Sandbox</title>
-    <link rel="stylesheet" href="../src/magicsuggest.css">
+    <link rel="stylesheet" href="../src/magicsuggest-1.1.0.css">
     <link rel="stylesheet" href="demo.css">
     <script type="text/javascript" src="../src/jquery-1.8.3-min.js"></script>
     <script type="text/javascript" src="../src/class-0.0.2.js"></script>
-    <script type="text/javascript" src="../src/magicsuggest.js"></script>
+    <script type="text/javascript" src="../src/magicsuggest-1.1.0.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             var jsonData = [];
@@ -16,6 +16,8 @@
                 renderTo: $('#ms1'),
                 data: 'data.json',
                 sortOrder: 'name',
+                minChars: 2,
+                maxSelection: 3,
                 maxResults: false,
                 selectionPosition: 'right',
                 groupBy: 'country',
@@ -24,11 +26,8 @@
 
             var ms2 = new MagicSuggest({
                 renderTo: $('#ms2'),
-                allowFreeEntries: false,
                 data: jsonData,
-                useTabKey: true,
-                required: true,
-                expanded: true
+                maxSelection: 3
             });
 
             var ms3 = new MagicSuggest({
