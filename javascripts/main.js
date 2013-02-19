@@ -105,8 +105,8 @@ $(document).ready(function(){
                 dispVal = val;
             } else {
                 if(rawval[0] === '[' || rawval[0] === '{'){
-                    val = JSON.parse(rawval);
                     dispVal = rawval;
+                    val = JSON.parse(rawval);
                 } else if (rawval.indexOf('function') === 0){
                     val = eval('a=' + rawval);
                     dispVal = val;
@@ -123,7 +123,7 @@ $(document).ready(function(){
                 (cfg !== 'data' ? "  data: 'data.json'<br/>" : '') +
                 "});";
             $('<div/>', {
-                html: "<br/><hr/><div>Example with <em>"+cfg+"</em> set to <em>" + val + "</em></div>" +
+                html: "<br/><hr/><div>Example with <b>"+cfg+"</b> set to <b>" + dispVal + "</b></div>" +
                     "<code><pre>" + foo + "</pre></code><br/><div style='clear:both'></div><br/>"
             }).hide().insertBefore(this).fadeIn();
             var exDiv = $('<div/>',{id: id});

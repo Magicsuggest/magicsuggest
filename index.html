@@ -167,11 +167,19 @@
             <a class="opt-ex cfg_hideTrigger_true">View an example</a></div>
           </div>
           <div class="conf">
-            <div class="opt-name">highlight</div>
-            <code>boolean</code>
-            <div style="clear:both;"></div>
-            <div class="opt-desc">Set to true to highlight search input within displayed suggestions.<br/>Defaults to <b>true</b>
-            <a class="opt-ex cfg_highlight_false">View an example</a></div>
+              <div class="opt-name">highlight</div>
+              <code>boolean</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Set to true to highlight search input within displayed suggestions.<br/>Defaults to <b>true</b>
+                  <a class="opt-ex cfg_highlight_false">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">inputCfg</div>
+              <code>object</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Additional parameters passed out to the INPUT tag. Enables usage of AngularJS's custom tags for ex.<br/>
+                  Watch out as <a href="http://www.json.org/" target="_new">JSON's spec</a> only accept double quote characters.<br/>Defaults to <b>{}</b>
+                  <a class='opt-ex cfg_inputCfg_{"ng-model":"customer.city"}'>View an example</a></div>
           </div>
           <div class="conf">
             <div class="opt-name">invalidCls</div>

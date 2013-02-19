@@ -105,6 +105,10 @@
 .conf .opt-desc em{
 	font-style: normal;
 }
+.conf .opt-desc b{
+    font-style: bold;
+    color: #000;
+}
 .conf .opt-ex{
 	color: #999;
 	float: right;
