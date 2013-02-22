@@ -83,7 +83,7 @@ var MagicSuggest = Class.create({
          * <p>The default placeholder text when nothing has been entered</p>
          * Defaults to <code>'Type or click here'</code> or just <code>'Click here'</code> if not editable.
          */
-        this.emptyText = cfg.emptyText || (this.editable === true ? 'Type or click here' : 'Click here');
+        this.emptyText = cfg.emptyText !== undefined ? cfg.emptyText : (this.editable === true ? 'Type or click here' : 'Click here');
 
         /**
          * @cfg {String} emptyTextCls
@@ -506,7 +506,7 @@ var MagicSuggest = Class.create({
                 }
             });
             if(valuechanged === true){
-                this._renderSelection(this.resultAsString);
+                this._renderSelection();
                 this.input.val('');
                 $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
             }
@@ -519,7 +519,6 @@ var MagicSuggest = Class.create({
     collapse: function(){
         if(this.expanded === true){
             this.combobox.detach();
-            this.container.removeClass('ms-ctn-bootstrap-focus');
             this.expanded = false;
             $(this).trigger('collapse', [this]);
         }
@@ -612,7 +611,7 @@ var MagicSuggest = Class.create({
             }
         });
         if(valuechanged === true){
-            this._renderSelection(this.resultAsString);
+            this._renderSelection();
             $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
             if(this.expanded){
                 this._processSuggestions();
@@ -747,15 +746,12 @@ var MagicSuggest = Class.create({
             this._processSuggestions();
             if(this.value !== null){
                 this.setValue(this.value);
-
-                if(this.resultAsString === true){
-                    this._renderSelection(true);
-                }
+                this._renderSelection();
             }
             $(this).trigger('afterrender', [this]);
             var ref = this;
             $("body").click(function(e) {
-                if(ref.container.has(e.target).length === 0 && e.target.className.indexOf('ms-res-item') < 0 &&
+                if(ref.container.hasClass('ms-ctn-bootstrap-focus') && ref.container.has(e.target).length === 0 && e.target.className.indexOf('ms-res-item') < 0 &&
                     ref.container[0] !== e.target){
                     ref._onBlur();
                 }
@@ -781,7 +777,8 @@ var MagicSuggest = Class.create({
      * @private
      */
     _onInputFocus: function(){
-        if(this.isDisabled() === false){
+        if(this.isDisabled() === false && !this._hasFocus){
+            this._hasFocus = true;
             this.container.addClass('ms-ctn-bootstrap-focus');
             this.container.removeClass(this.invalidCls);
             if(this.input.val() === this.emptyText){
@@ -797,9 +794,7 @@ var MagicSuggest = Class.create({
             } else if(curLength < this.minChars){
                 this._updateHelper(this.minCharsRenderer.call(this, this.minChars - curLength));
             }
-            if(this.resultAsString === true){
-                this._renderSelection();
-            }
+            this._renderSelection();
             $(this).trigger('focus', [this]);
         }
     },
@@ -810,19 +805,19 @@ var MagicSuggest = Class.create({
      */
     _onBlur: function(){
         this.container.removeClass('ms-ctn-bootstrap-focus');
-
         this.collapse();
-
-        if(this.resultAsString === true){
-            this._renderSelection(true);
-        }
+        this._hasFocus = false;
+        this._renderSelection();
         if(this.isValid() === false){
             this.container.addClass('ms-ctn-invalid');
         }
 
-        if(this.input.val() === ''){
+        if(this.input.val() === '' && this._selection.length === 0){
             this.input.addClass(this.emptyTextCls);
             this.input.val(this.emptyText);
+        } else if(this.input.val() !== '' && this.allowFreeEntries === false){
+            this.input.val('');
+            this._updateHelper('');
         }
         if(this.input.is(":focus")){
             $(this).trigger('blur', [this]);
@@ -858,12 +853,9 @@ var MagicSuggest = Class.create({
                     e.preventDefault();
                 }
                 break;
-            case 9: // tab
-                e.preventDefault();
-                break;
-            case 188:
-                e.preventDefault();
-                break;
+            case 9:case 188:case 13: // tab,esc,enter
+            e.preventDefault();
+            break;
             case 40: // down
                 e.preventDefault();
                 this._moveSelectedRow("down");
@@ -896,7 +888,7 @@ var MagicSuggest = Class.create({
 
         // collapse if escape, but keep focus.
         if(e.keyCode === 27 && this.expanded){
-            this.combobox.height(0);
+            this.collapse();
         }
         // ignore a bunch of keys
         if((e.keyCode === 9 && this.useTabKey === false) || (e.keyCode > 13 && e.keyCode < 32)){
@@ -904,27 +896,27 @@ var MagicSuggest = Class.create({
         }
         switch(e.keyCode) {
             case 40:case 38: // up, down
-                e.preventDefault();
-                break;
+            e.preventDefault();
+            break;
             case 13:case 9:case 188:// enter, tab, comma
-                if(e.keyCode !== 188 || this.useCommaKey === true){
-                    e.preventDefault();
-                    if(this.combobox.height() > 0){ // if a selection is performed, select it and reset field
-                        selected = this.combobox.find('.ms-res-item-active:first');
-                        if(selected.length > 0){
-                            selected.click();
-                            return;
-                        }
+            if(e.keyCode !== 188 || this.useCommaKey === true){
+                e.preventDefault();
+                if(this.expanded === true){ // if a selection is performed, select it and reset field
+                    selected = this.combobox.find('.ms-res-item-active:first');
+                    if(selected.length > 0){
+                        this._selectItem(selected);
+                        return;
                     }
-                    // if no selection or if freetext entered and free entries allowed, add new obj to selection
-                    if(inputValid === true && this.allowFreeEntries === true){
-                        obj[this.displayField] = obj[this.valueField] = freeInput;
-                        this.addToSelection(obj);
-                        this.collapse(); // cause the combo suggestions to reset
-                        ref.input.focus();
-                    }
-                    break;
                 }
+                // if no selection or if freetext entered and free entries allowed, add new obj to selection
+                if(inputValid === true && this.allowFreeEntries === true){
+                    obj[this.displayField] = obj[this.valueField] = freeInput;
+                    this.addToSelection(obj);
+                    this.collapse(); // cause the combo suggestions to reset
+                    ref.input.focus();
+                }
+                break;
+            }
             default:
                 if(this._selection.length === this.maxSelection){
                     this._updateHelper(this.maxSelectionRenderer.call(this, this._selection.length));
@@ -932,12 +924,12 @@ var MagicSuggest = Class.create({
                     if(freeInput.length < this.minChars){
                         this._updateHelper(this.minCharsRenderer.call(this, this.minChars - freeInput.length));
                         if(this.expanded === true){
-                            this.combobox.height(0);
+                            this.combobox.collapse();
                         }
                     } else if(this.maxEntryLength && freeInput.length > this.maxEntryLength){
                         this._updateHelper(this.maxEntryRenderer.call(this, freeInput.length - this.maxEntryLength));
                         if(this.expanded === true){
-                            this.combobox.height(0);
+                            this.combobox.collapse();
                         }
                     } else {
                         this.helper.hide();
@@ -1040,7 +1032,7 @@ var MagicSuggest = Class.create({
             $.each(data, function(index, obj){
                 var name = obj[ref.displayField];
                 if((ref.matchCase === true && name.indexOf(q) > -1) ||
-                   (ref.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)){
+                    (ref.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)){
                     if(ref.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0){
                         filtered.push(obj);
                     }
@@ -1120,7 +1112,7 @@ var MagicSuggest = Class.create({
         }
         if(data.length === 0){
             this._updateHelper(this.noSuggestionText);
-            this.combobox.height(0);
+            this.combobox.collapse();
         }
     },
 
@@ -1174,8 +1166,17 @@ var MagicSuggest = Class.create({
      * @private
      */
     _onComboItemSelected: function(e){
-        this.addToSelection($(e.currentTarget).data('json'));
-        $(e.currentTarget).removeClass('ms-res-item-active');
+        this._selectItem($(e.currentTarget));
+    },
+
+    /**
+     * Select an item either through keyboard or mouse
+     * @param item
+     * @private
+     */
+    _selectItem: function(item){
+        this.addToSelection(item.data('json'));
+        item.removeClass('ms-res-item-active');
         this.collapse();
         this.input.focus();
     },
@@ -1184,12 +1185,10 @@ var MagicSuggest = Class.create({
      * Renders the selected items into their container.
      * @private
      */
-    _renderSelection: function(asText){
-        var ref = this, w = 0, inputOffset = 0;
-        if(this.selectionPosition === 'inner'){
-            this.input.detach();
-        }
-        this.selectionContainer.empty();
+    _renderSelection: function(){
+        var ref = this, w = 0, inputOffset = 0, items = [],
+            asText = this.resultAsString === true && this._hasFocus === false;
+        this.selectionContainer.find('.ms-sel-item').remove();
 
         $.each(this._selection, function(index, value){
 
@@ -1213,11 +1212,12 @@ var MagicSuggest = Class.create({
                 delItemEl.click($.proxy(ref._onRemoveFromSelection, ref));
             }
 
-            ref.selectionContainer.append(selectedItemEl);
+            items.push(selectedItemEl);
         });
+        this.selectionContainer.prepend(items);
         if(this.selectionPosition === 'inner'){
             // this really sucks... trying to figure out the best way to fill out the remaining space
-            this.selectionContainer.append(this.input);
+//            this.selectionContainer.append(this.input);
             this.input.width(0);
             if(this.editable === true || this._selection.length === 0){
                 inputOffset = this.input.offset().left - this.selectionContainer.offset().left;
