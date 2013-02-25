@@ -5,6 +5,12 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.1.1  BugFixing and additional parameters
+===========================================
+- (fix) start up rendering when value rendered as text
+- (cfg) dataParams: additional parameters for ajax request (credits to jayesbee - https://github.com/jayesbee)
+- (fix) other rendering issues with inner text
+
 v1.1.0 Various enhancements and bug fixing (Minor Tagged Milestone - Feb. 19th 2013)
 ====================================================================================
 - (fea) close cross style now blends in a bit more

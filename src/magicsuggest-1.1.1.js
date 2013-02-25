@@ -57,6 +57,13 @@ var MagicSuggest = Class.create({
         this.data = cfg.data !== undefined ? cfg.data : null;
 
         /**
+         * @cfg {Object} dataParams
+         * <p>Additional parameters to the ajax call</p>
+         * Defaults to <code>{}</code>
+         */
+        this.dataParams = cfg.dataParams !== undefined ? cfg.dataParams : {};
+
+        /**
          * @cfg {Boolean} disabled
          * <p>Start the component in a disabled state.</p>
          * Defaults to <code>false</code>.
@@ -782,9 +789,9 @@ var MagicSuggest = Class.create({
             this.container.addClass('ms-ctn-bootstrap-focus');
             this.container.removeClass(this.invalidCls);
             if(this.input.val() === this.emptyText){
-                this.input.removeClass(this.emptyTextCls);
                 this.input.val('');
             }
+            this.input.removeClass(this.emptyTextCls);
             var curLength = this.input.val().length;
             if((this.expandOnFocus === true && curLength === 0) || curLength > this.minChars){
                 this.expand();
@@ -972,10 +979,11 @@ var MagicSuggest = Class.create({
             if(typeof(this.data) === 'string' && this.data.indexOf(',') < 0){ // get results from ajax
                 $(this).trigger('onbeforeload', [this]);
                 var ref = this;
+                var params = $.extend({query: this.input.val()}, this.dataParams);
                 $.ajax({
                     type: this.method,
                     url: this.data,
-                    data: {query: this.input.val()},
+                    data: params,
                     success: function(items){
                         if(typeof(items) === 'string'){
                             json = JSON.parse(items);
@@ -1187,7 +1195,7 @@ var MagicSuggest = Class.create({
      */
     _renderSelection: function(){
         var ref = this, w = 0, inputOffset = 0, items = [],
-            asText = this.resultAsString === true && this._hasFocus === false;
+            asText = this.resultAsString === true && !this._hasFocus;
         this.selectionContainer.find('.ms-sel-item').remove();
 
         $.each(this._selection, function(index, value){
