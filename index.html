@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.1.0-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.1.1-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -42,7 +42,8 @@
            <li><a href="#tab-1">Demo</a></li>
            <li><a href="#tab-2">Installation</a></li>
            <li><a href="#tab-3">Documentation</a></li>
-           <li><a href="#tab-4">Licence</a></li>
+           <li><a href="#tab-4">Examples</a></li>
+           <li><a href="#tab-5">Licence</a></li>
          </ul>
          <div id="tab-1" class='tab-content'>
            <p>This combo was generated with the default options.</p>
@@ -102,6 +103,13 @@
                 - a JSON object whose data will be contained in the results property (ex: {results: [{id:...,name:...},{...}]</p>
             Defaults to <b>null</b>
             <a class="opt-ex cfg_data_red,orange,blue,green,yellow,black,white">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">dataParams</div>
+              <code>object</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Additional parameters to the ajax call. <br/>Defaults to <b>{}</b>.
+              </div>
           </div>
           <div class="conf">
             <div class="opt-name">disabled</div>
@@ -523,6 +531,20 @@
 
          </div>
          <div id="tab-4" class='tab-content'>
+             <h3>Examples</h3>
+             <h5>GMail style combo</h5>
+             <p>This combo allows multiple selection and changes style upon focus/blur:</p>
+             <div id="ms-gmail"></div>
+             <p>Code used:</p>
+             <pre><code>new MagicSuggest({
+    renderTo: $('#ms-gmail'),
+    resultAsString: true,
+    width: 590,
+    value: ['john@kennedy.com','martin@luther.com'],
+    data: 'marilyn@monroe.com,mother@teresa.com,...,jimmy@wales.com'
+});</code></pre>
+         </div>
+         <div id="tab-5" class='tab-content'>
             <h3>MIT Licence</h3>
             <p>Copyright (C) 2013 Nicolas Bize</p>
             <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
@@ -543,7 +565,7 @@
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
     <script type="text/javascript" src="bin/class-0.0.2-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.1.0-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.1.1-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
