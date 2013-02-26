@@ -149,11 +149,11 @@ var MagicSuggest = Class.create({
         this.inputCfg = cfg.inputCfg || {};
 
         /**
-         * @cfg {String} inputName
+         * @cfg {String} name
          * <p>the <code>name</code> parameter of the input field for the items being selected.</p>
          * Defaults to <code>'item'</code>
          */
-        this.inputName = cfg.inputName || 'item';
+        this.name = cfg.name || 'item';
 
         /**
          * @cfg {String} invalidCls
@@ -1229,8 +1229,8 @@ var MagicSuggest = Class.create({
             
             inputEl = $('<input/>', {
                 'type': 'hidden',
-                'name': ref.inputName,
-                'value': value[ref.valueField]
+                'name': ref.name,
+                'value': JSON.stringify(value)
             }).appendTo(selectedItemEl);
 
             items.push(selectedItemEl);
