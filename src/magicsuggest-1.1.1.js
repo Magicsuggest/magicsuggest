@@ -149,6 +149,13 @@ var MagicSuggest = Class.create({
         this.inputCfg = cfg.inputCfg || {};
 
         /**
+         * @cfg {String} inputName
+         * <p>the <code>name</code> parameter of the input field for the items being selected.</p>
+         * Defaults to <code>'item'</code>
+         */
+        this.inputName = cfg.inputName || 'item';
+
+        /**
          * @cfg {String} invalidCls
          * <p>The class that is applied to show that the field is invalid</p>
          * Defaults to ms-ctn-invalid
@@ -1219,6 +1226,12 @@ var MagicSuggest = Class.create({
                 }).data('json', value).appendTo(selectedItemEl);
                 delItemEl.click($.proxy(ref._onRemoveFromSelection, ref));
             }
+            
+            inputEl = $('<input/>', {
+                'type': 'hidden',
+                'name': ref.inputName,
+                'value': value[ref.valueField]
+            }).appendTo(selectedItemEl);
 
             items.push(selectedItemEl);
         });
