@@ -5,6 +5,11 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.1.2  Enhanced docs and form name
+===================================
+- (fea) added documentation examples
+- (cfg) name: name used for magicsuggest as a form element (credits to iambibhas - https://github.com/iambibhas)
+
 v1.1.1  BugFixing and additional parameters
 ===========================================
 - (fix) start up rendering when value rendered as text

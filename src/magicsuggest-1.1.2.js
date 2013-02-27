@@ -241,6 +241,13 @@ var MagicSuggest = Class.create({
             function(v){return 'Please type ' + v + ' more character' + (v > 1 ? 's':'');};
 
         /**
+         * @cfg {String} name
+         * <p>The name used as a form element.</p>
+         * Defaults to 'null'
+         */
+        this.name = cfg.name || null;
+
+        /**
          * @cfg {String} noSuggestionText
          * <p>The text displayed when there are no suggestions.</p>
          * Defaults to 'No suggestions"
@@ -1197,7 +1204,9 @@ var MagicSuggest = Class.create({
         var ref = this, w = 0, inputOffset = 0, items = [],
             asText = this.resultAsString === true && !this._hasFocus;
         this.selectionContainer.find('.ms-sel-item').remove();
-
+        if(this._valueContainer !== undefined){
+            this._valueContainer.remove();
+        }
         $.each(this._selection, function(index, value){
 
             var selectedItemEl, delItemEl;
@@ -1223,6 +1232,12 @@ var MagicSuggest = Class.create({
             items.push(selectedItemEl);
         });
         this.selectionContainer.prepend(items);
+        this._valueContainer = $('<input/>', {
+            type: 'hidden',
+            name: this.name,
+            value: JSON.stringify(this.getValue())
+        });
+        this._valueContainer.appendTo(this.selectionContainer);
         if(this.selectionPosition === 'inner'){
             // this really sucks... trying to figure out the best way to fill out the remaining space
 //            this.selectionContainer.append(this.input);
