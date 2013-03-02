@@ -536,6 +536,22 @@
            		
    	    /**********  PUBLIC METHODS ************/
    	    /**
+   	     * Adds one or multiple json items to the dropdown list
+   	     * 
+   	     * @param items - json object or array of json objects
+   	     */
+   	    this.preloadList = function(items)
+   	    {
+	        if (!$.isArray(items)) {
+	        	items = [items];
+	        }
+	        
+	        this.combobox.appendTo(this.container);
+   	    	handlers._displaySuggestions(handlers._sortAndTrim(items));
+   	    	this.combobox.detach();
+   	    }
+   	    
+   	    /**
    	     * Add one or multiple json items to the current selection
    	     * @param items - json object or array of json objects
    	     */
@@ -549,6 +565,15 @@
    	            $.each(items, function(index, json) {
    	                if (context.getValue().indexOf(json[settings.valueField]) === -1) {
    	                    _selection.push(json);
+   	                    
+   	                    // add a hidden element for this selection
+                   		$('<input />', {
+                   			type: 'hidden',
+			            	name: settings.name,
+			    		    value: JSON.stringify(json[settings.valueField])
+			        	})
+			        	.appendTo(context.selectionContainer);
+   			        
    	                    valuechanged = true;
    	                }
    	            });
@@ -663,6 +688,11 @@
    	            var i = context.getValue().indexOf(json[settings.valueField]);
    	            if (i > -1) {
    	                _selection.splice(i, 1);
+   	                
+	                // remove associated hidden element
+   	                $('input[value='+JSON.stringify(json[settings.valueField])+']', context.selectionContainer)
+   	                .remove();
+   	                
    	                valuechanged = true;
    	            }
    	        });
@@ -737,6 +767,7 @@
 		var handlers = {
 			_rendered: false,
 			_hasFocus: false,
+			_timer: null,
 			
 		    /**
 		     * Render the component to the given input DOM element
@@ -978,6 +1009,8 @@
 		     * @private
 		     */		    
 		    _onHandleKeyUp: function(e) {
+		    	clearTimeout(this._timer);
+		    	
 		        var freeInput = context.input.val() !== settings.emptyText ? context.input.val() : '',
 		            inputValid = context.input.val().trim().length > 0 && context.input.val() !== settings.emptyText &&
 		                (!settings.maxEntryLength || context.input.val().trim().length < settings.maxEntryLength),
@@ -985,8 +1018,6 @@
 		            obj = {};
 		            
 		        $(context).trigger('onkeyup', [context, e]);
-		        
-		        clearTimeout(_timer);
 		        
 		        // collapse if escape, but keep focus.
 		        if (e.keyCode === 27 && settings.expanded) {
@@ -1040,7 +1071,7 @@
 		                    	context.helper.hide();
 		                        if (settings.expanded === true) {
 		                        	ctx = this;
-		            				_timer = setTimeout(function() {
+		            				this._timer = setTimeout(function() {
 		            					ctx._processSuggestions();
 		            				}, 450);
 		                        } 
@@ -1080,7 +1111,12 @@
 		        var json = null;
 		        if (settings.data !== null) {
 		            if (typeof(settings.data) === 'string' && settings.data.indexOf(',') < 0) { // get results from ajax
-		                $(context).trigger('onbeforeload', [context]);
+		            	var onbeforeloadEvent = $.Event('onbeforeload', { data: [context] });
+		            	
+		            	$(context).trigger(onbeforeloadEvent);
+		                
+		                if (!onbeforeloadEvent.result) return;
+		                
 		                var ref = this;
 		                var params = $.extend({query: context.input.val()}, settings.dataUrlParams);
 		        		
@@ -1315,9 +1351,6 @@
 		            asText = settings.resultAsString === true && !this._hasFocus;
 		        
 		        context.selectionContainer.find('.ms-sel-item').remove();
-		        if (context._valueContainer !== undefined) {
-		            context._valueContainer.remove();
-        		}
         		
 		        $.each(_selection, function(index, value){
 		
@@ -1350,12 +1383,6 @@
 		        });
 		        
 		        context.selectionContainer.prepend(items);
-        		context._valueContainer = $('<input/>', {
-		            type: 'hidden',
-        		    name: settings.name,
-		            value: JSON.stringify(context.getValue())
-        		});
-		        context._valueContainer.appendTo(context.selectionContainer);
         
 		        if (settings.selectionPosition === 'inner') {
 		            // this really sucks... trying to figure out the best way to fill out the remaining space
@@ -1438,7 +1465,6 @@
 		
         var _selection = []; // private array holder for our selected objects
         var _comboItemHeight = 0; // private height for each combo item.
-        var _timer;
         
         if (element !== null) {
             handlers._doRender(element);
