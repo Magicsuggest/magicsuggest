@@ -565,6 +565,7 @@
    	            $.each(items, function(index, json) {
    	                if (context.getValue().indexOf(json[settings.valueField]) === -1) {
    	                    _selection.push(json);
+   	                    _selectionContainerMap[json[settings.valueField]] = false;
    	                    
    	                    // add a hidden element for this selection
                    		$('<input />', {
@@ -693,6 +694,10 @@
    	                $('input[value='+JSON.stringify(json[settings.valueField])+']', context.selectionContainer)
    	                .remove();
    	                
+   	                // remove selection element
+   	                _selectionContainerMap[json[settings.valueField]].remove();
+   	                delete _selectionContainerMap[json[settings.valueField]];
+   	             
    	                valuechanged = true;
    	            }
    	        });
@@ -1350,21 +1355,23 @@
 		        var ref = this, w = 0, inputOffset = 0, items = [],
 		            asText = settings.resultAsString === true && !this._hasFocus;
 		        
-		        context.selectionContainer.find('.ms-sel-item').remove();
-        		
 		        $.each(_selection, function(index, value){
+		        	// create only those selections that havent been rendered yet
+		        	if (_selectionContainerMap[value[settings.valueField]] instanceof jQuery) {
+		        		return;
+		        	}
 		
 		            var selectedItemEl, delItemEl;
 		            // tag representing selected value
 		            if (asText === true) {
-		                selectedItemEl = $('<div/>', {
+		                selectedItemEl = $('<div></div>', {
 		                    'class': 'ms-sel-item ms-sel-text ' + settings.selectionCls,
 		                    html: value[settings.displayField] + (index === (_selection.length - 1) ? '' : ',')
 		                })
 		                .data('json', value);
 		            } 
 		            else {
-		                selectedItemEl = $('<div/>', {
+		                selectedItemEl = $('<div></div>', {
 		                    'class': 'ms-sel-item ' + settings.selectionCls,
 		                    html: value[settings.displayField]
 		                })
@@ -1380,6 +1387,7 @@
 		            }
 		
 		            items.push(selectedItemEl);
+		            _selectionContainerMap[value[settings.valueField]] = selectedItemEl;
 		        });
 		        
 		        context.selectionContainer.prepend(items);
@@ -1464,6 +1472,7 @@
     	};
 		
         var _selection = []; // private array holder for our selected objects
+        var _selectionContainerMap = {}; // selected object map
         var _comboItemHeight = 0; // private height for each combo item.
         
         if (element !== null) {
