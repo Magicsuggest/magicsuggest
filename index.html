@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.1.2-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.0-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -63,7 +63,6 @@
         <p>3. Add the following lines in your <code>HEAD</code> contents</p>
         <pre><code>&lt;link rel="stylesheet" href="magicsuggest-x.y.z-min.css"&gt;
 &lt;script type="text/javascript" src="jquery-1.8.3-min.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="class-0.0.2-min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="magicsuggest-x.y.z-min.js"&gt;&lt;/script&gt;</code></pre>
         <p>4. To transform any DOM element into a MagicSuggest combo, simply include this after jQuery has been initialized:
         <pre><code>new MagicSuggest({options});</code></pre></p>
@@ -105,7 +104,7 @@
             <a class="opt-ex cfg_data_red,orange,blue,green,yellow,black,white">View an example</a></div>
           </div>
           <div class="conf">
-              <div class="opt-name">dataParams</div>
+              <div class="opt-name">dataUrlParams</div>
               <code>object</code>
               <div style="clear:both;"></div>
               <div class="opt-desc">Additional parameters to the ajax call. <br/>Defaults to <b>{}</b>.
@@ -309,13 +308,6 @@
                   <a class="opt-ex cfg_renderer_function(a){return a.country=='France'?('French ' + a.name):a.name;}">View an example</a></div>
           </div>
           <div class="conf">
-            <div class="opt-name">renderTo</div>
-            <code>element</code>
-            <div style="clear:both;"></div>
-            <div class="opt-desc">If set, the combobox will be rendered within the given element.<br/>Defaults to <b>null</b>
-            </div>
-          </div>
-          <div class="conf">
             <div class="opt-name">required</div>
             <code>string</code>
             <div style="clear:both;"></div>
@@ -372,6 +364,13 @@
                   <a class='opt-ex cfg_style_border-radius: 0 !important;'>View an example</a></div>
           </div>
           <div class="conf">
+              <div class="opt-name">typeDelay</div>
+              <code>integer</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Amount (in ms) between keyboard registers.<br/>Defaults to <b>400</b>
+                  <a class="opt-ex cfg_typeDelay_0">View an example</a></div>
+          </div>
+          <div class="conf">
               <div class="opt-name">useTabKey</div>
               <code>boolean</code>
               <div style="clear:both;"></div>
@@ -415,6 +414,11 @@
               <div class="opt-desc">Add one or multiple json items to the current selection.</div>
           </div>
           <div class="conf">
+              <div class="opt-name">clear()</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Clears the current selection.</div>
+          </div>
+          <div class="conf">
               <div class="opt-name">collapse()</div>
               <div style="clear:both;"></div>
               <div class="opt-desc">Expand the drop drown part of the combo.</div>
@@ -440,19 +444,24 @@
               <div class="opt-desc">Retrieve component enabled status.</div>
           </div>
           <div class="conf">
-              <div class="opt-name">isRendered() : boolean</div>
-              <div style="clear:both;"></div>
-              <div class="opt-desc">Check whether or not the component has been rendered.</div>
-          </div>
-          <div class="conf">
               <div class="opt-name">isValid() : boolean</div>
               <div style="clear:both;"></div>
               <div class="opt-desc">Check whether or not the component is valid.</div>
           </div>
           <div class="conf">
+              <div class="opt-name">getDataUrlParams() : object</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Gets the data params for current ajax request.</div>
+          </div>
+          <div class="conf">
               <div class="opt-name">getSelectedItems() : array[object]</div>
               <div style="clear:both;"></div>
               <div class="opt-desc">Retrieve an array of selected json objects.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">getRawValue() : string</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Retrieve the current text entered by the user.</div>
           </div>
           <div class="conf">
               <div class="opt-name">getValue() : array[int / string]</div>
@@ -473,6 +482,11 @@
               <div class="opt-name">setValue(object / array[object])</div>
               <div style="clear:both;"></div>
               <div class="opt-desc">Sets the value for the combo box.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">setDataUrlParams(object)</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Sets data params for subsequent ajax requests.</div>
           </div>
 
           <h4>Events</h4>
@@ -672,8 +686,7 @@
     </div>
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="bin/class-0.0.2-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.1.2-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.2.0-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
