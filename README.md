@@ -5,13 +5,14 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
-v1.1.2  Enhanced docs and form name
-===================================
+v1.2.0 Standardization on jQuery plugins (Minor Tagged Milestone - Mar. 4th 2013)
+=================================================================================
+- (fix) fixed disabled behaviour when one could still edit the emptyText
+- (fix) collapse method would throw an error
+- (cfg) typeDelay: Amount (in ms) between keyboard registers (credits to jayesbee - https://github.com/jayesbee)
+- (fea) standardized on jQuery plugin (credits to jayesbee - https://github.com/jayesbee)
 - (fea) added documentation examples
 - (cfg) name: name used for magicsuggest as a form element (credits to iambibhas - https://github.com/iambibhas)
-
-v1.1.1  BugFixing and additional parameters
-===========================================
 - (fix) start up rendering when value rendered as text
 - (cfg) dataParams: additional parameters for ajax request (credits to jayesbee - https://github.com/jayesbee)
 - (fix) other rendering issues with inner text

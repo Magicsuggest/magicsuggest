@@ -2,36 +2,36 @@
 <html>
 <head>
     <title>MagicSuggest Test Sandbox</title>
-    <link rel="stylesheet" href="../src/magicsuggest-1.1.2.css">
+    <link rel="stylesheet" href="../src/magicsuggest-1.2.0.css">
     <link rel="stylesheet" href="demo.css">
     <script type="text/javascript" src="../src/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="../src/class-0.0.2.js"></script>
-    <script type="text/javascript" src="../src/magicsuggest-1.1.2.js"></script>
+    <script type="text/javascript" src="../src/magicsuggest-1.2.0.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             var jsonData = [];
             var cities = 'New York,Los Angeles,Chicago,Houston,Paris,Marseille,Toulouse,Lyon,Bordeaux,Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville'.split(',');
-            for(var i=0; i<cities.length;i++) jsonData.push({id:i,name:cities[i],status:i%2?'Already Visited':'Planned for visit',coolness:Math.floor(Math.random() * 10) + 1});
-            var ms1 = new MagicSuggest({
-                renderTo: $('#ms1'),
-                data: 'data.json',
+            for(var i=0;i<cities.length;i++) jsonData.push({id:i,name:cities[i],status:i%2?'Already Visited':'Planned for visit',coolness:Math.floor(Math.random() * 10) + 1});
+            var ms1 = $('#ms1').magicSuggest({
+                data: jsonData,
                 sortOrder: 'name',
                 minChars: 2,
-                maxSelection: 3,
                 maxResults: false,
                 selectionPosition: 'right',
-                groupBy: 'country',
+                groupBy: 'status',
                 maxDropHeight: 200
             });
-
-            var ms2 = new MagicSuggest({
-                renderTo: $('#ms2'),
+            var ms2 = $('#ms2').magicSuggest({
                 data: jsonData,
-                maxSelection: 3
+                maxSelection: 3,
+                editable: false
+            });
+            $('afterrender,beforerender,blur,collapse,expand,focus,onbeforeload,onkeydown,onkeyup,onload,ontriggerclick,selectionchange'.split(',')).each(function(index, value){
+                $(ms2).on(value, function(){
+                    console.debug(value);
+                });
             });
 
-            var ms3 = new MagicSuggest({
-                renderTo: $('#ms3'),
+            $('#ms3').magicSuggest({
                 selectionPosition: 'bottom',
                 renderer: function(city){
                     return '<div>' +
@@ -43,15 +43,13 @@
                 selectionStacked: true,
                 data: jsonData
             });
-            var ms4 = new MagicSuggest({
-                renderTo: $('#ms4'),
+            $('#ms4').magicSuggest({
                 data: jsonData,
                 value: [1,2],
                 selectionPosition: 'right',
                 expandOnFocus: true
             });
-            var ms5 = new MagicSuggest({
-                renderTo: $('#ms5'),
+            $('#ms5').magicSuggest({
                 resultAsString: true,
                 width: 590,
                 value: ['john@kennedy.com','martin@luther.com'],
