@@ -65,7 +65,7 @@
 &lt;script type="text/javascript" src="jquery-1.8.3-min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="magicsuggest-x.y.z-min.js"&gt;&lt;/script&gt;</code></pre>
         <p>4. To transform any DOM element into a MagicSuggest combo, simply include this after jQuery has been initialized:
-        <pre><code>new MagicSuggest({options});</code></pre></p>
+        <pre><code>$(el).magicSuggest({options});</code></pre></p>
          </div>
          <div id="tab-3" class='tab-content'>
 
@@ -560,8 +560,7 @@
              <div id="ms-right"></div>
              <div style="clear:both;"></div>
              <p>Code used:</p>
-             <pre><code>new MagicSuggest({
-    renderTo: $('#ms-right'),
+             <pre><code>$('#ms-right').magicSuggest({
     width: 250,
     selectionPosition: 'right',
     data: 'red,orange,blue,purple,dark blue,yellow,green,magenta,cyan,black,white'
@@ -571,8 +570,7 @@
              <p>This combo allows multiple selection and changes style upon focus/blur:</p>
              <div id="ms-gmail"></div>
              <p>Code used:</p>
-             <pre><code>new MagicSuggest({
-    renderTo: $('#ms-gmail'),
+             <pre><code>$('#ms-gmail').magicSuggest({
     resultAsString: true,
     width: 590,
     value: ['john@kennedy.com','martin@luther.com'],
@@ -582,8 +580,7 @@
              <p>Usually seen on the left side of web pages where width is short:</p>
              <div id="ms-filter"></div>
              <p>Code used:</p>
-             <pre><code>new MagicSuggest({
-    renderTo: $('#ms-filter'),
+             <pre><code>$('#ms-filter').magicSuggest({
     width: 180,
     sortOrder: 'countryName',
     selectionPosition: 'bottom',
@@ -620,8 +617,7 @@
              <p>Lets you customize the way items are presented in the combo box:</p>
              <div id="ms-tpl"></div>
              <p>Code used:</p>
-             <pre><code>new MagicSuggest({
-    renderTo: $('#ms-tpl'),
+             <pre><code>$('#ms-tpl').magicSuggest({
     width: 590,
     highlight: false,
     data: [{
