@@ -1,4 +1,4 @@
-MagicSuggest v1.1
+MagicSuggest v1.2
 --------------------------
 
 Check out full documentation and examples here: http://nicolasbize.github.com/magicsuggest/
