@@ -5,6 +5,11 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.1 Bugfixing
+================
+- (fix) make sure combo is filled prior to triggering load event
+- (fea) renamed some events for better readability
+
 v1.2.0 Standardization on jQuery plugins (Minor Tagged Milestone - Mar. 4th 2013)
 =================================================================================
 - (fix) fixed disabled behaviour when one could still edit the emptyText

@@ -25,7 +25,7 @@
                 maxSelection: 3,
                 editable: false
             });
-            $('afterrender,beforerender,blur,collapse,expand,focus,onbeforeload,onkeydown,onkeyup,onload,ontriggerclick,selectionchange'.split(',')).each(function(index, value){
+            $('afterrender,beforerender,blur,collapse,expand,focus,beforeload,keydown,keyup,load,triggerclick,selectionchange'.split(',')).each(function(index, value){
                 $(ms2).on(value, function(){
                     console.debug(value);
                 });

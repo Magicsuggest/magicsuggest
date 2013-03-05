@@ -737,7 +737,7 @@
                 var json = null;
                 if(cfg.data !== null) {
                     if(typeof(cfg.data) === 'string' && cfg.data.indexOf(',') < 0) { // get results from ajax
-                        $(ms).trigger('onbeforeload', [ms]);
+                        $(ms).trigger('beforeload', [ms]);
                         var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
 
                         $.ajax({
@@ -754,8 +754,8 @@
                                 } else {
                                     json = [];
                                 }
-                                $(ms).trigger('onload', [ms, json]);
                                 self._displaySuggestions(self._sortAndTrim(json));
+                                $(ms).trigger('load', [ms, json]);
                             },
                             error: function(){
                                 throw("Could not reach server");
@@ -1165,7 +1165,7 @@
                 var active = ms.combobox.find('.ms-res-item-active:first'),
                     freeInput = ms.input.val() !== cfg.emptyText ? ms.input.val() : '';
 
-                $(ms).trigger('onkeydown', [ms, e]);
+                $(ms).trigger('keydown', [ms, e]);
 
                 if(e.keyCode === 9 && (cfg.useTabKey === false ||
                     (cfg.useTabKey === true && active.length === 0 && ms.input.val().length === 0))) {
@@ -1215,7 +1215,7 @@
                     selected,
                     obj = {};
 
-                $(ms).trigger('onkeyup', [ms, e]);
+                $(ms).trigger('keyup', [ms, e]);
 
                 clearTimeout(_timer);
 
@@ -1298,7 +1298,7 @@
              */
             _onTriggerClick: function() {
                 if(ms.isDisabled() === false && !(cfg.expandOnFocus === true && _selection.length === cfg.maxSelection)) {
-                    $(ms).trigger('ontriggerclick', [ms]);
+                    $(ms).trigger('triggerclick', [ms]);
                     if(cfg.expanded === true) {
                         ms.collapse();
                     } else {
