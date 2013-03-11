@@ -6,7 +6,7 @@
  *
  * Author: Nicolas Bize
  * Date: Feb. 8th 2013
- * Version: 1.2.0
+ * Version: 1.2.2
  * Licence: MagicSuggest is licenced under MIT licence (http://www.opensource.org/licenses/mit-license.php)
  */
 (function($)
@@ -425,14 +425,14 @@
                 }
                 var valuechanged = false;
                 $.each(items, function(index, json) {
-                    if (ms.getValue().indexOf(json[cfg.valueField]) === -1) {
+                    if ($.inArray(json[cfg.valueField], ms.getValue()) === -1) {
                         _selection.push(json);
                         valuechanged = true;
                     }
                 });
                 if(valuechanged === true) {
                     self._renderSelection();
-                    this.input.val('');
+                    this.empty();
                     $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
                 }
             }
@@ -466,6 +466,14 @@
             this.container.addClass('ms-ctn-disabled');
             cfg.disabled = true;
         };
+
+        /**
+         * Empties out the combo user text
+         */
+        this.empty = function(){
+            this.input.removeClass(cfg.emptyTextCls);
+            this.input.val('');
+        }
 
         /**
          * Set the component in a enable state.
@@ -551,7 +559,7 @@
             }
             var valuechanged = false;
             $.each(items, function(index, json) {
-                var i = ms.getValue().indexOf(json[cfg.valueField]);
+                var i = $.inArray(json[cfg.valueField], ms.getValue());
                 if (i > -1) {
                     _selection.splice(i, 1);
                     valuechanged = true;
@@ -580,7 +588,7 @@
 
             $.each(this.combobox.children(), function(index, suggestion) {
                 var obj = $(suggestion).data('json');
-                if(values.indexOf(obj[cfg.valueField]) > -1) {
+                if($.inArray(obj[cfg.valueField], values) > -1) {
                     items.push(obj);
                 }
             });
@@ -658,7 +666,7 @@
                 var json = [];
                 $.each(data, function(index, s) {
                     var entry = {};
-                    entry[cfg.displayField] = entry[cfg.valueField] = s.trim();
+                    entry[cfg.displayField] = entry[cfg.valueField] = $.trim(s);
                     json.push(entry);
                 });
                 return json;
@@ -1019,7 +1027,7 @@
                 }
                 // take out the ones that have already been selected
                 $.each(filtered, function(index, obj) {
-                    if(selectedValues.indexOf(obj[cfg.valueField]) === -1) {
+                    if($.inArray(obj[cfg.valueField], selectedValues) === -1) {
                         newSuggestions.push(obj);
                     }
                 });
@@ -1075,6 +1083,11 @@
                 ms.container.removeClass('ms-ctn-bootstrap-focus');
                 ms.collapse();
                 _hasFocus = false;
+                if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
+                    var obj = {};
+                    obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue();
+                    ms.addToSelection(obj);
+                }
                 self._renderSelection();
 
                 if(ms.isValid() === false) {
@@ -1086,7 +1099,7 @@
                     ms.input.val(cfg.emptyText);
                 }
                 else if(ms.input.val() !== '' && cfg.allowFreeEntries === false) {
-                    ms.input.val('');
+                    ms.empty();
                     self._updateHelper('');
                 }
 
@@ -1133,8 +1146,7 @@
                     ms.container.removeClass(cfg.invalidCls);
 
                     if(ms.input.val() === cfg.emptyText) {
-                        ms.input.removeClass(cfg.emptyTextCls);
-                        ms.input.val('');
+                        ms.empty();
                     }
 
                     var curLength = ms.getRawValue().length;
@@ -1210,8 +1222,8 @@
              */
             _onKeyUp: function(e) {
                 var freeInput = ms.getRawValue(),
-                    inputValid = ms.input.val().trim().length > 0 && ms.input.val() !== cfg.emptyText &&
-                        (!cfg.maxEntryLength || ms.input.val().trim().length <= cfg.maxEntryLength),
+                    inputValid = $.trim(ms.input.val()).length > 0 && ms.input.val() !== cfg.emptyText &&
+                        (!cfg.maxEntryLength || $.trim(ms.input.val()).length <= cfg.maxEntryLength),
                     selected,
                     obj = {};
 
@@ -1334,6 +1346,17 @@
             // Return early if this element already has a plugin instance
             if(cntr.data('magicSuggest')) return;
 
+            if(this.nodeName.toLowerCase() === 'select'){ // rendering from select
+                options.data = [];
+                options.value = [];
+                $.each(this.children, function(index, child){
+                    if(child.nodeName && child.nodeName.toLowerCase() === 'option'){
+                        options.data.push({id: child.value, name: child.text});
+                        if(child.selected) options.value.push(child.value);
+                    }
+                });
+
+            }
             var field = new MagicSuggest(this, options);
             cntr.data('magicSuggest', field);
         });

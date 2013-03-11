@@ -5,6 +5,14 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.2 IE compatibility, rendering options
+==========================================
+- (fix) empty text class was not triggered properly (credits to jods4 - https://github.com/jods4)
+- (fix) IE8 compatibility (credits to Airborn22 - https://github.com/Airborn22)
+- (fea) MagicSuggest can now be rendered from a select dom component. (credits to Yogu - https://github.com/Yogu)
+- (fea) on blur now automatically adds the typed text to the selection if free entries are allowed (credits to Airborn22 - https://github.com/Airborn22)
+- (fea) new public method empty() which will clear the user text.
+
 v1.2.1 Bugfixing
 ================
 - (fix) make sure combo is filled prior to triggering load event
