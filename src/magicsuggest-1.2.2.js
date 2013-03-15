@@ -162,6 +162,13 @@
             inputCfg: {},
 
             /**
+             * @cfg (function) selectedItemRenderer
+             * <p>A function used to define how the items will be presented in the tag list</p>
+             * Defaults to <code>null</code>.
+             */
+            selectedItemRenderer: null,
+
+            /**
              * @cfg {String} invalidCls
              * <p>The class that is applied to show that the field is invalid</p>
              * Defaults to ms-ctn-invalid
@@ -929,19 +936,21 @@
 
                 $.each(_selection, function(index, value){
 
-                    var selectedItemEl, delItemEl;
+                    var selectedItemEl, delItemEl, selectedItem;
+                    selectedItem = cfg.selectedItemRenderer !== null ? cfg.selectedItemRenderer.call(ref, value) : value[cfg.displayField];
+
                     // tag representing selected value
                     if(asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls,
-                            html: value[cfg.displayField] + (index === (_selection.length - 1) ? '' : ',')
+                            html: selectedItem + (index === (_selection.length - 1) ? '' : ',')
                         })
                             .data('json', value);
                     }
                     else {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ' + cfg.selectionCls,
-                            html: value[cfg.displayField]
+                            html: selectedItem
                         })
                             .data('json', value);
 
