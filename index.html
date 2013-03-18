@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.2-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.3-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -329,11 +329,18 @@
             <a class="opt-ex cfg_selectionCls_customSelection">View an example</a></div>
           </div>
           <div class="conf">
-            <div class="opt-name">selectionPosition</div>
-            <code>string</code>
-            <div style="clear:both;"></div>
-            <div class="opt-desc">Where the selected items will be displayed. Only 'right', 'bottom' and 'inner' (within the combo) are valid values<br/>Defaults to <b>'inner'</b>
-            <a class="opt-ex cfg_selectionPosition_bottom">View an example</a></div>
+              <div class="opt-name">selectionPosition</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Where the selected items will be displayed. Only 'right', 'bottom' and 'inner' (within the combo) are valid values<br/>Defaults to <b>'inner'</b>
+                  <a class="opt-ex cfg_selectionPosition_bottom">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">selectionRenderer</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">A function used to define how the items will be presented in the tag list<br/>Defaults to <b>'null'</b>
+                  <a class="opt-ex cfg_selectionRenderer_function(a){return '[[' + a.name + ']]';}">View an example</a></div>
           </div>
           <div class="conf">
             <div class="opt-name">selectionStacked</div>
@@ -687,7 +694,7 @@
     </div>
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.2.2-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.2.3-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
