@@ -5,6 +5,11 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.3 BugFix and selection rendering
+=====================================
+- (fix) empty suggestion text was wrongly triggered when performing initial ajax call (credits to curtgrimes - https://github.com/curtgrimes)
+- (fea) added cfg(selectionRenderer) (credits to pstuart2 - https://github.com/pstuart2)
+
 v1.2.2 IE compatibility, rendering options
 ==========================================
 - (fix) empty text class was not triggered properly (credits to jods4 - https://github.com/jods4)

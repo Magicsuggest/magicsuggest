@@ -6,7 +6,7 @@
  *
  * Author: Nicolas Bize
  * Date: Feb. 8th 2013
- * Version: 1.2.2
+ * Version: 1.2.3
  * Licence: MagicSuggest is licenced under MIT licence (http://www.opensource.org/licenses/mit-license.php)
  */
 (function($)
@@ -304,6 +304,13 @@
              * Defaults to <code>'inner'</code>, meaning the selected items will appear within the input box itself.
              */
             selectionPosition: 'inner',
+
+            /**
+             * @cfg (function) selectionRenderer
+             * <p>A function used to define how the items will be presented in the tag list</p>
+             * Defaults to <code>null</code>.
+             */
+            selectionRenderer: null,
 
             /**
              * @cfg {Boolean} selectionStacked
@@ -652,7 +659,7 @@
                     ms.combobox.children().filter(':last').addClass('ms-res-item-active');
                 }
 
-                if(data.length === 0) {
+                if(data.length === 0 && ms.getRawValue() !== "") {
                     self._updateHelper(cfg.noSuggestionText);
                     ms.collapse();
                 }
@@ -929,27 +936,25 @@
 
                 $.each(_selection, function(index, value){
 
-                    var selectedItemEl, delItemEl;
+                    var selectedItemEl, delItemEl,
+                        selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
                     // tag representing selected value
                     if(asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls,
-                            html: value[cfg.displayField] + (index === (_selection.length - 1) ? '' : ',')
-                        })
-                            .data('json', value);
+                            html: selectedItemHtml + (index === (_selection.length - 1) ? '' : ',')
+                        }).data('json', value);
                     }
                     else {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ' + cfg.selectionCls,
-                            html: value[cfg.displayField]
-                        })
-                            .data('json', value);
+                            html: selectedItemHtml
+                        }).data('json', value);
 
                         // small cross img
                         delItemEl = $('<span/>', {
                             'class': 'ms-close-btn'
-                        })
-                            .data('json', value).appendTo(selectedItemEl);
+                        }).data('json', value).appendTo(selectedItemEl);
 
                         delItemEl.click($.proxy(handlers._onTagTriggerClick, ref));
                     }
