@@ -908,11 +908,12 @@
             _renderComboItems: function(items, isGrouped) {
                 var ref = this;
                 $.each(items, function(index, value) {
-                    var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
+                    var highlighted = cfg.highlight === true ? self._highlightSuggestion(value[cfg.displayField]) : value[cfg.displayField],
+		                    displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value, highlighted) : highlighted;
                     var resultItemEl = $('<div/>', {
                         'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ':'') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
-                        html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed
+                        html: displayed
                     }).data('json', value);
                     resultItemEl.click($.proxy(handlers._onComboItemSelected, ref));
                     resultItemEl.mouseover($.proxy(handlers._onComboItemMouseOver, ref));
