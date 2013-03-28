@@ -749,7 +749,6 @@
              * @private
              */
             _processSuggestions: function() {
-                console.trace();
                 var json = null;
                 if(cfg.data !== null) {
                     if(typeof(cfg.data) === 'string' && cfg.data.indexOf(',') < 0) { // get results from ajax
