@@ -468,11 +468,11 @@
         /**
          * Set the component in a disabled state.
          */
-        this.disable = function()
-        {
-            this.container.addClass('ms-ctn-disabled');
-            cfg.disabled = true;
-        };
+            this.disable = function()
+            {
+                this.container.addClass('ms-ctn-disabled');
+                cfg.disabled = true;
+            };
 
         /**
          * Empties out the combo user text
@@ -691,10 +691,10 @@
                 }
 
                 if(cfg.matchCase === true) {
-                    html = html.replace(new RegExp('(' + q + ')','g'), '<em>$1</em>');
+                    html = html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)','g'), '<em>$1</em>');
                 }
                 else {
-                    html = html.replace(new RegExp('(' + q + ')','gi'), '<em>$1</em>');
+                    html = html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)','gi'), '<em>$1</em>');
                 }
                 return html;
             },
@@ -749,6 +749,7 @@
              * @private
              */
             _processSuggestions: function() {
+                console.trace();
                 var json = null;
                 if(cfg.data !== null) {
                     if(typeof(cfg.data) === 'string' && cfg.data.indexOf(',') < 0) { // get results from ajax
@@ -1286,13 +1287,14 @@
                             }
                             else {
                                 ms.helper.hide();
-                                if(cfg.expanded === true) {
+                                if(cfg.minChars <= freeInput.length){
                                     _timer = setTimeout(function() {
-                                        self._processSuggestions();
+                                        if(cfg.expanded === true) {
+                                            self._processSuggestions();
+                                        } else {
+                                            ms.expand();
+                                        }
                                     }, cfg.typeDelay);
-                                }
-                                else if(cfg.minChars <= freeInput.length && cfg.expanded === false) {
-                                    ms.expand();
                                 }
                             }
                         }

@@ -47,12 +47,10 @@
     -webkit-transition: none;
     outline: none;
     display: block;
-    height: 20px;
     padding: 4px 6px;
-    margin-bottom: 0;
     overflow: hidden;
     float: left;
-    margin-left: 2px;
+    margin: 2px 0 2px 2px;
 }
 .ms-ctn-disabled input{
     cursor: not-allowed;
