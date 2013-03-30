@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.3-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.4-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -364,11 +364,25 @@
             <a class="opt-ex cfg_sortOrder_name">View an example</a></div>
           </div>
           <div class="conf">
+              <div class="opt-name">strictSuggest</div>
+              <code>boolean</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">If set to true, suggestions will have to start by user input (and not simply contain it as a substring)<br/>Defaults to <b>false</b>
+                  <a class="opt-ex cfg_strictSuggest_true">View an example</a></div>
+          </div>
+          <div class="conf">
               <div class="opt-name">style</div>
               <code>string</code>
               <div style="clear:both;"></div>
               <div class="opt-desc">Custom style added to the component container.<br/>Defaults to <b>''</b>
                   <a class='opt-ex cfg_style_border-radius: 0 !important;'>View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">toggleOnClick</div>
+              <code>boolean</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">If set to true, the combo will expand / collapse when clicked upon<br/>Defaults to <b>false</b>
+                  <a class="opt-ex cfg_toggleOnClick_true">View an example</a></div>
           </div>
           <div class="conf">
               <div class="opt-name">typeDelay</div>
@@ -694,7 +708,7 @@
     </div>
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.2.3-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.2.4-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
