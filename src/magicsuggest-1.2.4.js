@@ -352,6 +352,14 @@
             style: '',
 
             /**
+             * @cfg {Boolean} toggleOnClick
+             * <p>If set to true, the combo will expand / collapse when clicked upon</p>
+             * Defaults to <code>false</code>.
+             */
+            toggleOnClick: false,
+
+
+            /**
              * @cfg {Integer} typeDelay
              * <p>Amount (in ms) between keyboard registers.</p>
              *
@@ -823,6 +831,7 @@
                 }, cfg.inputCfg));
 
                 ms.input.focus($.proxy(handlers._onInputFocus, this));
+                ms.input.click($.proxy(handlers._onInputClick, this));
 
                 // holds the trigger on the right side
                 if(cfg.hideTrigger === false) {
@@ -1138,6 +1147,22 @@
              */
             _onFocus: function() {
                 ms.input.focus();
+            },
+
+            /**
+             * Triggered when clicking on the input text field
+             * @private
+             */
+            _onInputClick: function(){
+                if (ms.isDisabled() === false && _hasFocus) {
+                    if (cfg.toggleOnClick === true) {
+                        if (cfg.expanded){
+                            ms.collapse();
+                        } else {
+                            ms.expand();
+                        }
+                    }
+                }
             },
 
             /**

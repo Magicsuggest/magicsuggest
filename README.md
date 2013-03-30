@@ -5,6 +5,13 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.4 BugFix and toggle collapse/expand on click option
+========================================================
+- (fix) ajax query was sent twice when the user was typing faster than the typeDelay (credits to arvenom - https://github.com/arvenom)
+- (fix) highlighting the search results was also highlighting html tags when using custom rendering (credits to pstuart2 - https://github.com/pstuart2)
+- (fea) added cfg(strictSuggest) so that user can choose how the suggestions will be made
+- (fea) added cfg(toggleOnClick) so that the user can expand/close the combo by clicking on it (credits to psulek - https://github.com/psulek)
+
 v1.2.3 BugFix and selection rendering
 =====================================
 - (fix) empty suggestion text was wrongly triggered when performing initial ajax call (credits to curtgrimes - https://github.com/curtgrimes)
