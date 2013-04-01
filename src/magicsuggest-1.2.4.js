@@ -431,8 +431,9 @@
         /**
          * Add one or multiple json items to the current selection
          * @param items - json object or array of json objects
+         * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.addToSelection = function(items)
+        this.addToSelection = function(items, isSilent)
         {
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
                 if (!$.isArray(items)) {
@@ -448,17 +449,35 @@
                 if(valuechanged === true) {
                     self._renderSelection();
                     this.empty();
-                    $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
+                    if (isSilent !== true) {
+                        $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
+                    }
                 }
             }
         };
 
         /**
          * Clears the current selection
+         * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.clear = function()
-        {
-            this.removeFromSelection(_selection);
+        this.clear = function(isSilent) {
+            var valuechanged = false;
+            if (_selection && _selection.length) {
+                _selection = [];
+                valuechanged = true;
+            }
+            if (valuechanged === true) {
+                self._renderSelection();
+                if (isSilent !== true) {
+                    $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
+                }
+                if (cfg.expandOnFocus) {
+                    ms.expand();
+                }
+                if (cfg.expanded) {
+                    self._processSuggestions();
+                }
+            }
         };
 
         /**
@@ -566,8 +585,9 @@
         /**
          * Remove one or multiples json items from the current selection
          * @param items - json object or array of json objects
+         * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.removeFromSelection = function(items)
+        this.removeFromSelection = function(items, isSilent)
         {
             if (!$.isArray(items)) {
                 items = [items];
@@ -582,7 +602,9 @@
             });
             if (valuechanged === true) {
                 self._renderSelection();
-                $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
+                if (isSilent !== true) {
+                    $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
+                }
                 if(cfg.expandOnFocus){
                     ms.expand();
                 }
@@ -619,6 +641,14 @@
         this.setDataUrlParams = function(params)
         {
             cfg.dataUrlParams = $.extend({},params);
+        };
+
+        /**
+         * Sets data, for autocomplete suggestions
+         * @param data
+         */
+        this.setData = function(data) {
+            cfg.data = data;
         };
 
         /**********  PRIVATE ************/
