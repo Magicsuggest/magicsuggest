@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.4-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.5-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -43,7 +43,8 @@
            <li><a href="#tab-2">Installation</a></li>
            <li><a href="#tab-3">Documentation</a></li>
            <li><a href="#tab-4">Examples</a></li>
-           <li><a href="#tab-5">Licence</a></li>
+           <li><a href="#tab-5">FAQ</a></li>
+           <li><a href="#tab-6">Licence</a></li>
          </ul>
          <div id="tab-1" class='tab-content'>
            <p>This combo was generated with the default options.</p>
@@ -70,7 +71,24 @@
          <div id="tab-3" class='tab-content'>
 
           <h4>Configuration Properties</h4>
-
+          <h5>Notice for 1.2.5+ users</h5>
+          <p>Note that as of version <b>1.2.5</b>, the component's configuration is also generated from the original DOM element container.</p>
+          <p>The following 2 blocks of code will generate the same component:</p>
+<code><pre>&lt;div id="ms1" name="colors" data="red,blue,green" value="red"&gt;&lt;/div&gt;
+&lt;script&gt;
+    $('#ms1').magicSuggest({});
+&lt;/script&gt;</pre></code>
+<code><pre>&lt;div id="ms1"&gt;&lt;/div&gt;
+&lt;script&gt;
+    $('#ms1').magicSuggest({
+        id: 'ms1',
+        name: 'colors',
+        data: 'red,blue,green',
+        value: 'red'
+    });
+&lt;/script&gt;</pre></code>
+          <p>This allows you to setup your components directly in your DOM and eventually perform a bulk component creation by using a broader jQuery selector (on a class for example)</p>
+          <h5>Config options</h5>
           <div class="conf">
             <div class="opt-name">allowFreeEntries</div>
             <code>boolean</code>
@@ -430,14 +448,14 @@
           <h4>Public Methods</h4>
 
           <div class="conf">
-              <div class="opt-name">addToSelection(object / array[object])</div>
+              <div class="opt-name">addToSelection(object / array[object], isSilent:boolean)</div>
               <div style="clear:both;"></div>
-              <div class="opt-desc">Add one or multiple json items to the current selection.</div>
+              <div class="opt-desc">Add one or multiple json items to the current selection. Set isSilent to true to prevent event trigger.</div>
           </div>
           <div class="conf">
-              <div class="opt-name">clear()</div>
+              <div class="opt-name">clear(isSilent:boolean)</div>
               <div style="clear:both;"></div>
-              <div class="opt-desc">Clears the current selection.</div>
+              <div class="opt-desc">Clears the current selection. Set isSilent to true to prevent event trigger.</div>
           </div>
           <div class="conf">
               <div class="opt-name">collapse()</div>
@@ -495,14 +513,19 @@
               <div class="opt-desc">Retrieve an array of selected values.</div>
           </div>
           <div class="conf">
-              <div class="opt-name">removeFromSelection(object / array[object])</div>
+              <div class="opt-name">removeFromSelection(object / array[object], isSilent:boolean)</div>
               <div style="clear:both;"></div>
-              <div class="opt-desc">Remove one or multiples json items from the current selection.</div>
+              <div class="opt-desc">Remove one or multiples json items from the current selection. Set isSilent to true to prevent event trigger.</div>
           </div>
           <div class="conf">
               <div class="opt-name">render(domElement)</div>
               <div style="clear:both;"></div>
               <div class="opt-desc">If not rendered, the component will dynamically render itself in the given element.</div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">setData(object / array[object])</div>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Sets the data for the combo box contents after it has been rendered.</div>
           </div>
           <div class="conf">
               <div class="opt-name">setValue(object / array[object])</div>
@@ -689,6 +712,103 @@
 });</code></pre>
          </div>
          <div id="tab-5" class='tab-content'>
+            <h3>Frequently Asked Questions</h3>
+            <h4>My combo is within my form but I don't retrieve any data in the backend?</h4>
+            <p>In order for MagicSuggest component to register for a form component, one must add a <b>name</b> property to its configuration or original DOM container.</p>
+            <p>The values retrieved in the back-end will be an array of IDs</p>
+            <pre><code>$('#ms-tpl').magicSuggest({
+    data: [{id:1, name: 'red'}, {id: 2, name: 'blue'}, {id: 3, name: 'green'}],
+    name: 'color'
+});</code></pre>
+             <p>Selecting <b>red</b> and <b>blue</b> will result in sending <b>[1,2]</b> in the POST parameter called <b>color</b>.</p>
+             <h4>How do I use events?</h4>
+             <p>You first need to create a variable that will store your magicSuggest object. You can then use the following:</p>
+             <pre><code>var ms = $('#ms').magicSuggest({
+   data: 'red,blue,green'
+});
+$(ms).on('selectionchange', function(event, combo, selection){
+     alert(selection);
+});</code></pre>
+             <h4>The value property doesn't work when working with remote data?</h4>
+             <p>This is a common case when you are trying to set initial values to the combo while its data hasn't been loaded yet.</p>
+             <p>What you need to do is to perform an initial load with special parameters in order to validate the data in the backend.</p>
+             <p>Here is an example with PHP:</p>
+             <p><b>data.php:</b></p>
+<code><pre>
+&lt;?php
+
+// this would usually be fetched through a database using a specific DAO.
+$colors = array(
+    array('id' =&gt; 0, 'name' =&gt; 'red'),
+    array('id' =&gt; 1, 'name' =&gt; 'blue'),
+    array('id' =&gt; 2, 'name' =&gt; 'green')
+);
+
+/**
+ * Retrieve colors according to given name query
+ * $query - string : user query
+ */
+function getColorsByName($query){
+    global $colors;
+    if(empty($query)) return $colors;
+    $matches = array();
+    for($i = 0; $i &lt; count($colors); $i++){
+        if(strpos($colors[$i]['name'], $query) &gt; -1){
+            $matches[] = $colors[$i];
+        }
+    }
+    return $matches;
+}
+
+/**
+ * Retrieve colors according to given ids
+ * $arrIds - array : array of color ids.
+ */
+function getColorsbyId($arrIds){
+    global $colors;
+    $matches = array();
+    for($i = 0; $i &lt; count($colors); $i++){
+        if(array_search($colors[$i]['id'], $arrIds) !== false){
+            $matches[] = $colors[$i];
+        }
+    }
+    return $matches;
+}
+
+if(isset($_POST['init'])){
+    echo json_encode(getColorsbyId($_POST['cols']));
+} else {
+    echo json_encode(getColorsByName($_POST['query']));
+}
+
+?&gt;
+</pre></code>
+         <p><b>index.html javascript part:</b></p>
+<code><pre>
+$(document).ready(function() {
+    var ms = $('#ms').magicSuggest({
+        data: 'data.php',
+        dataUrlParams: {
+            init: true,
+            cols: [2,1]
+        }
+    });
+
+    $(ms).on('load', function(){
+        if(this._dataSet === undefined){
+            // we get here the first time the combo has loaded and gone through
+            // the first if case in tag-autocomplete-service.php: the combo has been
+            // populated with the default values only.
+            this._dataSet = true;
+            ms.setValue([2,1]);
+            ms.setDataUrlParams({});
+        }
+    });
+});
+</pre></code>
+
+         </div>
+         <div id="tab-6" class='tab-content'>
             <h3>MIT Licence</h3>
             <p>Copyright (C) 2013 Nicolas Bize</p>
             <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
@@ -708,7 +828,7 @@
     </div>
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.2.4-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.2.5-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>

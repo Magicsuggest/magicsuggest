@@ -59,7 +59,7 @@
 
 #tabs ul li a {
     text-decoration: none;
-    padding: 8px;
+    padding: 8px 0;
     color: #000;
     font-weight: bold;
 }
