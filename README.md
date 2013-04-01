@@ -5,6 +5,13 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.5 BugFix and added a couple of missing functions
+=====================================================
+- (fix) the clear function was broken (credits to travishaagen - https://github.com/travishaagen)
+- (fea) the component's config can now be setup entirely from the DOM container element.
+- (fea) added a silent mode to selection changing methods in order to know if it was user-triggered or not. (credits to travishaagen - https://github.com/travishaagen)
+- (fea) added a setData(object) method to fill the combo after it has been rendered (credits to travishaagen - https://github.com/travishaagen)
+
 v1.2.4 BugFix and toggle collapse/expand on click option
 ========================================================
 - (fix) ajax query was sent twice when the user was typing faster than the typeDelay (credits to arvenom - https://github.com/arvenom)
