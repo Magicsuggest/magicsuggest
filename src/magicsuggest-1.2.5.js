@@ -672,7 +672,7 @@
                     resHeight = _comboItemHeight * (data.length + nbGroups);
                 }
 
-                if(resHeight < ms.combobox.height() || resHeight < cfg.maxDropHeight) {
+                if(resHeight < ms.combobox.height() || resHeight <= cfg.maxDropHeight) {
                     ms.combobox.height(resHeight);
                 }
                 else if(resHeight >= ms.combobox.height() && resHeight > cfg.maxDropHeight) {
