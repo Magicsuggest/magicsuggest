@@ -6,7 +6,7 @@
  *
  * Author: Nicolas Bize
  * Date: Feb. 8th 2013
- * Version: 1.2.3
+ * Version: 1.2.6
  * Licence: MagicSuggest is licenced under MIT licence (http://www.opensource.org/licenses/mit-license.php)
  */
 (function($)
@@ -672,7 +672,7 @@
                     resHeight = _comboItemHeight * (data.length + nbGroups);
                 }
 
-                if(resHeight < ms.combobox.height() || resHeight < cfg.maxDropHeight) {
+                if(resHeight < ms.combobox.height() || resHeight <= cfg.maxDropHeight) {
                     ms.combobox.height(resHeight);
                 }
                 else if(resHeight >= ms.combobox.height() && resHeight > cfg.maxDropHeight) {

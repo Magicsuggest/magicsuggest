@@ -5,6 +5,10 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.6 BugFix
+=============
+- (fix) suggestions were not appearing when maxSuggestions was set to 10. (credits to zerekw - https://github.com/zerekw and plasmaxy - https://github.com/plasmaxy)
+
 v1.2.5 BugFix and added a couple of missing functions
 =====================================================
 - (fix) the clear function was broken (credits to travishaagen - https://github.com/travishaagen)
