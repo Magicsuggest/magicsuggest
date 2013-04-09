@@ -1412,6 +1412,12 @@
             });
             var field = new MagicSuggest(this, $.extend(options, def));
             cntr.data('magicSuggest', field);
+            
+            // because the object is replace, set the MagicSuggest instance on the new object as well
+            var newcntr = $('#' + cntr.attr('id'));
+            
+            if (newcntr.size() >= 1 && newcntr.eq(0)[0].nodeName !== cntr.eq(0)[0].nodeName)
+                newcntr.data('magicSuggest', field);
         });
 
         if(obj.size() == 1) {
