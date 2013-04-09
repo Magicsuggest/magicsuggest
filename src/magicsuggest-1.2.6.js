@@ -52,6 +52,12 @@
              *     - a string containing an array of JSON objects ready to be parsed (ex: "[{id:...,name:...},{...}]")<br/>
              *     - a JSON object whose data will be contained in the results property
              *      (ex: {results: [{id:...,name:...},{...}]</p>
+             * <p><ul>A Function</ul><br/>
+             *     You can pass a function which returns an array of JSON objects  (ex: [{id:...,name:...},{...}])<br/>
+             *     The function can return the JSON data or it can use the first argument as function to handle the data.<br/>
+             *     Only one (callback function or return value) is needed for the function to succeed.<br/>
+             *     See the following example:<br/>
+             *     <code>function (response) { var myjson = [{name: 'test', id: 1}]; response(myjson); return myjson; }</code></p>
              * Defaults to <b>null</b>
              */
             data: null,
@@ -775,7 +781,20 @@
             _processSuggestions: function() {
                 var json = null;
                 if(cfg.data !== null) {
-                    if(typeof(cfg.data) === 'string' && cfg.data.indexOf(',') < 0) { // get results from ajax
+                    if(typeof(cfg.data) === 'function') { // get results from a function
+                        json = cfg.data.call(ms, function (jsondata) {
+                            // you can use this function to set the json data
+                            self._displaySuggestions(self._sortAndTrim(jsondata));
+                            $(ms).trigger('load', [ms, jsondata]);
+                        });
+                        
+                        // or you can use the return value (if not empty) to set the json data
+                        if (typeof(json) == "object" && !!json) {
+                            self._displaySuggestions(self._sortAndTrim(json));
+                            $(ms).trigger('load', [ms, json]);
+                        }
+                    }
+                    else if(typeof(cfg.data) === 'string' && cfg.data.indexOf(',') < 0) { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
 
