@@ -9,7 +9,7 @@ v1.2.7 BugFix, rendering and data enhancements
 ==============================================
 - (fix) input space now always uses the remaining space as this leads to less issues.
 - (fea) combo has now more logic when used for a single selection combo box.
-- (fix) space taken for single selection on a small combo remains on one line. (credits to Yogu - https://github.com/Yogu)
+- (fix) space taken for single selection on a small combo remains on one line. (credits to ScullWM - https://github.com/ScullWM)
 - (fea) multiple items can now be selected through the Ctrl key (credits to meghuizen - https://github.com/meghuizen)
 - (fea) trigger icon now uses pure CSS (credits to meghuizen - https://github.com/meghuizen)
 - (fea) cfg(data) can now take a function as parameter (credits to meghuizen - https://github.com/meghuizen)
