@@ -867,6 +867,10 @@
                     style: 'width: ' + w + 'px; height: ' + cfg.maxDropHeight + 'px;'
                 });
 
+                // bind the onclick and mouseover using delegated events (needs jQuery >= 1.7)
+                ms.combobox.on('click', 'div.ms-res-item', $.proxy(handlers._onComboItemSelected, this));
+                ms.combobox.on('mouseover', 'div.ms-res-item', $.proxy(handlers._onComboItemMouseOver, this));
+
                 ms.selectionContainer = $('<div/>', {
                     id: 'ms-sel-ctn-' +  $('div[id^="ms-sel-ctn"]').length,
                     'class': 'ms-sel-ctn'
@@ -932,17 +936,25 @@
 
             _renderComboItems: function(items, isGrouped) {
                 var ref = this;
-                $.each(items, function(index, value) {
+
+                var classes = 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped':'');
+                var combohtml = '';
+                for (index in items) {
+                    var value = items[index];
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
+
                     var resultItemEl = $('<div/>', {
-                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ':'') +
-                            (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
-                        html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed
-                    }).data('json', value);
-                    resultItemEl.click($.proxy(handlers._onComboItemSelected, ref));
-                    resultItemEl.mouseover($.proxy(handlers._onComboItemMouseOver, ref));
-                    ms.combobox.append(resultItemEl);
-                });
+                        'class': classes +
+                            (cfg.useZebraStyle === true && index % 2 === 1 ? ' ms-res-odd' : ''),
+                        html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed,
+                        'data-json': JSON.stringify(value)
+                    });
+
+                    combohtml += $('<div/>').append(resultItemEl).html();
+                }
+
+                ms.combobox.html(combohtml);
+
                 _comboItemHeight = ms.combobox.find('.ms-res-item:first').outerHeight();
             },
 
