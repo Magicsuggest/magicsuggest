@@ -492,7 +492,7 @@
         this.empty = function(){
             this.input.removeClass(cfg.emptyTextCls);
             this.input.val('');
-        }
+        };
 
         /**
          * Set the component in a enable state.
@@ -555,7 +555,7 @@
          */
         this.getRawValue = function(){
             return ms.input.val() !== cfg.emptyText ? ms.input.val() : '';
-        }
+        };
 
         /**
          * Retrieve an array of selected values
@@ -1306,8 +1306,8 @@
                             ms.collapse(); // reset combo suggestions
                             ms.input.focus();
                         }
-                        break;
                     }
+                    break;
                     default:
                         if(_selection.length === cfg.maxSelection){
                             self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
