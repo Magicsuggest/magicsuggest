@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.6-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.2.7-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -54,6 +54,7 @@
             <div>- suggestions will appear as the user starts typing</div>
             <div>- the user can toggle the suggestions using arrow keys</div>
             <div>- the user can delete selected items by using backspace</div>
+            <div>- the user can hold the ctrl key to select multiple items</div>
             <div>- the user is free to enter new input using the enter key after having entered text</div>
             <p>There are many configuration options that allow you to customize the component.</p>
          </div>
@@ -106,7 +107,7 @@
           </div>
           <div class="conf">
             <div class="opt-name">data</div>
-            <code>array / string</code>
+            <code>array / string / function</code>
             <div style="clear:both;"></div>
             <div class="opt-desc">JSON Data source used to populate the combo box. 3 options are available here:<br/>
             <p><u>No Data Source (default)</u><br/>
@@ -118,7 +119,13 @@
                 - an array of JSON objects (ex: [{id:...,name:...},{...}])<br/>
                 - a string containing an array of JSON objects ready to be parsed (ex: "[{id:...,name:...},{...}]")<br/>
                 - a JSON object whose data will be contained in the results property (ex: {results: [{id:...,name:...},{...}]</p>
-            Defaults to <b>null</b>
+            <p><u>Function</u><br/>
+                You can pass a function which returns an array of JSON objects  (ex: [{id:...,name:...},{...}])<br/>
+                The function can return the JSON data or it can use the first argument as function to handle the data.<br/>
+                Only one (callback function or return value) is needed for the function to succeed.<br/>
+                See the following example:<br/>
+                function (response) { var myjson = [{name: 'test', id: 1}]; response(myjson); return myjson; }</p>
+                Defaults to <b>null</b>
             <a class="opt-ex cfg_data_red,orange,blue,green,yellow,black,white">View an example</a></div>
           </div>
           <div class="conf">
@@ -828,7 +835,7 @@ $(document).ready(function() {
     </div>
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.2.6-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.2.7-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
