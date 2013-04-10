@@ -2,10 +2,10 @@
 <html>
 <head>
     <title>MagicSuggest Test Sandbox</title>
-    <link rel="stylesheet" href="../src/magicsuggest-1.2.6.css">
+    <link rel="stylesheet" href="../src/magicsuggest-1.2.7.css">
     <link rel="stylesheet" href="demo.css">
     <script type="text/javascript" src="../src/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="../src/magicsuggest-1.2.6.js"></script>
+    <script type="text/javascript" src="../src/magicsuggest-1.2.7.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             var jsonData = [];
@@ -14,16 +14,13 @@
             var ms1 = $('#ms1').magicSuggest({
                 data: jsonData,
                 sortOrder: 'name',
-                minChars: 2,
-                maxResults: false,
+                value: [0],
                 selectionPosition: 'right',
                 groupBy: 'status',
                 maxDropHeight: 200
             });
             var ms2 = $('#ms2').magicSuggest({
-                data: jsonData,
-                maxSelection: 3,
-                editable: false
+                data: jsonData
             });
             var ms3 = $('#ms3').magicSuggest({
                 selectionPosition: 'bottom',
@@ -38,13 +35,10 @@
                 data: jsonData
             });
             var ms4 = $('#ms4').magicSuggest({
-                data: jsonData,
-                value: [1,2],
-                selectionPosition: 'right'
+                data: [{id:1,label:'one'}, {id:2,label:'two'}, {id:3,label:'three'}],
+                displayField: 'label',
+                value: [1,3],
             });
-            ms4.clear();
-            ms4.setData(jsonData);
-            ms4.setValue([1,2]);
             var ms5 = $('#ms5').magicSuggest({
                 resultAsString: true,
                 width: 590,
@@ -54,6 +48,12 @@
             var ms6 = $('#ms6').magicSuggest({
                 // will fetch data from options
             });
+            var ms7 = $('#ms7').magicSuggest({
+                data: jsonData,
+                resultAsString: true,
+                maxSelection: 1,
+                maxSelectionRenderer: function(){}
+            })
 
         });
     </script>
@@ -91,6 +91,9 @@
             <option value=4>Visual Studio</option>
             <option value=5>Komodo</option>
         </select>
+        <div style="clear:both;"></div>
+        <h3>Simple regular combo</h3>
+        <input id="ms7" style="width:200px;" type="text"/>
 
     </div>
 </body>
