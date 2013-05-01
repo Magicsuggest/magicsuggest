@@ -5,6 +5,11 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.8 BugFixing
+================
+- (fix) when a value is specified in the DOM original element, it is passed correctly to MS. (credits to jbmoens - https://github.com/jbmoens)
+
+
 v1.2.7 BugFix, rendering and data enhancements
 ==============================================
 - (fix) input space now always uses the remaining space as this leads to less issues.
