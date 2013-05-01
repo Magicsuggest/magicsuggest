@@ -1,0 +1,19 @@
+body {
+    text-align: center;
+    margin: 5em 0 0 0;
+    vertical-align: middle;
+    background: #EEE;
+    font-family: Arial;
+    font-size: 12px;
+}
+
+.content {
+    border-radius: 5px;
+    width: 760px;
+    text-align: left;
+    margin: 0 auto;
+    background: #FFF;
+    padding: 20px;
+    border: 1px solid #CCC;
+    min-height: 600px;
+}

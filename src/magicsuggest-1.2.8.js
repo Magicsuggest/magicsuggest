@@ -621,8 +621,18 @@
          */
         this.setValue = function(data)
         {
-            var values = $.isArray(data) ? data : [data],
-                items = [];
+            var values = data, items = [];
+            if(!$.isArray(data)){
+                if(typeof(data) === 'string'){
+                    if(data.indexOf('[') > -1){
+                        values = eval(data);
+                    } else if(data.indexOf(',') > -1){
+                        values = data.split(',');
+                    }
+                } else {
+                    values = [data];
+                }
+            }
 
             $.each(_cbData, function(index, obj) {
                 if($.inArray(obj[cfg.valueField], values) > -1) {
