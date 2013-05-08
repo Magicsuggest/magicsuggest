@@ -5,6 +5,30 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.2.8 BugFixing
+================
+- (fix) when a value is specified in the DOM original element, it is passed correctly to MS. (credits to jbmoens - https://github.com/jbmoens)
+
+
+v1.2.7 BugFix, rendering and data enhancements
+==============================================
+- (fix) input space now always uses the remaining space as this leads to less issues.
+- (fea) combo has now more logic when used for a single selection combo box.
+- (fix) space taken for single selection on a small combo remains on one line. (credits to ScullWM - https://github.com/ScullWM)
+- (fea) multiple items can now be selected through the Ctrl key (credits to meghuizen - https://github.com/meghuizen)
+- (fea) trigger icon now uses pure CSS (credits to meghuizen - https://github.com/meghuizen)
+- (fea) cfg(data) can now take a function as parameter (credits to meghuizen - https://github.com/meghuizen)
+- (fea) cfg(data) can take a json object whose data items are within the results property
+- (fix) CSS has been fixed so it behaves correctly within a bootstrap modal (credits to daenuprobst - https://github.com/daenuprobst)
+- (fea) suggestion rendering optimized by reducing draw calls to one. (credits to meghuizen - https://github.com/meghuizen)
+- (fix) tags can now longer be removed when the combo is disabled (credits to grena - https://github.com/grena)
+- (fix) setting data was only going through visible set of suggestions (credits to grena - https://github.com/grena)
+- (fix) missing semi-colons, went through full jslint (credits to grena - https://github.com/grena)
+
+v1.2.6 BugFix
+=============
+- (fix) suggestions were not appearing when maxSuggestions was set to 10. (credits to zerekw - https://github.com/zerekw and plasmaxy - https://github.com/plasmaxy)
+
 v1.2.5 BugFix and added a couple of missing functions
 =====================================================
 - (fix) the clear function was broken (credits to travishaagen - https://github.com/travishaagen)

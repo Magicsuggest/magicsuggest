@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>MagicSuggest Test Sandbox</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="../../src/magicsuggest-1.2.8.css">
+    <link rel="stylesheet" href="demo.css">
+    <script type="text/javascript" src="../../src/jquery-1.8.3-min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="../../src/magicsuggest-1.2.8.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var jsonData = [];
+            var cities = 'New York,Los Angeles,Chicago,Houston,Paris,Marseille,Toulouse,Lyon,Bordeaux,Philadelphia,Phoenix,San Antonio,San Diego,Dallas,San Jose,Jacksonville'.split(',');
+            for(var i=0;i<cities.length;i++) jsonData.push({id:i,name:cities[i],status:i%2?'Already Visited':'Planned for visit',coolness:Math.floor(Math.random() * 10) + 1});
+            var ms1 = $('#ms1').magicSuggest({
+                data: jsonData,
+                sortOrder: 'name',
+                value: [0],
+                selectionPosition: 'right',
+                groupBy: 'status',
+                maxDropHeight: 200
+            });
+            var ms2 = $('#ms2').magicSuggest({
+                data: jsonData
+            });
+            var ms3 = $('#ms3').magicSuggest({
+                selectionPosition: 'bottom',
+                renderer: function(city){
+                    return '<div>' +
+                            '<div style="font-family: Arial; font-weight: bold">' + city.name + '</div>' +
+                            '<div><b>Cooooolness</b>: ' + city.coolness + '</div>' +
+                           '</div>';
+                },
+                minChars: 1,
+                selectionStacked: true,
+                data: jsonData
+            });
+            var ms4 = $('#ms4').magicSuggest({
+                data: [{id:1,label:'one'}, {id:2,label:'two'}, {id:3,label:'three'}],
+                displayField: 'label',
+                value: [1,3]
+            });
+            var ms5 = $('#ms5').magicSuggest({
+                width: 590,
+                data: 'marilyn@monroe.com,mother@teresa.com,john@kennedy.com,martin@luther.com,nelson@mandela.com,winston@churchill.com,bill@gates.com,muhammad@ali.com,mahatma@gandhi.com,margaret@thatcher.com,charles@gaulle.com,christopher@colombus.com,george@orwell.com,charles@darwin.com,elvis@presley.com,albert@einstein.com,paul@mccartney.com,queen@elizabeth.com,queen@victoria.com,john@keynes.com,mikhail@gorbachev.com,jawaharlal@nehru.com,leonardo@vinci.com,louis@pasteur.com,leo@tolstoy.com,pablo@picasso.com,vincent@gogh.com,franklin@roosevelt.com,john@paul.com,neil@armstrong.com,thomas@edison.com,rosa@parks.com,aung@kyi.com,lyndon@johnson.com,ludwig@beethoven.com,oprah@winfrey.com,indira@gandhi.com,eva@peron.com,benazir@bhutto.com,desmond@tutu.com,dalai@lama.com,walt@disney.com,peter@sellers.com,barack@obama.com,malcolm@x.com,richard@branson.com,jesse@owens.com,ernest@hemingway.com,john@lennon.com,henry@ford.com,haile@selassie.com,joseph@stalin.com,lord@baden.com,michael@jordon.com,george@bush.com,osama@laden.com,fidel@castro.com,oscar@wilde.com,coco@chanel.com,amelia@earhart.com,adolf@hitler.com,mary@magdalene.com,alfred@hitchcock.com,michael@jackson.com,mata@hari.com,emmeline@pankhurst.com,ronald@reagan.com,lionel@messi.com,babe@ruth.com,bob@geldof.com,leon@trotsky.com,roger@federer.com,sigmund@freud.com,woodrow@wilson.com,mao@zedong.com,katherine@hepburn.com,audrey@hepburn.com,david@beckham.com,tiger@woods.com,usain@bolt.com,bill@cosby.com,carl@lewis.com,prince@charles.com,jacqueline@onassis.com,billie@holiday.com,virginia@woolf.com,billie@king.com,kylie@minogue.com,anne@frank.com,emile@zatopek.com,lech@walesa.com,christiano@ronaldo.com,yoko@ono.com,julie@andrews.com,florence@nightingale.com,marie@curie.com,stephen@hawking.com,tim@lee.com,lady@gaga.com,lance@armstrong.com,jon@stewart.com,scarlett@johansson.com,larry@page.com,sergey@brin.com,roman@abramovich.com,rupert@murdoch.com,al@gore.com,sacha@baron.com,george@clooney.com,paul@krugman.com,jimmy@wales.com'
+            });
+            var ms6 = $('#ms6').magicSuggest({
+                // will fetch data from options
+            });
+            var ms7 = $('#ms7').magicSuggest({
+                data: jsonData,
+                resultAsString: true,
+                maxSelection: 1,
+                maxSelectionRenderer: function(){}
+            })
+
+        });
+    </script>
+</head>
+<body>
+    <div class="content">
+        <h2>MagicSuggest Test Sandbox</h2>
+        <h3>Replacing an INPUT field</h3>
+        <input id="ms1" style="width:400px;" type="text" name="ms1"/>
+        <div style="clear:both;"></div>
+        <h3>Replacing a DIV</h3>
+        <div id="ms2"></div>
+        <div style="clear:both;"></div>
+        <h3>Stacking in bottom, ajax source (type 1 char to load)</h3>
+        <input id="ms3" style="width:400px;" type="text"/>
+        <div style="clear:both;"></div>
+        <h3>Filter style, right side</h3>
+        <input id="ms4" style="width:200px;" type="text"/>
+        <div style="clear:both;"></div>
+        <h3>Result as string</h3>
+        <input id="ms5" style="width:400px;" type="text" value="['john@kennedy.com','martin@luther.com']"/>
+        <div style="clear:both;"></div>
+        <h3>rendering from an existing SELECT box</h3>
+        <select style="width:400px;">
+            <option value=1>Sublime Text</option>
+            <option value=2 selected>Intellij</option>
+            <option value=3>Eclipse</option>
+            <option value=4>Visual Studio</option>
+            <option value=5>Komodo</option>
+        </select>
+        <select id="ms6" style="width:400px;">
+            <option value=1>Sublime Text</option>
+            <option value=2 selected>Intellij</option>
+            <option value=3>Eclipse</option>
+            <option value=4>Visual Studio</option>
+            <option value=5>Komodo</option>
+        </select>
+        <div style="clear:both;"></div>
+        <h3>Simple regular combo</h3>
+        <input id="ms7" style="width:200px;" type="text"/>
+
+    </div>
+</body>
+</html>
