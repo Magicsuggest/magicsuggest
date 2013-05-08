@@ -491,6 +491,7 @@
         {
             this.container.addClass('ms-ctn-disabled');
             cfg.disabled = true;
+            ms.input.attr('disabled', true);
         };
 
         /**
@@ -508,6 +509,7 @@
         {
             this.container.removeClass('ms-ctn-disabled');
             cfg.disabled = false;
+            ms.input.attr('disabled', false);
         };
 
         /**
