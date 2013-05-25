@@ -1,17 +1,19 @@
-MagicSuggest v1.2
+MagicSuggest v1.3
 --------------------------
 
 Check out full documentation and examples here: http://nicolasbize.github.com/magicsuggest/
 
 Milestone change log:
 
-v1.2.8 BugFixing
-================
+v1.3.0 Some more features and bugfixing (Minor Tagged Milestone - May 25th, 2013)
+=================================================================================
+- (fea) combo component can now be fetched through the same div element (credits to meghuizen - https://github.com/meghuizen)
+- (fix) CSS bug with 1.2.7+ with triggerHidden (credits to ScullWM - https://github.com/ScullWM)
+- (fix) container would always render with 1 row even though a bunch of data was loaded (credits to travishaagen - https://github.com/travishaagen)
+- (fea) added minimum jQuery version to work in docs (credits to rajeshmeniya - https://github.com/rajeshmeniya)
+- (fix) input was not correctly enabled / disabled (credits to zerekw - https://github.com/zerekw)
+- (fea) added getName and setName to easily fetch/set form name of component (credits to jbmoens - https://github.com/jbmoens)
 - (fix) when a value is specified in the DOM original element, it is passed correctly to MS. (credits to jbmoens - https://github.com/jbmoens)
-
-
-v1.2.7 BugFix, rendering and data enhancements
-==============================================
 - (fix) input space now always uses the remaining space as this leads to less issues.
 - (fea) combo has now more logic when used for a single selection combo box.
 - (fix) space taken for single selection on a small combo remains on one line. (credits to ScullWM - https://github.com/ScullWM)
@@ -24,40 +26,22 @@ v1.2.7 BugFix, rendering and data enhancements
 - (fix) tags can now longer be removed when the combo is disabled (credits to grena - https://github.com/grena)
 - (fix) setting data was only going through visible set of suggestions (credits to grena - https://github.com/grena)
 - (fix) missing semi-colons, went through full jslint (credits to grena - https://github.com/grena)
-
-v1.2.6 BugFix
-=============
 - (fix) suggestions were not appearing when maxSuggestions was set to 10. (credits to zerekw - https://github.com/zerekw and plasmaxy - https://github.com/plasmaxy)
-
-v1.2.5 BugFix and added a couple of missing functions
-=====================================================
 - (fix) the clear function was broken (credits to travishaagen - https://github.com/travishaagen)
 - (fea) the component's config can now be setup entirely from the DOM container element.
 - (fea) added a silent mode to selection changing methods in order to know if it was user-triggered or not. (credits to travishaagen - https://github.com/travishaagen)
 - (fea) added a setData(object) method to fill the combo after it has been rendered (credits to travishaagen - https://github.com/travishaagen)
-
-v1.2.4 BugFix and toggle collapse/expand on click option
-========================================================
 - (fix) ajax query was sent twice when the user was typing faster than the typeDelay (credits to arvenom - https://github.com/arvenom)
 - (fix) highlighting the search results was also highlighting html tags when using custom rendering (credits to pstuart2 - https://github.com/pstuart2)
 - (fea) added cfg(strictSuggest) so that user can choose how the suggestions will be made
 - (fea) added cfg(toggleOnClick) so that the user can expand/close the combo by clicking on it (credits to psulek - https://github.com/psulek)
-
-v1.2.3 BugFix and selection rendering
-=====================================
 - (fix) empty suggestion text was wrongly triggered when performing initial ajax call (credits to curtgrimes - https://github.com/curtgrimes)
 - (fea) added cfg(selectionRenderer) (credits to pstuart2 - https://github.com/pstuart2)
-
-v1.2.2 IE compatibility, rendering options
-==========================================
 - (fix) empty text class was not triggered properly (credits to jods4 - https://github.com/jods4)
 - (fix) IE8 compatibility (credits to Airborn22 - https://github.com/Airborn22)
 - (fea) MagicSuggest can now be rendered from a select dom component. (credits to Yogu - https://github.com/Yogu)
 - (fea) on blur now automatically adds the typed text to the selection if free entries are allowed (credits to Airborn22 - https://github.com/Airborn22)
 - (fea) new public method empty() which will clear the user text.
-
-v1.2.1 Bugfixing
-================
 - (fix) make sure combo is filled prior to triggering load event
 - (fea) renamed some events for better readability
 
