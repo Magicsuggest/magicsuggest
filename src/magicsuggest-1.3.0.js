@@ -1461,7 +1461,7 @@
             $.each(this.attributes, function(i, att){
                 def[att.name] = att.value;
             });
-            var field = new MagicSuggest(this, $.extend(options, def));
+            var field = new MagicSuggest(this, $.extend($.fn.magicSuggest.defaults, options, def));
             cntr.data('magicSuggest', field);
             field.container.data('magicSuggest', field);
         });
@@ -1471,4 +1471,6 @@
         }
         return obj;
     };
+    //Will be merged, modify this to modify options for all instances
+    $.fn.magicSuggest.defaults = {};
 })(jQuery);
