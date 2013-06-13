@@ -967,6 +967,9 @@
 
             _renderComboItems: function(items, isGrouped) {
                 var ref = this, html = '';
+                if (isGrouped) {
+                  html = ms.combobox.html();
+                };
                 $.each(items, function(index, value) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var resultItemEl = $('<div/>', {
