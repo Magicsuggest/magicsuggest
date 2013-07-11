@@ -825,7 +825,7 @@
                             url: data,
                             data: params,
                             success: function(asyncData){
-                                json = JSON.parse(asyncData);
+                                json = typeof(asyncData)==='string'?JSON.parse(asyncData):asyncData;
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                             },
