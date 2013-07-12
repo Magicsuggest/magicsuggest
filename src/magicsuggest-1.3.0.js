@@ -417,7 +417,14 @@
              */
             width: function() {
                 return $(this).width();
-            }
+            } ,
+
+            /**
+             * @cfg {String} resultsField
+             * <p>name of JSON object property that represents the list of suggested objects</p>
+             * Defaults to <code>results</code>
+             */
+            resultsField:'results'
         };
 
         var conf = $.extend({},options);
@@ -825,7 +832,7 @@
                             url: data,
                             data: params,
                             success: function(asyncData){
-                                json = JSON.parse(asyncData);
+                                json = typeof(asyncData)==='string'?JSON.parse(asyncData):asyncData;
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                             },
@@ -840,7 +847,7 @@
                         if(data.length > 0 && typeof(data[0]) === 'string') { // results from array of strings
                             _cbData = self._getEntriesFromStringArray(data);
                         } else { // regular json array or json object with results property
-                            _cbData = data.results || data;
+                            _cbData = data[cfg.resultsField] || data;
                         }
                     }
                     self._displaySuggestions(self._sortAndTrim(_cbData));
