@@ -30,6 +30,14 @@
             allowFreeEntries: true,
 
             /**
+             * @cfg {Function} beforeSend
+             * <p>A function triggered just before the ajax request is send. The parameters and use case correspond to
+             *    beforeSend method from jQuery.</p>
+             * <p>Usage example: function(xhr) { xhr.setRequestHeader('Authorization', 'API token'); }</p>
+             */
+            beforeSend: null,
+
+            /**
              * @cfg {String} cls
              * <p>A custom CSS class to apply to the field's underlying element.</p>
              * Defaults to <code>''</code>.
@@ -820,7 +828,7 @@
                     if(typeof(data) === 'string' && data.indexOf(',') < 0) { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
-                        $.ajax({
+                        var ajaxOptions = {
                             type: cfg.method,
                             url: data,
                             data: params,
@@ -832,7 +840,11 @@
                             error: function(){
                                 throw("Could not reach server");
                             }
-                        });
+                        };
+                        if (cfg.beforeSend && typeof(cfg.beforeSend) === 'function') {
+                              ajaxOptions.beforeSend = cfg.beforeSend;
+                        }
+                        $.ajax(ajaxOptions);
                         return;
                     } else if(typeof(data) === 'string' && data.indexOf(',') > -1) { // results from csv string
                         _cbData = self._getEntriesFromStringArray(data.split(','));
