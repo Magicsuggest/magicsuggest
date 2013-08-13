@@ -509,6 +509,7 @@
         this.enable = function()
         {
             this.container.removeClass('ms-ctn-disabled');
+			ms.input.attr('disabled', false);
             cfg.disabled = false;
         };
 
@@ -876,7 +877,7 @@
                     value: cfg.emptyText,
                     readonly: !cfg.editable,
                     disabled: cfg.disabled
-                }, cfg.inputCfg)).width(w - (cfg.hideTrigger ? 16 : 42));
+                }, cfg.inputCfg)).width(w - (cfg.hideTrigger ? 16 : 42) - 2 /* also count for possible borders*/);
 
                 ms.input.focus($.proxy(handlers._onInputFocus, this));
                 ms.input.click($.proxy(handlers._onInputClick, this));
