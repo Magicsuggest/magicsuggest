@@ -7,7 +7,7 @@
     <meta name="description" content="Magicsuggest : Auto-suggest combo with bootstrap theme using jQuery" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.3.0-min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bin/magicsuggest-1.3.1-min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/api-doc.css">
 
     <title>MagicSuggest</title>
@@ -335,7 +335,7 @@
           </div>
           <div class="conf">
             <div class="opt-name">required</div>
-            <code>string</code>
+            <code>boolean</code>
             <div style="clear:both;"></div>
             <div class="opt-desc">Whether or not this field should be required.<br/>Defaults to <b>false</b>
             <a class="opt-ex cfg_required_true">View an example</a></div>
@@ -346,6 +346,13 @@
               <div style="clear:both;"></div>
               <div class="opt-desc">Set to true to render selection as comma separated string<br/>Defaults to <b>false</b>
                   <a class="opt-ex cfg_resultAsString_true">View an example</a></div>
+          </div>
+          <div class="conf">
+              <div class="opt-name">resultsField</div>
+              <code>string</code>
+              <div style="clear:both;"></div>
+              <div class="opt-desc">Name of JSON object property that represents the list of suggested objets.<br/>Defaults to <b>'results'</b>
+                  <a class="opt-ex cfg_resultsField_json">View an example</a></div>
           </div>
           <div class="conf">
             <div class="opt-name">selectionCls</div>
@@ -846,7 +853,7 @@ $(document).ready(function() {
     </div>
 
     <script type="text/javascript" src="bin/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="bin/magicsuggest-1.3.0-min.js"></script>
+    <script type="text/javascript" src="bin/magicsuggest-1.3.1-min.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
   </body>
