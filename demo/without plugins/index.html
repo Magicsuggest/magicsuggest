@@ -2,10 +2,10 @@
 <html>
 <head>
     <title>MagicSuggest Test Sandbox</title>
-    <link rel="stylesheet" href="../../src/magicsuggest-1.3.0.css">
+    <link rel="stylesheet" href="../../src/magicsuggest-1.3.1.css">
     <link rel="stylesheet" href="demo.css">
     <script type="text/javascript" src="../../src/jquery-1.8.3-min.js"></script>
-    <script type="text/javascript" src="../../src/magicsuggest-1.3.0.js"></script>
+    <script type="text/javascript" src="../../src/magicsuggest-1.3.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             var jsonData = [];
@@ -38,10 +38,14 @@
             var ms4 = $('#ms4').magicSuggest({
                 data: [{id:1,label:'one'}, {id:2,label:'two'}, {id:3,label:'three'}],
                 displayField: 'label',
-                value: [1,3]
+                value: [1,3],
+                selectionPosition: 'right',
+                selectionStacked: true
             });
             var ms5 = $('#ms5').magicSuggest({
                 resultAsString: true,
+                data: ['a,b,c'],
+                value: ['a','b'],
                 width: 590
             });
             var ms6 = $('#ms6').magicSuggest({
@@ -60,22 +64,22 @@
 <body>
     <div class="content">
         <h2>MagicSuggest Test Sandbox</h2>
-        <h3>Replacing an INPUT field</h3>
+        <h3>ms1: Replacing an INPUT field</h3>
         <input id="ms1" style="width:400px;" type="text" name="ms1"/>
         <div style="clear:both;"></div>
-        <h3>Replacing a DIV</h3>
+        <h3>ms2: Replacing a DIV</h3>
         <div id="ms2"></div>
         <div style="clear:both;"></div>
-        <h3>Stacking in bottom, ajax source (type 1 char to load)</h3>
+        <h3>ms3: Stacking in bottom, ajax source (type 1 char to load)</h3>
         <input id="ms3" style="width:400px;" type="text"/>
         <div style="clear:both;"></div>
-        <h3>Filter style, right side</h3>
+        <h3>ms4: Filter style, right side</h3>
         <input id="ms4" style="width:200px;" type="text"/>
         <div style="clear:both;"></div>
-        <h3>Result as string</h3>
-        <input id="ms5" style="width:400px;" type="text" data="a,b,c" value="a,b"/>
+        <h3>ms5: Result as string</h3>
+        <input id="ms5" style="width:400px;" type="text"/>
         <div style="clear:both;"></div>
-        <h3>rendering from an existing SELECT box</h3>
+        <h3>ms6: rendering from an existing SELECT box</h3>
         <select style="width:400px;">
             <option value=1>Sublime Text</option>
             <option value=2 selected>Intellij</option>
@@ -91,7 +95,7 @@
             <option value=5>Komodo</option>
         </select>
         <div style="clear:both;"></div>
-        <h3>Simple regular combo</h3>
+        <h3>ms7: Simple regular combo</h3>
         <input id="ms7" style="width:200px;" type="text"/>
 
     </div>
