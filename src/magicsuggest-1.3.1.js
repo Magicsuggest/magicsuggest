@@ -6,7 +6,7 @@
  *
  * Author: Nicolas Bize
  * Date: Feb. 8th 2013
- * Version: 1.2.6
+ * Version: 1.3.1
  * Licence: MagicSuggest is licenced under MIT licence (http://www.opensource.org/licenses/mit-license.php)
  */
 (function($)
@@ -299,6 +299,13 @@
             resultAsString: false,
 
             /**
+             * @cfg {String} resultsField
+             * <p>Name of JSON object property that represents the list of suggested objets</p>
+             * Defaults to <code>results</code>
+             */
+            resultsField: 'results',
+
+            /**
              * @cfg {String} selectionCls
              * <p>A custom CSS class to add to a selected item</p>
              * Defaults to <code>''</code>.
@@ -469,7 +476,7 @@
          */
         this.clear = function(isSilent)
         {
-            this.removeFromSelection(_selection.slice(0)); // clone array to avoid concurrency issues
+            this.removeFromSelection(_selection.slice(0), isSilent); // clone array to avoid concurrency issues
         };
 
         /**
@@ -551,6 +558,14 @@
         };
 
         /**
+         * Gets the name given to the form input
+         */
+        this.getName = function()
+        {
+            return cfg.name;
+        };
+
+        /**
          * Retrieve an array of selected json objects
          * @return {Array}
          */
@@ -615,6 +630,17 @@
         this.setData = function(data){
             cfg.data = data;
             self._processSuggestions();
+        };
+
+        /**
+         * Sets the name for the input field so it can be fetched in the form
+         * @param name
+         */
+        this.setName = function(name){
+            cfg.name = name;
+            if(ms._valueContainer){
+                ms._valueContainer.name = name;
+            }
         };
 
         /**
@@ -806,7 +832,8 @@
                             url: data,
                             data: params,
                             success: function(asyncData){
-                                self._processSuggestions(asyncData);
+                                json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
+                                self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                             },
                             error: function(){
@@ -820,7 +847,7 @@
                         if(data.length > 0 && typeof(data[0]) === 'string') { // results from array of strings
                             _cbData = self._getEntriesFromStringArray(data);
                         } else { // regular json array or json object with results property
-                            _cbData = data.results || data;
+                            _cbData = data[cfg.resultsField] || data;
                         }
                     }
                     self._displaySuggestions(self._sortAndTrim(_cbData));
@@ -841,8 +868,8 @@
                     'class': 'ms-ctn ' + cfg.cls +
                         (cfg.disabled === true ? ' ms-ctn-disabled' : '') +
                         (cfg.editable === true ? '' : ' ms-ctn-readonly'),
-                    style: 'width: ' + w + 'px;' + cfg.style
-                });
+                    style: cfg.style
+                }).width(w);
                 ms.container.focus($.proxy(handlers._onFocus, this));
                 ms.container.blur($.proxy(handlers._onBlur, this));
                 ms.container.keydown($.proxy(handlers._onKeyDown, this));
@@ -855,9 +882,8 @@
                     'class': cfg.emptyTextCls + (cfg.editable === true ? '' : ' ms-input-readonly'),
                     value: cfg.emptyText,
                     readonly: !cfg.editable,
-                    disabled: cfg.disabled,
-                    style: 'width: ' + (w - (cfg.hideTrigger ? 16 : 42)) + 'px;'
-                }, cfg.inputCfg));
+                    disabled: cfg.disabled
+                }, cfg.inputCfg)).width(w - (cfg.hideTrigger ? 16 : 42));
 
                 ms.input.focus($.proxy(handlers._onInputFocus, this));
                 ms.input.click($.proxy(handlers._onInputClick, this));
@@ -876,9 +902,8 @@
                 // holds the suggestions. will always be placed on focus
                 ms.combobox = $('<div/>', {
                     id: 'ms-res-ctn-' + $('div[id^="ms-res-ctn"]').length,
-                    'class': 'ms-res-ctn ',
-                    style: 'width: ' + w + 'px; height: ' + cfg.maxDropHeight + 'px;'
-                });
+                    'class': 'ms-res-ctn '
+                }).width(w).height(cfg.maxDropHeight);
 
                 // bind the onclick and mouseover using delegated events (needs jQuery >= 1.7)
                 ms.combobox.on('click', 'div.ms-res-item', $.proxy(handlers._onComboItemSelected, this));
@@ -961,7 +986,7 @@
                     resultItemEl.mouseover($.proxy(handlers._onComboItemMouseOver, ref));
                     html += $('<div/>').append(resultItemEl).html();
                 });
-                ms.combobox.html(html);
+                ms.combobox.append(html);
                 _comboItemHeight = ms.combobox.find('.ms-res-item:first').outerHeight();
             },
 
@@ -1019,7 +1044,7 @@
                 if(cfg.selectionPosition === 'inner') {
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
-                    w = ms.container.width() - inputOffset - (cfg.hideTrigger === true ? 0 : 42);
+                    w = ms.container.width() - inputOffset - 42;
                     ms.input.width(w);
                     ms.container.height(ms.selectionContainer.height());
                 }
@@ -1445,7 +1470,7 @@
             });
             var field = new MagicSuggest(this, $.extend(options, def));
             cntr.data('magicSuggest', field);
-
+            field.container.data('magicSuggest', field);
         });
 
         if(obj.size() === 1) {
@@ -1453,4 +1478,6 @@
         }
         return obj;
     };
+
+//    $.fn.magicSuggest.defaults = {};
 })(jQuery);
