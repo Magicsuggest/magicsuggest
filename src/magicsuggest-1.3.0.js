@@ -1461,7 +1461,7 @@
             $.each(this.attributes, function(i, att){
                 def[att.name] = att.value;
             });
-            var field = new MagicSuggest(this, $.extend($.fn.magicSuggest.defaults, options, def));
+            var field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
             cntr.data('magicSuggest', field);
             field.container.data('magicSuggest', field);
         });
