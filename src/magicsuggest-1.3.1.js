@@ -126,6 +126,13 @@
             },
 
             /**
+             * @cfg {Boolean} filterByKeyword
+             * <p>If set to true, suggestions will be found using all words in search in order in the name</p>
+             * Defaults to <code>false</code>.
+             */
+            filterByKeyword: false,
+
+            /**
              * @cfg {String} groupBy
              * <p>JSON property by which the list should be grouped</p>
              * Defaults to null
@@ -759,13 +766,16 @@
                 if(q.length === 0) {
                     return html; // nothing entered as input
                 }
+                q = q.split(' ');
 
-                if(cfg.matchCase === true) {
-                    html = html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)','g'), '<em>$1</em>');
-                }
-                else {
-                    html = html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)','gi'), '<em>$1</em>');
-                }
+                $.each(q, function(index, word) {
+                      if(cfg.matchCase === true) {
+                          html = html.replace(new RegExp('(' + word + ')(?!([^<]+)?>)','g'), '<em>$1</em>');
+                      }
+                      else {
+                          html = html.replace(new RegExp('(' + word + ')(?!([^<]+)?>)','gi'), '<em>$1</em>');
+                      }
+                });
                 return html;
             },
 
@@ -1080,6 +1090,49 @@
                 }
             },
 
+            _filterData: function(data, query) {
+                  var q = query,
+                      filtered = [];
+
+                  if (cfg.filterByKeyword) {
+                        q = q.split(' ');
+                        $.each(data, function(index, obj) {
+                              var name = obj[cfg.displayField];
+                              var foundWords = true;
+                              $.each(q, function(index, q){
+                                if (q.length > 0) {
+                                      return foundWords = self._findWord(q, name);
+                                }
+                              });
+                              if (foundWords) {
+                                filtered.push(obj);
+                              }
+                        });
+                  }
+                  else {
+                        $.each(data, function(index, obj) {
+                              var name = obj[cfg.displayField];
+                              if (self._findWord(q, name)) {
+                                    filtered.push(obj);
+                              }
+                        });
+                  }
+                  return filtered;
+            },
+
+            _findWord: function(q, haystack) {
+                  if (q.length < 1 || q[0] === '') return;
+                  
+                  if((cfg.matchCase === true && haystack.indexOf(q) > -1) ||
+                      (cfg.matchCase === false && haystack.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
+                      if(cfg.strictSuggest === false || haystack.toLowerCase().indexOf(q.toLowerCase()) === 0) {
+                          return true;
+                      }
+                  }
+
+                  return false;
+            },
+
             /**
              * Sorts the results and cut them down to max # of displayed results at once
              * @private
@@ -1090,16 +1143,8 @@
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
-                if(q.length > 0) {
-                    $.each(data, function(index, obj) {
-                        var name = obj[cfg.displayField];
-                        if((cfg.matchCase === true && name.indexOf(q) > -1) ||
-                            (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
-                            if(cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
-                                filtered.push(obj);
-                            }
-                        }
-                    });
+                if(q.length > 0) {  
+                  filtered = self._filterData(data, q);
                 }
                 else {
                     filtered = data;
