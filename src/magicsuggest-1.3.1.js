@@ -416,6 +416,11 @@
              * Defaults to <code>id</code>.
              */
             valueField: 'id',
+			  /**
+             * @cfg {boolean} filterLocal
+             * <p>Indicates if the results should be filter locally</p>
+             */
+                filterLocal:true,
 
             /**
              * @cfg {Integer} width (in px)
@@ -1104,7 +1109,7 @@
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
-                if(q.length > 0) {
+                 if(q.length > 0&&cfg.filterLocal) {
                     $.each(data, function(index, obj) {
                         var name = obj[cfg.displayField];
                         if((cfg.matchCase === true && name.indexOf(q) > -1) ||
