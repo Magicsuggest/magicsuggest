@@ -74,7 +74,9 @@
 .ms-ctn .ms-trigger{
     float: right;
     width: 27px;
-    height: 28px;
+    height:100%;
+    position:absolute;
+    right:0;
     border-left: 1px solid #CCC;
     background: #EEE;
     cursor: pointer;
@@ -162,6 +164,7 @@
 .ms-sel-ctn{
     overflow: auto;
     line-height: 22px;
+    padding-right:27px;
 }
 .ms-sel-ctn .ms-sel-item{
     background: #555;

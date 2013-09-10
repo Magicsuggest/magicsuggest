@@ -5,6 +5,15 @@ Check out full documentation and examples here: http://nicolasbize.github.com/ma
 
 Milestone change log:
 
+v1.3.1 BugFixing again! (Minor Tagged Milestone - August 17th, 2013)
+====================================================================
+- (fix) enable after disable now works (credits to amanokerim - https://github.com/amanokerim)
+- (fix) trigger icon now takes full height (credits to DioVayne - https://github.com/DioVayne)
+- (fix) clear now compatible with isSilent (credits to Coywolf - https://github.com/Coywolf)
+- (fix) groupBy was broken by 1.3.0
+- (fea) compatibility with latest jQuery 1.10.2 (credits to RafaelMalgor - https://github.com/RafaelMalgor)
+- (fea) resulted JSON objects can now have a custom result property resultsField (credits to RafaelMalgor - https://github.com/RafaelMalgor)
+
 v1.3.0 Some more features and bugfixing (Minor Tagged Milestone - May 25th, 2013)
 =================================================================================
 - (fea) combo component can now be fetched through the same div element (credits to meghuizen - https://github.com/meghuizen)
