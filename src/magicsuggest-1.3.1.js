@@ -416,6 +416,13 @@
              * Defaults to <code>id</code>.
              */
             valueField: 'id',
+            
+            /**
+             * @cfg {Boolean} blurOnSelect
+             * <p>blur on select of an item.</p>
+             * Defaults to false.
+             */
+            blurOnSelect: false,            
 
             /**
              * @cfg {Integer} width (in px)
@@ -1077,6 +1084,9 @@
                     if(_ctrlDown){
                         ms.expand();
                     }
+                }
+                if(cfg.blurOnSelect === true){
+                    handlers._onBlur();
                 }
             },
 
