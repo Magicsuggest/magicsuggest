@@ -293,10 +293,17 @@
 
             /**
              * @cfg {Boolean} resultAsString
-             * <p>Set to true to render selection as comma separated string</p>
+             * <p>Set to true to render selection as delimited string</p>
              * Defaults to <code>false</code>.
              */
             resultAsString: false,
+
+            /**
+             * @cfg {String} resultAsStringDelimiter
+             * <p>Text delimiter to use in a separated string</p>
+             * Defaults to <code>,</code>.
+             */
+            resultAsStringDelimiter: ',',
 
             /**
              * @cfg {String} resultsField
@@ -996,7 +1003,8 @@
              */
             _renderSelection: function() {
                 var ref = this, w = 0, inputOffset = 0, items = [],
-                    asText = cfg.resultAsString === true && !_hasFocus;
+                    asText = cfg.resultAsString === true && !_hasFocus,
+                    asTextDelimiter = cfg.resultAsStringDelimiter;
 
                 ms.selectionContainer.find('.ms-sel-item').remove();
                 if(ms._valueContainer !== undefined) {
@@ -1011,7 +1019,7 @@
                     if(asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls,
-                            html: selectedItemHtml + (index === (_selection.length - 1) ? '' : ',')
+                            html: selectedItemHtml + (index === (_selection.length - 1) ? '' : asTextDelimiter)
                         }).data('json', value);
                     }
                     else {
