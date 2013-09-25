@@ -416,6 +416,13 @@
              * Defaults to <code>id</code>.
              */
             valueField: 'id',
+            
+            /**
+             * @cfg {Boolean} blurOnSelect
+             * <p>blur on select of an item.</p>
+             * Defaults to false.
+             */
+            blurOnSelect: false,            
 
             /**
              * @cfg {Integer} width (in px)
@@ -1078,6 +1085,9 @@
                         ms.expand();
                     }
                 }
+                if(cfg.blurOnSelect === true){
+                    handlers._onBlur();
+                }
             },
 
             /**
@@ -1358,7 +1368,12 @@
                             obj[cfg.displayField] = obj[cfg.valueField] = freeInput;
                             ms.addToSelection(obj);
                             ms.collapse(); // reset combo suggestions
-                            ms.input.focus();
+                            if(cfg.blurOnSelect === true){
+                                ms.input.blur();
+                                handlers._onBlur();
+                            }else{
+                                ms.input.focus();
+                            }
                         }
                         break;
                     }
