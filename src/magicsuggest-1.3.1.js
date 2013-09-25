@@ -1368,7 +1368,12 @@
                             obj[cfg.displayField] = obj[cfg.valueField] = freeInput;
                             ms.addToSelection(obj);
                             ms.collapse(); // reset combo suggestions
-                            ms.input.focus();
+                            if(cfg.blurOnSelect === true){
+                                ms.input.blur();
+                                handlers._onBlur();
+                            }else{
+                                ms.input.focus();
+                            }
                         }
                         break;
                     }
