@@ -304,7 +304,12 @@
              * Defaults to <code>results</code>
              */
             resultsField: 'results',
-
+            /**
+             * @cfg(Boolean) queryWithCredentials
+             * <p>Value of the "withCredentials" parameter of the ajax query, useful for doing CORS request</p>
+             * Defaults to <code>true</code>
+             */
+            queryWithCredentials:true,
             /**
              * @cfg {String} selectionCls
              * <p>A custom CSS class to add to a selected item</p>
@@ -416,7 +421,8 @@
              * Defaults to <code>id</code>.
              */
             valueField: 'id',
-			  /**
+
+            /**
              * @cfg {boolean} filterLocal
              * <p>Indicates if the results should be filter locally</p>
              */
@@ -430,12 +436,6 @@
             width: function() {
                 return $(this).width();
             }
-
-            /**
-             * @cfg {String} resultField
-             * <p>name of JSON object property that represents the list of suggested objects</p>
-             * Defaults to <code>results</code>
-             */
         };
 
         var conf = $.extend({},options);
@@ -837,17 +837,16 @@
                     }
                     if(typeof(data) === 'string' && data.indexOf(',') < 0) { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
-                        var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
+                        var params = $.extend({query: ms.getRawValue()}, cfg.dataUrlParams);
                         $.ajax({
                             type: cfg.method,
                             url: data,
                             data: params,
+                            xhrFields: {
+                                withCredentials: cfg.queryWithCredentials
+                            },
                             success: function(asyncData){
-<<<<<<< HEAD:src/magicsuggest-1.3.0.js
-                                json = typeof(asyncData)==='string'?JSON.parse(asyncData):asyncData;
-=======
                                 json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
->>>>>>> original/master:src/magicsuggest-1.3.1.js
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                             },
@@ -862,11 +861,7 @@
                         if(data.length > 0 && typeof(data[0]) === 'string') { // results from array of strings
                             _cbData = self._getEntriesFromStringArray(data);
                         } else { // regular json array or json object with results property
-<<<<<<< HEAD:src/magicsuggest-1.3.0.js
-                            _cbData = data[cfg.resultField] || data;
-=======
                             _cbData = data[cfg.resultsField] || data;
->>>>>>> original/master:src/magicsuggest-1.3.1.js
                         }
                     }
                     self._displaySuggestions(self._sortAndTrim(_cbData));
@@ -1109,7 +1104,7 @@
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
-                 if(q.length > 0&&cfg.filterLocal) {
+                if(q.length > 0&&cfg.filterLocal) {
                     $.each(data, function(index, obj) {
                         var name = obj[cfg.displayField];
                         if((cfg.matchCase === true && name.indexOf(q) > -1) ||
