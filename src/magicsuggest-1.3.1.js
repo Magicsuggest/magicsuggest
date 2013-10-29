@@ -304,7 +304,12 @@
              * Defaults to <code>results</code>
              */
             resultsField: 'results',
-
+            /**
+             * @cfg(Boolean) queryWithCredentials
+             * <p>Value of the "withCredentials" parameter of the ajax query, useful for doing CORS request</p>
+             * Defaults to <code>true</code>
+             */
+            queryWithCredentials:true,
             /**
              * @cfg {String} selectionCls
              * <p>A custom CSS class to add to a selected item</p>
