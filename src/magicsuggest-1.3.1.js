@@ -395,6 +395,12 @@
              */
             useCommaKey: true,
 
+            /**
+             * @cfg {Boolean} useSpaceKey
+             * <p>If set to true, using space will validate the user's choice</p>
+             * Defaults to <code>false</code>
+             */
+            useSpaceKey: false,
 
             /**
              * @cfg {Boolean} useZebraStyle
@@ -1293,6 +1299,11 @@
                     case 13: // enter
                         e.preventDefault();
                         break;
+                    case 32: // space
+                        if(cfg.useSpaceKey === true) {
+                            e.preventDefault();
+                        }
+                        break;
                     case 17: // ctrl
                         _ctrlDown = true;
                         break;
@@ -1343,8 +1354,8 @@
                     case 40:case 38: // up, down
                     e.preventDefault();
                     break;
-                    case 13:case 9:case 188:// enter, tab, comma
-                    if(e.keyCode !== 188 || cfg.useCommaKey === true) {
+                    case 13:case 9:case 188:case 32:// enter, tab, comma, space
+                    if((e.keyCode !== 188 || cfg.useCommaKey === true) && (e.keyCode !== 32 || cfg.useSpaceKey === true)) {
                         e.preventDefault();
                         if(cfg.expanded === true){ // if a selection is performed, select it and reset field
                             selected = ms.combobox.find('.ms-res-item-active:first');
