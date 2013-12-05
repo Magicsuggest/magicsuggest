@@ -1003,6 +1003,12 @@
                     ms._valueContainer.remove();
                 }
 
+                // For no selection show the empty text here
+                if(ms.input.val() === '' && _selection.length === 0) {
+                    ms.input.addClass(cfg.emptyTextCls);
+                    ms.input.val(cfg.emptyText);
+                }
+
                 $.each(_selection, function(index, value){
 
                     var selectedItemEl, delItemEl,
