@@ -463,6 +463,7 @@
                 if(valuechanged === true) {
                     self._renderSelection();
                     this.empty();
+                    self._updateSelection();
                     if (isSilent !== true) {
                         $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
                     }
@@ -611,6 +612,7 @@
             });
             if (valuechanged === true) {
                 self._renderSelection();
+                self._updateSelection();
                 if(isSilent !== true){
                     $(this).trigger('selectionchange', [this, this.getSelectedItems()]);
                 }
@@ -1003,12 +1005,6 @@
                     ms._valueContainer.remove();
                 }
 
-                // For no selection show the empty text here
-                if(ms.input.val() === '' && _selection.length === 0) {
-                    ms.input.addClass(cfg.emptyTextCls);
-                    ms.input.val(cfg.emptyText);
-                }
-
                 $.each(_selection, function(index, value){
 
                     var selectedItemEl, delItemEl,
@@ -1059,6 +1055,20 @@
                     self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
                 } else {
                     ms.helper.hide();
+                }
+            },
+
+            /**
+             * Called whenever the selection has been updated
+             */
+            _updateSelection : function () {
+                // For no selection show the empty text here
+                if(ms.input.val() === '' && !ms.input.is(':focus') && _selection.length === 0) {
+                    ms.input.addClass(cfg.emptyTextCls);
+                    ms.input.val(cfg.emptyText);
+                } else if (!ms.input.is(':focus')) {
+                    ms.input.removeClass(cfg.emptyTextCls);
+                    ms.input.val();
                 }
             },
 
@@ -1289,6 +1299,7 @@
                         if(freeInput.length === 0 && ms.getSelectedItems().length > 0 && cfg.selectionPosition === 'inner') {
                             _selection.pop();
                             self._renderSelection();
+                            self._updateSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelectedItems()]);
                             ms.input.focus();
                             e.preventDefault();
