@@ -824,23 +824,27 @@
                     if(typeof(data) === 'function'){
                         data = data.call(ms);
                     }
-                    if(typeof(data) === 'string' && data.indexOf(',') < 0) { // get results from ajax
-                        $(ms).trigger('beforeload', [ms]);
-                        var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
-                        $.ajax({
-                            type: cfg.method,
-                            url: data,
-                            data: params,
-                            success: function(asyncData){
-                                json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
-                                self._processSuggestions(json);
-                                $(ms).trigger('load', [ms, json]);
-                            },
-                            error: function(){
-                                throw("Could not reach server");
-                            }
-                        });
-                        return;
+                    if(typeof(data) === 'string' && data.indexOf(',') < 0) { // get results from ajax or regard it as only one value
+                        if (data.indexOf('/') == 0) { // get results from ajax if the 1st char is '/'
+                              $(ms).trigger('beforeload', [ms]);
+                              var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
+                              $.ajax({
+                                  type: cfg.method,
+                                  url: data,
+                                  data: params,
+                                  success: function(asyncData){
+                                      json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
+                                      self._processSuggestions(json);
+                                      $(ms).trigger('load', [ms, json]);
+                                  },
+                                  error: function(){
+                                      throw("Could not reach server");
+                                  }
+                              });
+                              return;
+                        } else { // regard it as only one value
+                              _cbData = self._getEntriesFromStringArray([data]);
+                        }
                     } else if(typeof(data) === 'string' && data.indexOf(',') > -1) { // results from csv string
                         _cbData = self._getEntriesFromStringArray(data.split(','));
                     } else { // results from local array
