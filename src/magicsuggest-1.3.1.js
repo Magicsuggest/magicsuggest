@@ -1289,10 +1289,12 @@
                         }
                         break;
                     case 9: // tab
-                    case 188: // esc
                     case 13: // enter
-                        e.preventDefault();
-                        break;
+                    case 188: // comma
+                        if(e.keyCode !== 188 || (cfg.useCommaKey === true && e.keyCode == 188)) {
+                            e.preventDefault();
+                            break;
+                        }
                     case 17: // ctrl
                         _ctrlDown = true;
                         break;
@@ -1344,7 +1346,7 @@
                     e.preventDefault();
                     break;
                     case 13:case 9:case 188:// enter, tab, comma
-                    if(e.keyCode !== 188 || cfg.useCommaKey === true) {
+                    if(e.keyCode !== 188 || (cfg.useCommaKey === true && e.keyCode == 188)) {
                         e.preventDefault();
                         if(cfg.expanded === true){ // if a selection is performed, select it and reset field
                             selected = ms.combobox.find('.ms-res-item-active:first');
