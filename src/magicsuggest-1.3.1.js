@@ -1182,7 +1182,7 @@
                     self._updateHelper('');
                 }
 
-                if(ms.input.is(":focus")) {
+                if(ms.input.not(":focus")) {
                     $(ms).trigger('blur', [ms]);
                 }
             },
