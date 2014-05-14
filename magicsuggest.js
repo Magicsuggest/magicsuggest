@@ -535,10 +535,16 @@
          */
         this.setValue = function(data)
         {
-            var values = data, items = [];
-            $.each(_cbData, function(index, obj) {
-                if($.inArray(obj[cfg.valueField], values) > -1) {
+            var items = [];
+
+            $.each(data, function(index, obj) {
+                if(typeof(obj) === 'object'){
                     items.push(obj);
+                } else {
+                    var json = {};
+                    json[cfg.valueField] = obj;
+                    json[cfg.displayField] = obj;
+                    items.push(json);
                 }
             });
             if(items.length > 0) {
@@ -1344,7 +1350,6 @@
                         }
                     }
                 });
-
             }
 
             var def = {};
