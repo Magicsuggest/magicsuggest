@@ -1,3 +1,10 @@
+MagicSuggest v.2.0.0
+====================
+- New home at http://nicolasbize.com/magicsuggest including examples, new API doc, tutorials, etc.
+- Now runs with Bootstrap 3 (required)
+- Responsive design
+- No more intrusive loading
+
 MagicSuggest v1.3
 --------------------------
 
