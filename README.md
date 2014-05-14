@@ -1,16 +1,16 @@
+MagicSuggest v2.0.0
+--------------------------
+MagicSuggest has a new home here: http://nicolasbize.com/magicsuggest/
+It includes a great new API documentation, examples, tutorials and more!
+
+Milestone change log:
+
 MagicSuggest v.2.0.0
 ====================
-- New home at http://nicolasbize.com/magicsuggest including examples, new API doc, tutorials, etc.
+- New home at http://nicolasbize.com/magicsuggest/ to run dynamic examples that gh-pages couldn't handle
 - Now runs with Bootstrap 3 (required)
 - Responsive design
 - No more intrusive loading
-
-MagicSuggest v1.3
---------------------------
-
-Check out full documentation and examples here: http://nicolasbize.github.com/magicsuggest/
-
-Milestone change log:
 
 v1.3.1 BugFixing again! (Minor Tagged Milestone - August 17th, 2013)
 ====================================================================
