@@ -577,6 +577,7 @@
              * @private
              */
             _displaySuggestions: function(data) {
+                ms.combobox.show();
                 ms.combobox.empty();
 
                 var resHeight = 0, // total height taken by displayed results.
@@ -612,6 +613,10 @@
                 if(data.length === 0 && ms.getRawValue() !== "") {
                     self._updateHelper(cfg.noSuggestionText);
                     ms.collapse();
+                }
+
+                if(data.length === 0){
+                    ms.combobox.hide();
                 }
             },
 
@@ -1220,7 +1225,7 @@
 
                 // collapse if escape, but keep focus.
                 if(e.keyCode === 27 && cfg.expanded) {
-                    ms.combobox.height(0);
+                    ms.combobox.hide();
                 }
                 // ignore a bunch of keys
                 if((e.keyCode === 9 && cfg.useTabKey === false) || (e.keyCode > 13 && e.keyCode < 32)) {
