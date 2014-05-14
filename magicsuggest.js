@@ -225,7 +225,7 @@
             resultAsString: false,
 
             /**
-             * Name of JSON object property that represents the list of suggested objets
+             * Name of JSON object property that represents the list of suggested objects
              */
             resultsField: 'results',
 
@@ -1066,7 +1066,7 @@
                 _hasFocus = false;
                 if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
                     var obj = {};
-                    obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue();
+                    obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
                     ms.addToSelection(obj);
                 }
                 self._renderSelection();
@@ -1250,7 +1250,7 @@
                         }
                         // if no selection or if freetext entered and free entries allowed, add new obj to selection
                         if(inputValid === true && cfg.allowFreeEntries === true) {
-                            obj[cfg.displayField] = obj[cfg.valueField] = freeInput;
+                            obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
                             ms.addToSelection(obj);
                             ms.collapse(); // reset combo suggestions
                             ms.input.focus();
