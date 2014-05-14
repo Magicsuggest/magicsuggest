@@ -1080,9 +1080,7 @@
                     self._updateHelper('');
                 }
 
-                if(ms.input.is(":focus")) {
-                    $(ms).trigger('blur', [ms]);
-                }
+                $(ms).trigger('blur', [ms]);
             },
 
             /**
