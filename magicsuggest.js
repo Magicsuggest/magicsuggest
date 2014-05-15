@@ -4,7 +4,7 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: May 14th 2014
+ * Last Updated: May 15th 2014
  * Version:      2.0.0
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
@@ -533,18 +533,29 @@
          * Sets a value for the combo box. Value must be an array of values with data type matching valueField one.
          * @param data
          */
-        this.setValue = function(data)
+        this.setValue = function(values)
         {
             var items = [];
 
-            $.each(data, function(index, obj) {
-                if(typeof(obj) === 'object'){
-                    items.push(obj);
-                } else {
-                    var json = {};
-                    json[cfg.valueField] = obj;
-                    json[cfg.displayField] = obj;
-                    items.push(json);
+            $.each(values, function(index, value) {
+                // first try to see if we have the full objects from our data set
+                var found = false;
+                $.each(_cbData, function(i,item){
+                    if(item[cfg.valueField] == value){
+                        items.push(item);
+                        found = true;
+                        return false;
+                    }
+                });
+                if(!found){
+                    if(typeof(value) === 'object'){
+                        items.push(value);
+                    } else {
+                        var json = {};
+                        json[cfg.valueField] = value;
+                        json[cfg.displayField] = value;
+                        items.push(json);
+                    }
                 }
             });
             if(items.length > 0) {
@@ -721,7 +732,7 @@
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                                 if(self._asyncValues){
-                                    ms.setValue(self._asyncValues);
+                                    ms.setValue(JSON.parse(self._asyncValues));
                                     self._renderSelection();
                                     delete(self._asyncValues);
                                 }
