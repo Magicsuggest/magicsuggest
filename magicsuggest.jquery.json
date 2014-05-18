@@ -1,0 +1,36 @@
+{
+    "name": "magicsuggest",
+    "title": "MagicSuggest",
+    "description": "MagicSuggest is a multiple selection auto suggest combo box for Bootstrap 3.",
+    "keywords": [
+        "select",
+        "suggest",
+        "autocomplete",
+        "typeahead",
+        "dropdown",
+        "multiselect",
+        "tag",
+        "tagging",
+        "bootstrap",
+        "combobox"
+    ],
+    "version": "2.0.0",
+    "author": {
+        "name": "Nicolas Bize",
+        "url": "https://github.com/nicolasbize"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://nicolasbize.com/magicsuggest/licence.html"
+        }
+    ],
+    "bugs": "https://github.com/nicolasbize/magicsuggest/issues",
+    "homepage": "http://nicolasbize.com/magicsuggest/",
+    "docs": "http://nicolasbize.com/magicsuggest/doc.html",
+    "download": "https://github.com/nicolasbize/magicsuggest/releases",
+    "dependencies": {
+        "jquery": ">=1.8.3",
+        "bootstrap": ">=3.0.0"
+    }
+}
