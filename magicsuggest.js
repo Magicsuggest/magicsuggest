@@ -4,7 +4,7 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: May 15th 2014
+ * Last Updated: May 17th 2014
  * Version:      2.0.0
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
@@ -739,7 +739,7 @@
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                                 if(self._asyncValues){
-                                    ms.setValue(JSON.parse(self._asyncValues));
+                                    ms.setValue(typeof(self._asyncValues) === 'string' ? JSON.parse(self._asyncValues) : self._asyncValues);
                                     self._renderSelection();
                                     delete(self._asyncValues);
                                 }
