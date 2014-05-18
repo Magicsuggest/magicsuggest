@@ -503,13 +503,6 @@
         };
 
         /**
-         * Get current data
-         */
-        this.getData = function(){
-            return cfg.data;
-        };
-
-        /**
          * Set up some combo data after it has been rendered
          * @param data
          */
