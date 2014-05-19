@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: May 18th 2014
- * Version:      2.0.2
+ * Last Updated: May 19th 2014
+ * Version:      2.0.3
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -614,7 +614,13 @@
                         }).appendTo(ms.combobox);
                         self._renderComboItems(_groups[grpName].items, true);
                     }
-                    resHeight = _comboItemHeight * (data.length + nbGroups);
+                    var _groupItemHeight = ms.combobox.find('.ms-res-group').outerHeight();
+                    if(_groupItemHeight !== null) {
+                      var tmpResHeight = nbGroups * _groupItemHeight;
+                      resHeight = (_comboItemHeight * data.length) + tmpResHeight;
+                    } else {
+                      resHeight = _comboItemHeight * (data.length + nbGroups);
+                    }
                 }
 
                 if(resHeight < ms.combobox.height() || resHeight <= cfg.maxDropHeight) {

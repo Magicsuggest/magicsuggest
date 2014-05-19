@@ -1,22 +1,22 @@
 {
-  "name": "nicolasbize/magicsuggest",
-  "description": "MagicSuggest is a multiple selection auto suggest combo box for Bootstrap 3.",
-  "version": "2.0.2",
-  "type": "component",
-  "homepage": "http://nicolasbize.com/magicsuggest",
-  "license": "MIT",
-  "require": {
-    "components/bootstrap": ">=3.0.0",
-    "components/jquery": ">=1.8.3"
-  },
-  "extra": {
-    "component": {
-      "scripts": [
-        "magicsuggest.js"
-      ],
-      "files": [
-        "magicsuggest.css"
-      ]
+    "name": "nicolasbize/magicsuggest",
+    "description": "MagicSuggest is a multiple selection auto suggest combo box for Bootstrap 3.",
+    "version": "2.0.3",
+    "type": "component",
+    "homepage": "http://nicolasbize.com/magicsuggest",
+    "license": "MIT",
+    "require": {
+        "components/bootstrap": ">=3.0.0",
+        "components/jquery": ">=1.8.3"
+    },
+    "extra": {
+        "component": {
+            "scripts": [
+                "magicsuggest.js"
+            ],
+            "files": [
+                "magicsuggest.css"
+            ]
+        }
     }
-  }
 }
