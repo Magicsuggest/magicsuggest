@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: May 19th 2014
- * Version:      2.0.3
+ * Last Updated: May 20th 2014
+ * Version:      2.0.4
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -306,7 +306,17 @@
             /**
              * name of JSON object property that represents its underlying value
              */
-            valueField: 'id'
+            valueField: 'id',
+
+            /**
+             * regular expression to validate the values against
+             */
+            vregex: null,
+
+            /**
+             * type to validate against
+             */
+            vtype: null
         };
 
         var conf = $.extend({},options);
@@ -417,7 +427,13 @@
          */
         this.isValid = function()
         {
-            return cfg.required === false || _selection.length > 0;
+            var valid = cfg.required === false || _selection.length > 0;
+            if(cfg.vtype || cfg.vregex){
+                $.each(_selection, function(index, item){
+                    valid = valid && self._validateSingleItem(item[cfg.displayField]);
+                });
+            }
+            return valid;
         };
 
         /**
@@ -922,16 +938,19 @@
 
                     var selectedItemEl, delItemEl,
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
+
+                    var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
+
                     // tag representing selected value
                     if(asText === true) {
                         selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls,
+                            'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : ',')
                         }).data('json', value);
                     }
                     else {
                         selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ' + cfg.selectionCls,
+                            'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
                             html: selectedItemHtml
                         }).data('json', value);
 
@@ -1075,6 +1094,29 @@
                 ms.helper.html(html);
                 if(!ms.helper.is(":visible")) {
                     ms.helper.fadeIn();
+                }
+            },
+
+            /**
+             * Validate an item against vtype or vregex
+             * @private
+             */
+            _validateSingleItem: function(value){
+                if(cfg.vregex !== null && cfg.vregex instanceof RegExp){
+                    return cfg.vregex.test(value);
+                } else if(cfg.vtype !== null) {
+                    switch(cfg.vtype){
+                        case 'alpha':
+                        return (/^[a-zA-Z_]+$/).test(value);
+                        case 'alphanum':
+                        return (/^[a-zA-Z0-9_]+$/).test(value);
+                        case 'email':
+                        return (/^(\w+)([\-+.][\w]+)*@(\w[\-\w]*\.){1,5}([A-Za-z]){2,6}$/).test(value);
+                        case 'url':
+                        return (/(((^https?)|(^ftp)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\\\/+@&#;`~=%!]*)(\.\w{2,})?)*\/?)/i).test(value);
+                        case 'ipaddress':
+                        return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(value);
+                    }
                 }
             }
         };
