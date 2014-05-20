@@ -515,7 +515,7 @@
          * Get current data
          */
         this.getData = function(){
-            return cfg.data;
+            return _cbData;
         };
 
         /**
@@ -747,7 +747,7 @@
                 var json = null, data = source || cfg.data;
                 if(data !== null) {
                     if(typeof(data) === 'function'){
-                        data = data.call(ms);
+                        data = data.call(ms, ms.getRawValue());
                     }
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
