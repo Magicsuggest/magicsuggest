@@ -4,7 +4,7 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: May 20th 2014
+ * Last Updated: May 22nd 2014
  * Version:      2.0.4
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
@@ -1425,7 +1425,7 @@
             var def = {};
             // set values from DOM container element
             $.each(this.attributes, function(i, att){
-                def[att.name] = att.value;
+                def[att.name] = att.name === 'value' ? JSON.parse(att.value) : att.value;
             });
 
             var field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
