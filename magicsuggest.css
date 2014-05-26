@@ -69,6 +69,10 @@
     -webkit-transition: none;
     background: #FFF;
 }
+.ms-ctn input::-ms-clear {
+    width: 0; 
+    height: 0;
+}
 .ms-ctn .ms-trigger{
     top: 0;
     width: 25px;
@@ -215,6 +219,9 @@
 }
 .ms-sel-ctn .ms-sel-item .ms-close-btn:hover{
     background-position: 0 0;
+}
+.ms-stacked .ms-sel-item .ms-close-btn {
+    margin-left: 0px;
 }
 .ms-helper{
     color: #AAA;
