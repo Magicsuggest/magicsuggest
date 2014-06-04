@@ -1075,12 +1075,21 @@
                 // build groups
                 if(cfg.groupBy !== null) {
                     _groups = {};
+
                     $.each(data, function(index, value) {
-                        if(_groups[value[cfg.groupBy]] === undefined) {
-                            _groups[value[cfg.groupBy]] = {title: value[cfg.groupBy], items: [value]};
+                        var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
+                        var prop = value[cfg.groupBy];
+                        if(typeof(props) != 'string'){
+                            prop = value;
+                            while(props.length > 0){
+                                prop = prop[props.shift()];
+                            }
+                        }
+                        if(_groups[prop] === undefined) {
+                            _groups[prop] = {title: prop, items: [value]};
                         }
                         else {
-                            _groups[value[cfg.groupBy]].items.push(value);
+                            _groups[prop].items.push(value);
                         }
                     });
                 }
