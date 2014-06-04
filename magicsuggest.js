@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: May 22nd 2014
- * Version:      2.0.4
+ * Last Updated: Jun 3rd 2014
+ * Version:      2.0.5
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -796,7 +796,8 @@
                         (cfg.disabled === true ? ' ms-ctn-disabled' : '') +
                         (cfg.editable === true ? '' : ' ms-ctn-readonly') +
                         (cfg.hideTrigger === false ? '' : ' ms-no-trigger'),
-                    style: cfg.style
+                    style: cfg.style,
+                    id: cfg.id
                 });
                 ms.container.focus($.proxy(handlers._onFocus, this));
                 ms.container.blur($.proxy(handlers._onBlur, this));
