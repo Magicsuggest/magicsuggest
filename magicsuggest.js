@@ -602,7 +602,18 @@
             _hasFocus = false,
             _groups = null,
             _cbData = [],
-            _ctrlDown = false;
+            _ctrlDown = false,
+			KEYCODES = {
+				BACKSPACE: 8,
+				TAB: 9,
+				ENTER: 13,
+				CTRL: 17,
+				ESC: 27,
+				SPACE: 32,
+				UPARROW: 38,
+				DOWNARROW: 40,
+				COMMA: 188
+			};
 
         var self = {
 
@@ -1242,13 +1253,13 @@
                     freeInput = ms.input.val();
                 $(ms).trigger('keydown', [ms, e]);
 
-                if(e.keyCode === 9 && (cfg.useTabKey === false ||
+                if(e.keyCode === KEYCODES.TAB && (cfg.useTabKey === false ||
                     (cfg.useTabKey === true && active.length === 0 && ms.input.val().length === 0))) {
                     handlers._onBlur();
                     return;
                 }
                 switch(e.keyCode) {
-                    case 8: //backspace
+                    case KEYCODES.BACKSPACE:
                         if(freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
                             _selection.pop();
                             self._renderSelection();
@@ -1258,19 +1269,19 @@
                             e.preventDefault();
                         }
                         break;
-                    case 9: // tab
-                    case 27: // esc
-                    case 13: // enter
+                    case KEYCODES.TAB:
+                    case KEYCODES.ESC:
+                    case KEYCODES.ENTER:
                         e.preventDefault();
                         break;
-                    case 17: // ctrl
+                    case KEYCODES.CTRL:
                         _ctrlDown = true;
                         break;
-                    case 40: // down
+                    case KEYCODES.DOWNARROW:
                         e.preventDefault();
                         self._moveSelectedRow("down");
                         break;
-                    case 38: // up
+                    case KEYCODES.UPARROW:
                         e.preventDefault();
                         self._moveSelectedRow("up");
                         break;
@@ -1299,22 +1310,25 @@
                 clearTimeout(_timer);
 
                 // collapse if escape, but keep focus.
-                if(e.keyCode === 27 && cfg.expanded) {
+                if(e.keyCode === KEYCODES.ESC && cfg.expanded) {
                     ms.combobox.hide();
                 }
                 // ignore a bunch of keys
-                if((e.keyCode === 9 && cfg.useTabKey === false) || (e.keyCode > 13 && e.keyCode < 32)) {
-                    if(e.keyCode === 17){
+                if((e.keyCode === KEYCODES.TAB && cfg.useTabKey === false) || (e.keyCode > KEYCODES.ENTER && e.keyCode < KEYCODES.SPACE)) {
+                    if(e.keyCode === KEYCODES.CTRL){
                         _ctrlDown = false;
                     }
                     return;
                 }
                 switch(e.keyCode) {
-                    case 40:case 38: // up, down
+                    case KEYCODES.UPARROW:
+					case KEYCODES.DOWNARROW:
                     e.preventDefault();
                     break;
-                    case 13:case 9:case 188:// enter, tab, comma
-                    if(e.keyCode !== 188 || cfg.useCommaKey === true) {
+                    case KEYCODES.ENTER:
+					case KEYCODES.TAB:
+					case KEYCODES.COMMA:
+                    if(e.keyCode !== KEYCODES.COMMA || cfg.useCommaKey === true) {
                         e.preventDefault();
                         if(cfg.expanded === true){ // if a selection is performed, select it and reset field
                             selected = ms.combobox.find('.ms-res-item-active:first');
