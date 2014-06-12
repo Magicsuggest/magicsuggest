@@ -1259,7 +1259,7 @@
                         }
                         break;
                     case 9: // tab
-                    case 188: // esc
+                    case 27: // esc
                     case 13: // enter
                         e.preventDefault();
                         break;
