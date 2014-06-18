@@ -1439,7 +1439,7 @@
                 $.each(this.children, function(index, child){
                     if(child.nodeName && child.nodeName.toLowerCase() === 'option'){
                         options.data.push({id: child.value, name: child.text});
-                        if(child.selected){
+                        if($(child).attr('selected')){
                             options.value.push(child.value);
                         }
                     }
