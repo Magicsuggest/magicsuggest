@@ -3,7 +3,7 @@
     "version": "2.1.0",
     "main": ["magicsuggest.js", "magicsuggest.css"],
     "dependencies": {
-        "bootstrap": "~3.0.2",
+        "bootstrap": "~3",
         "jquery": ">= 1.8.3"
     }
 }
