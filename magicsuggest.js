@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Jun 3rd 2014
- * Version:      2.0.5
+ * Last Updated: Jul 1st 2014
+ * Version:      2.1.0
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -25,6 +25,17 @@
              * Defaults to true.
              */
             allowFreeEntries: true,
+
+
+            /**
+             * If a single suggestion comes out, it is preselected.
+             */
+            autoSelect: true,
+
+            /**
+             * A function triggered just before the ajax request is sent, similar to jQuery
+             */
+            beforeSend: function(){ },
 
             /**
              * A custom CSS class to apply to the field's underlying element.
@@ -68,7 +79,12 @@
             disabled: false,
 
             /**
-             * name of JSON object property displayed in the combo list
+             * Name of JSON object property that defines the disabled behaviour
+             */
+            disabledField: null,
+
+            /**
+             * Name of JSON object property displayed in the combo list
              */
             displayField: 'name',
 
@@ -205,11 +221,6 @@
             placeholder: 'Type or click here',
 
             /**
-             * If a single suggestion comes out, it is preselected.
-             */
-            autoSelect: true,
-
-            /**
              * A function used to define how the items will be presented in the combo
              */
             renderer: null,
@@ -220,9 +231,14 @@
             required: false,
 
             /**
-             * Set to true to render selection as comma separated string
+             * Set to true to render selection as a delimited string
              */
             resultAsString: false,
+
+            /**
+             * Text delimiter to use in a delimited string.
+             */
+            resultAsStringDelimiter: ',',
 
             /**
              * Name of JSON object property that represents the list of suggested objects
@@ -233,6 +249,11 @@
              * A custom CSS class to add to a selected item
              */
             selectionCls: '',
+
+            /**
+             * An optional element replacement in which the selection is rendered
+             */
+            selectionContainer: null,
 
             /**
              * Where the selected items will be displayed. Only 'right', 'bottom' and 'inner' are valid values
@@ -430,7 +451,7 @@
             var valid = cfg.required === false || _selection.length > 0;
             if(cfg.vtype || cfg.vregex){
                 $.each(_selection, function(index, item){
-                    valid = valid && self._validateSingleItem(item[cfg.displayField]);
+                    valid = valid && self._validateSingleItem(item[cfg.valueField]);
                 });
             }
             return valid;
@@ -647,7 +668,7 @@
                 }
 
                 if(data.length === 1 && cfg.autoSelect === true) {
-                    ms.combobox.children().filter(':last').addClass('ms-res-item-active');
+                    ms.combobox.children().filter(':not(.ms-res-item-disabled):last').addClass('ms-res-item-active');
                 }
 
                 if(data.length === 0 && ms.getRawValue() !== "") {
@@ -704,17 +725,17 @@
                     ms.expand();
                 }
                 var list, start, active, scrollPos;
-                list = ms.combobox.find(".ms-res-item");
+                list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
                 if(dir === 'down') {
                     start = list.eq(0);
                 }
                 else {
                     start = list.filter(':last');
                 }
-                active = ms.combobox.find('.ms-res-item-active:first');
+                active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
                 if(active.length > 0) {
                     if(dir === 'down') {
-                        start = active.nextAll('.ms-res-item').first();
+                        start = active.nextAll('.ms-res-item:not(.ms-res-item-disabled)').first();
                         if(start.length === 0) {
                             start = list.eq(0);
                         }
@@ -725,7 +746,7 @@
                         }
                     }
                     else {
-                        start = active.prevAll('.ms-res-item').first();
+                        start = active.prevAll('.ms-res-item:not(.ms-res-item-disabled)').first();
                         if(start.length === 0) {
                             start = list.filter(':last');
                             ms.combobox.scrollTop(_comboItemHeight * list.length);
@@ -756,6 +777,7 @@
                             type: cfg.method,
                             url: data,
                             data: params,
+                            beforeSend: cfg.beforeSend,
                             success: function(asyncData){
                                 json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
                                 self._processSuggestions(json);
@@ -825,12 +847,17 @@
                 ms.combobox.on('click', 'div.ms-res-item', $.proxy(handlers._onComboItemSelected, this));
                 ms.combobox.on('mouseover', 'div.ms-res-item', $.proxy(handlers._onComboItemMouseOver, this));
 
-                ms.selectionContainer = $('<div/>', {
-                    'class': 'ms-sel-ctn'
-                });
+                if(cfg.selectionContainer){
+                    ms.selectionContainer = cfg.selectionContainer;
+                    $(ms.selectionContainer).addClass('ms-sel-ctn');
+                } else {
+                    ms.selectionContainer = $('<div/>', {
+                        'class': 'ms-sel-ctn'
+                    });
+                }
                 ms.selectionContainer.click($.proxy(handlers._onFocus, this));
 
-                if(cfg.selectionPosition === 'inner') {
+                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.selectionContainer.append(ms.input);
                 }
                 else {
@@ -847,21 +874,23 @@
                 // Render the whole thing
                 $(el).replaceWith(ms.container);
 
-                switch(cfg.selectionPosition) {
-                    case 'bottom':
-                        ms.selectionContainer.insertAfter(ms.container);
-                        if(cfg.selectionStacked === true) {
-                            ms.selectionContainer.width(ms.container.width());
-                            ms.selectionContainer.addClass('ms-stacked');
-                        }
-                        break;
-                    case 'right':
-                        ms.selectionContainer.insertAfter(ms.container);
-                        ms.container.css('float', 'left');
-                        break;
-                    default:
-                        ms.container.append(ms.selectionContainer);
-                        break;
+                if(!cfg.selectionContainer){
+                    switch(cfg.selectionPosition) {
+                        case 'bottom':
+                            ms.selectionContainer.insertAfter(ms.container);
+                            if(cfg.selectionStacked === true) {
+                                ms.selectionContainer.width(ms.container.width());
+                                ms.selectionContainer.addClass('ms-stacked');
+                            }
+                            break;
+                        case 'right':
+                            ms.selectionContainer.insertAfter(ms.container);
+                            ms.container.css('float', 'left');
+                            break;
+                        default:
+                            ms.container.append(ms.selectionContainer);
+                            break;
+                    }
                 }
 
 
@@ -904,18 +933,22 @@
                 }
             },
 
+            /**
+             * Renders each element within the combo box
+             * @private
+             */
             _renderComboItems: function(items, isGrouped) {
                 var ref = this, html = '';
                 $.each(items, function(index, value) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
+                    var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
                     var resultItemEl = $('<div/>', {
                         'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ':'') +
+                            (disabled ? 'ms-res-item-disabled ':'') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
                         html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed,
                         'data-json': JSON.stringify(value)
                     });
-                    resultItemEl.click($.proxy(handlers._onComboItemSelected, ref));
-                    resultItemEl.mouseover($.proxy(handlers._onComboItemMouseOver, ref));
                     html += $('<div/>').append(resultItemEl).html();
                 });
                 ms.combobox.append(html);
@@ -946,7 +979,7 @@
                     if(asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
-                            html: selectedItemHtml + (index === (_selection.length - 1) ? '' : ',')
+                            html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
                         }).data('json', value);
                     }
                     else {
@@ -983,7 +1016,7 @@
                 });
                 ms._valueContainer.appendTo(ms.selectionContainer);
 
-                if(cfg.selectionPosition === 'inner') {
+                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
                     w = ms.container.width() - inputOffset - 42;
@@ -1166,8 +1199,11 @@
              * @private
              */
             _onComboItemMouseOver: function(e) {
-                ms.combobox.children().removeClass('ms-res-item-active');
-                $(e.currentTarget).addClass('ms-res-item-active');
+                var target = $(e.currentTarget);
+                if(!target.hasClass('ms-res-item-disabled')){
+                    ms.combobox.children().removeClass('ms-res-item-active');
+                    target.addClass('ms-res-item-active');
+                }
             },
 
             /**
@@ -1176,7 +1212,10 @@
              * @private
              */
             _onComboItemSelected: function(e) {
-                self._selectItem($(e.currentTarget));
+                var target = $(e.currentTarget);
+                if(!target.hasClass('ms-res-item-disabled')){
+                    self._selectItem($(e.currentTarget));
+                }
             },
 
             /**
@@ -1238,7 +1277,7 @@
              */
             _onKeyDown: function(e) {
                 // check how tab should be handled
-                var active = ms.combobox.find('.ms-res-item-active:first'),
+                var active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
                     freeInput = ms.input.val();
                 $(ms).trigger('keydown', [ms, e]);
 
@@ -1253,7 +1292,7 @@
                             _selection.pop();
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
-                            ms.input.attr('placeholder', (cfg.selectionPosition === 'inner' && this.getValue().length > 0) ? '' : cfg.placeholder);
+                            ms.input.attr('placeholder', (cfg.selectionPosition === 'inner' && ms.getValue().length > 0) ? '' : cfg.placeholder);
                             ms.input.focus();
                             e.preventDefault();
                         }
@@ -1317,7 +1356,7 @@
                     if(e.keyCode !== 188 || cfg.useCommaKey === true) {
                         e.preventDefault();
                         if(cfg.expanded === true){ // if a selection is performed, select it and reset field
-                            selected = ms.combobox.find('.ms-res-item-active:first');
+                            selected = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
                             if(selected.length > 0) {
                                 self._selectItem(selected);
                                 return;

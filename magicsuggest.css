@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Jun 3rd 2014
- * Version:      2.0.5
+ * Last Updated: Jul 1st 2014
+ * Version:      2.1.0
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 .ms-ctn{
@@ -70,7 +70,7 @@
     background: #FFF;
 }
 .ms-ctn input::-ms-clear {
-    width: 0; 
+    width: 0;
     height: 0;
 }
 .ms-ctn .ms-trigger{
@@ -138,6 +138,10 @@
 }
 .ms-res-ctn .ms-res-item-active{
     background-color: #F5F5F5;
+}
+.ms-res-ctn .ms-res-item-disabled{
+    color: #CCC;
+    cursor: default;
 }
 .ms-sel-ctn{
     overflow: auto;
