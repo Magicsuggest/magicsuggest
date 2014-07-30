@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Jul 1st 2014
- * Version:      2.1.0
+ * Last Updated: Jul 30th 2014
+ * Version:      2.1.1
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -26,6 +26,10 @@
              */
             allowFreeEntries: true,
 
+            /**
+             * Additional config object passed to each $.ajax call
+             */
+            ajaxConfig: {},
 
             /**
              * If a single suggestion comes out, it is preselected.
@@ -784,7 +788,7 @@
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
-                        $.ajax({
+                        $.ajax($.extend({
                             type: cfg.method,
                             url: data,
                             data: params,
@@ -802,7 +806,7 @@
                             error: function(){
                                 throw("Could not reach server");
                             }
-                        });
+                        }, cfg.ajaxConfig));
                         return;
                     } else { // results from local array
                         if(data.length > 0 && typeof(data[0]) === 'string') { // results from array of strings

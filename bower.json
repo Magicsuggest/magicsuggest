@@ -1,6 +1,6 @@
 {
     "name": "magicsuggest",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "main": ["magicsuggest.js", "magicsuggest.css"],
     "dependencies": {
         "bootstrap": "~3",
