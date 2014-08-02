@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Jul 30th 2014
- * Version:      2.1.1
+ * Last Updated: Aug 2nd 2014
+ * Version:      2.1.2
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -628,17 +628,17 @@
             _groups = null,
             _cbData = [],
             _ctrlDown = false,
-			KEYCODES = {
-				BACKSPACE: 8,
-				TAB: 9,
-				ENTER: 13,
-				CTRL: 17,
-				ESC: 27,
-				SPACE: 32,
-				UPARROW: 38,
-				DOWNARROW: 40,
-				COMMA: 188
-			};
+            KEYCODES = {
+                BACKSPACE: 8,
+                TAB: 9,
+                ENTER: 13,
+                CTRL: 17,
+                ESC: 27,
+                SPACE: 32,
+                UPARROW: 38,
+                DOWNARROW: 40,
+                COMMA: 188
+            };
 
         var self = {
 
@@ -1317,6 +1317,11 @@
                     case KEYCODES.ENTER:
                         e.preventDefault();
                         break;
+                    case KEYCODES.COMMA:
+                        if(cfg.useCommaKey === true){
+                            e.preventDefault();
+                        }
+                        break;
                     case KEYCODES.CTRL:
                         _ctrlDown = true;
                         break;
@@ -1365,12 +1370,12 @@
                 }
                 switch(e.keyCode) {
                     case KEYCODES.UPARROW:
-					case KEYCODES.DOWNARROW:
+                    case KEYCODES.DOWNARROW:
                     e.preventDefault();
                     break;
                     case KEYCODES.ENTER:
-					case KEYCODES.TAB:
-					case KEYCODES.COMMA:
+                    case KEYCODES.TAB:
+                    case KEYCODES.COMMA:
                     if(e.keyCode !== KEYCODES.COMMA || cfg.useCommaKey === true) {
                         e.preventDefault();
                         if(cfg.expanded === true){ // if a selection is performed, select it and reset field
