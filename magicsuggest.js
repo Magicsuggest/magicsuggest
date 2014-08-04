@@ -27,6 +27,12 @@
             allowFreeEntries: true,
 
             /**
+             * Restricts or allows the user to add the same entry more than once
+             * Defaults to true.
+             */
+            allowDuplicates: true,
+
+            /**
              * Additional config object passed to each $.ajax call
              */
             ajaxConfig: {},
@@ -361,9 +367,14 @@
                 }
                 var valuechanged = false;
                 $.each(items, function(index, json) {
-                    if ($.inArray(json[cfg.valueField], ms.getValue()) === -1) {
+                    if (cfg.allowDuplicates) {
                         _selection.push(json);
                         valuechanged = true;
+                    } else {
+                        if ($.inArray(json[cfg.valueField], ms.getValue()) === -1) {
+                            _selection.push(json);
+                            valuechanged = true;
+                        }    
                     }
                 });
                 if(valuechanged === true) {
@@ -1095,8 +1106,12 @@
                 }
                 // take out the ones that have already been selected
                 $.each(filtered, function(index, obj) {
-                    if($.inArray(obj[cfg.valueField], selectedValues) === -1) {
+                    if (cfg.allowDuplicates) {
                         newSuggestions.push(obj);
+                    } else {
+                        if($.inArray(obj[cfg.valueField], selectedValues) === -1) {
+                            newSuggestions.push(obj);
+                        }    
                     }
                 });
                 // sort the data
