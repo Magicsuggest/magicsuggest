@@ -841,6 +841,8 @@
                 // holds the main div, will relay the focus events to the contained input element.
                 ms.container = $('<div/>', {
                     'class': 'ms-ctn form-control ' + (cfg.resultAsString ? 'ms-as-string ' : '') + cfg.cls +
+                        ($(el).hasClass('input-lg') ? ' input-lg' : '') +
+                        ($(el).hasClass('input-sm') ? ' input-sm' : '') +
                         (cfg.disabled === true ? ' ms-ctn-disabled' : '') +
                         (cfg.editable === true ? '' : ' ms-ctn-readonly') +
                         (cfg.hideTrigger === false ? '' : ' ms-no-trigger'),
