@@ -341,7 +341,13 @@
             /**
              * type to validate against
              */
-            vtype: null
+            vtype: null,
+            /**
+            *format ajax result
+            */
+            formatResultAjax : function(asyncData){
+                return JSON.parse(asyncData)
+            }
         };
 
         var conf = $.extend({},options);
@@ -794,7 +800,7 @@
                             data: params,
                             beforeSend: cfg.beforeSend,
                             success: function(asyncData){
-                                json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
+                                json = typeof(asyncData) === 'string' ? cfg.formatResultAjax(asyncData) : asyncData;
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                                 if(self._asyncValues){
