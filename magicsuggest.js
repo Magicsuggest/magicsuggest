@@ -347,7 +347,12 @@
             */
             formatResultAjax : function(asyncData){
                 return JSON.parse(asyncData)
-            }
+            },
+            /*
+            *filter result in client or not
+            */
+            useClientFilter : true
+            
         };
 
         var conf = $.extend({},options);
@@ -1085,7 +1090,7 @@
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
-                if(q.length > 0) {
+                if(cfg.useClientFilter && qq.length > 0) {
                     $.each(data, function(index, obj) {
                         var name = obj[cfg.displayField];
                         if((cfg.matchCase === true && name.indexOf(q) > -1) ||
