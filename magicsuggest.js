@@ -630,6 +630,16 @@
         {
             cfg.dataUrlParams = $.extend({},params);
         };
+        
+        /**
+         * Sets placeholder
+         * @param placeholder
+         */
+        this.setPlaceholder = function(placeholder)
+        {
+            cfg.placeholder = placeholder;
+            this.input.attr('placeholder', cfg.placeholder);
+        };
 
         /**********  PRIVATE ************/
         var _selection = [],      // selected objects
