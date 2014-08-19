@@ -276,6 +276,11 @@
             selectionStacked: false,
 
             /**
+             * An optional element to append combobox.
+             */
+            comboboxContainer : null,
+
+            /**
              * Direction used for sorting. Only 'asc' and 'desc' are valid values
              */
             sortDir: 'asc',
@@ -352,7 +357,7 @@
             *filter result in client or not
             */
             useClientFilter : true
-            
+
         };
 
         var conf = $.extend({},options);
@@ -442,7 +447,13 @@
         this.expand = function()
         {
             if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().size() > 0)) {
-                this.combobox.appendTo(this.container);
+                this.combobox.appendTo( cfg.comboboxContainer || this.container );
+                if ( cfg.comboboxContainer ) {
+                    var top = this.container.offset().top + this.container.outerHeight( true ) + 2;
+                    var left = this.container.offset().left;
+                    var width = this.container.outerWidth( true );
+                    this.combobox.css( { "top" : top, "left" : left, "width" : width } );
+                }
                 self._processSuggestions();
                 cfg.expanded = true;
                 $(this).trigger('expand', [this]);
@@ -630,7 +641,7 @@
         {
             cfg.dataUrlParams = $.extend({},params);
         };
-        
+
         /**
          * Sets placeholder
          * @param placeholder
