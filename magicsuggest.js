@@ -37,6 +37,11 @@
             autoSelect: true,
 
             /**
+             * Allow customization of query parameter
+             */
+            queryParam: 'query',
+
+            /**
              * A function triggered just before the ajax request is sent, similar to jQuery
              */
             beforeSend: function(){ },
@@ -787,7 +792,9 @@
                     }
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
-                        var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
+                        var queryParams = {}
+                        queryParams[cfg.queryParam] = ms.input.val();
+                        var params = $.extend(queryParams, cfg.dataUrlParams);
                         $.ajax($.extend({
                             type: cfg.method,
                             url: data,
