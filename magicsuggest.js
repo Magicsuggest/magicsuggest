@@ -701,7 +701,8 @@
                 }
 
                 if(data.length === 0 && ms.getRawValue() !== "") {
-                    self._updateHelper(cfg.noSuggestionText);
+                    var noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
+                    self._updateHelper(noSuggestionText);
                     ms.collapse();
                 }
 
