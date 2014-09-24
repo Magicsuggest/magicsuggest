@@ -37,6 +37,11 @@
             autoSelect: true,
 
             /**
+             * Auto select the first matching item with multiple items shown
+             */
+            selectFirst: false,
+
+            /**
              * Allow customization of query parameter
              */
             queryParam: 'query',
@@ -689,6 +694,10 @@
 
                 if(data.length === 1 && cfg.autoSelect === true) {
                     ms.combobox.children().filter(':not(.ms-res-item-disabled):last').addClass('ms-res-item-active');
+                }
+
+                if (cfg.selectFirst === true) {
+                    ms.combobox.children().filter(':not(.ms-res-item-disabled):first').addClass('ms-res-item-active');
                 }
 
                 if(data.length === 0 && ms.getRawValue() !== "") {
