@@ -706,8 +706,14 @@
                     ms.collapse();
                 }
 
-                if(data.length === 0){
-                    ms.combobox.hide();
+                // When free entry is off, add invalid class to input if no data matches
+                if(cfg.allowFreeEntries === false) {
+                  if(data.length === 0) {
+                      $(ms.input).addClass(cfg.invalidCls);
+                      ms.combobox.hide();
+                  } else {
+                    $(ms.input).removeClass(cfg.invalidCls);
+                  }
                 }
             },
 
