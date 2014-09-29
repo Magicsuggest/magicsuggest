@@ -234,3 +234,33 @@
     top: -17px;
     right: 0;
 }
+.ms-ctn.input-lg .ms-trigger .ms-trigger-ico {
+    margin-top: 17px
+}
+.ms-ctn.input-sm .ms-trigger .ms-trigger-ico {
+    margin-top: 13px
+}
+.ms-ctn.input-lg .ms-sel-ctn .ms-sel-item {
+    padding-top: 2px;
+    padding-bottom: 3px;
+}
+.ms-ctn.input-sm .ms-sel-ctn {
+    line-height: 15px;
+}
+.ms-ctn.input-sm .ms-sel-ctn .ms-sel-item {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-top:0;
+    margin-bottom: 0;
+}
+.ms-ctn.input-sm .ms-sel-ctn .ms-sel-item .ms-close-btn {
+    margin-top: 4px;
+}
+.ms-ctn .ms-sel-ctn {
+    margin-left: -7px;
+}
+.ms-ctn .ms-trigger:hover {
+    width:24px;
+    right: 1px;
+    border-radius: 0 3px 3px 0;
+}

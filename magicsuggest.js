@@ -27,6 +27,12 @@
             allowFreeEntries: true,
 
             /**
+             * Restricts or allows the user to add the same entry more than once
+             * Defaults to true.
+             */
+            allowDuplicates: true,
+
+            /**
              * Additional config object passed to each $.ajax call
              */
             ajaxConfig: {},
@@ -361,9 +367,14 @@
                 }
                 var valuechanged = false;
                 $.each(items, function(index, json) {
-                    if ($.inArray(json[cfg.valueField], ms.getValue()) === -1) {
+                    if (cfg.allowDuplicates) {
                         _selection.push(json);
                         valuechanged = true;
+                    } else {
+                        if ($.inArray(json[cfg.valueField], ms.getValue()) === -1) {
+                            _selection.push(json);
+                            valuechanged = true;
+                        }    
                     }
                 });
                 if(valuechanged === true) {
@@ -825,6 +836,8 @@
                 // holds the main div, will relay the focus events to the contained input element.
                 ms.container = $('<div/>', {
                     'class': 'ms-ctn form-control ' + (cfg.resultAsString ? 'ms-as-string ' : '') + cfg.cls +
+                        ($(el).hasClass('input-lg') ? ' input-lg' : '') +
+                        ($(el).hasClass('input-sm') ? ' input-sm' : '') +
                         (cfg.disabled === true ? ' ms-ctn-disabled' : '') +
                         (cfg.editable === true ? '' : ' ms-ctn-readonly') +
                         (cfg.hideTrigger === false ? '' : ' ms-no-trigger'),
@@ -1092,8 +1105,12 @@
                 }
                 // take out the ones that have already been selected
                 $.each(filtered, function(index, obj) {
-                    if($.inArray(obj[cfg.valueField], selectedValues) === -1) {
+                    if (cfg.allowDuplicates) {
                         newSuggestions.push(obj);
+                    } else {
+                        if($.inArray(obj[cfg.valueField], selectedValues) === -1) {
+                            newSuggestions.push(obj);
+                        }    
                     }
                 });
                 // sort the data
