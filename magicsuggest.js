@@ -28,9 +28,9 @@
 
             /**
              * Restricts or allows the user to add the same entry more than once
-             * Defaults to true.
+             * Defaults to false.
              */
-            allowDuplicates: true,
+            allowDuplicates: false,
 
             /**
              * Additional config object passed to each $.ajax call
@@ -377,14 +377,9 @@
                 }
                 var valuechanged = false;
                 $.each(items, function(index, json) {
-                    if (cfg.allowDuplicates) {
+                    if (cfg.allowDuplicates || $.inArray(json[cfg.valueField], ms.getValue()) === -1) {
                         _selection.push(json);
                         valuechanged = true;
-                    } else {
-                        if ($.inArray(json[cfg.valueField], ms.getValue()) === -1) {
-                            _selection.push(json);
-                            valuechanged = true;
-                        }    
                     }
                 });
                 if(valuechanged === true) {
@@ -1136,12 +1131,8 @@
                 }
                 // take out the ones that have already been selected
                 $.each(filtered, function(index, obj) {
-                    if (cfg.allowDuplicates) {
+                    if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
                         newSuggestions.push(obj);
-                    } else {
-                        if($.inArray(obj[cfg.valueField], selectedValues) === -1) {
-                            newSuggestions.push(obj);
-                        }    
                     }
                 });
                 // sort the data
