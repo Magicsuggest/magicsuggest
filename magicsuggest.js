@@ -43,6 +43,16 @@
             autoSelect: true,
 
             /**
+             * Auto select the first matching item with multiple items shown
+             */
+            selectFirst: false,
+
+            /**
+             * Allow customization of query parameter
+             */
+            queryParam: 'query',
+
+            /**
              * A function triggered just before the ajax request is sent, similar to jQuery
              */
             beforeSend: function(){ },
@@ -697,13 +707,24 @@
                     ms.combobox.children().filter(':not(.ms-res-item-disabled):last').addClass('ms-res-item-active');
                 }
 
+                if (cfg.selectFirst === true) {
+                    ms.combobox.children().filter(':not(.ms-res-item-disabled):first').addClass('ms-res-item-active');
+                }
+
                 if(data.length === 0 && ms.getRawValue() !== "") {
-                    self._updateHelper(cfg.noSuggestionText);
+                    var noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
+                    self._updateHelper(noSuggestionText);
                     ms.collapse();
                 }
 
-                if(data.length === 0){
-                    ms.combobox.hide();
+                // When free entry is off, add invalid class to input if no data matches
+                if(cfg.allowFreeEntries === false) {
+                  if(data.length === 0) {
+                      $(ms.input).addClass(cfg.invalidCls);
+                      ms.combobox.hide();
+                  } else {
+                    $(ms.input).removeClass(cfg.invalidCls);
+                  }
                 }
             },
 
@@ -801,7 +822,9 @@
                     }
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
-                        var params = $.extend({query: ms.input.val()}, cfg.dataUrlParams);
+                        var queryParams = {}
+                        queryParams[cfg.queryParam] = ms.input.val();
+                        var params = $.extend(queryParams, cfg.dataUrlParams);
                         $.ajax($.extend({
                             type: cfg.method,
                             url: data,
