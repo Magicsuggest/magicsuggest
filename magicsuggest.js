@@ -728,6 +728,14 @@
              */
             _highlightSuggestion: function(html) {
                 var q = ms.input.val();
+
+                //escape special regex characters
+                var specialCharacters = ['^', '$', '*', '+', '?', '.', '(', ')', ':', '!', '|', '{', '}', '[', ']'];
+
+                $.each(specialCharacters, function (index, value) {
+                    q = q.replace(value, "\\" + value);
+                })
+
                 if(q.length === 0) {
                     return html; // nothing entered as input
                 }
