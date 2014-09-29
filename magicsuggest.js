@@ -4,8 +4,8 @@
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Aug 2nd 2014
- * Version:      2.1.2
+ * Last Updated: Sep 28th 2014
+ * Version:      2.1.3
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function($)
@@ -721,13 +721,8 @@
                     return html; // nothing entered as input
                 }
 
-                if(cfg.matchCase === true) {
-                    html = html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)','g'), '<em>$1</em>');
-                }
-                else {
-                    html = html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)','gi'), '<em>$1</em>');
-                }
-                return html;
+                var glob = cfg.matchCase === true ? 'g' : 'gi';
+                return html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)', glob), '<em>$1</em>');
             },
 
             /**
@@ -920,14 +915,16 @@
                 }
 
                 // do not perform an initial call if we are using ajax unless we have initial values
-                if(cfg.value !== null){
+                if(cfg.value !== null || cfg.data !== null){
                     if(typeof(cfg.data) === 'string'){
                         self._asyncValues = cfg.value;
                         self._processSuggestions();
                     } else {
                         self._processSuggestions();
-                        ms.setValue(cfg.value);
-                        self._renderSelection();
+                        if(cfg.value !== null){
+                            ms.setValue(cfg.value);
+                            self._renderSelection();
+                        }
                     }
 
                 }
@@ -1314,8 +1311,12 @@
                         break;
                     case KEYCODES.TAB:
                     case KEYCODES.ESC:
-                    case KEYCODES.ENTER:
                         e.preventDefault();
+                        break;
+                    case KEYCODES.ENTER:
+                        if(freeInput !== '' || cfg.expanded){
+                            e.preventDefault();
+                        }
                         break;
                     case KEYCODES.COMMA:
                         if(cfg.useCommaKey === true){
