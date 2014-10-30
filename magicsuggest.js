@@ -644,6 +644,7 @@
             _groups = null,
             _cbData = [],
             _ctrlDown = false,
+			_cntInMf = false, // Content is in modification mode.
             KEYCODES = {
                 BACKSPACE: 8,
                 TAB: 9,
@@ -1048,6 +1049,9 @@
                             }).data('json', value).appendTo(selectedItemEl);
 
                             delItemEl.click($.proxy(handlers._onTagTriggerClick, ref));
+							if (cfg.allowFreeEntries === true){
+								selectedItemEl.dblclick($.proxy(handlers._onTagEditTriggerDblClick, ref));
+							}
                         }
                     }
 
@@ -1226,6 +1230,7 @@
             _onBlur: function() {
                 ms.container.removeClass('ms-ctn-focus');
                 ms.collapse();
+				_cntInMf = false;
                 _hasFocus = false;
                 if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
                     var obj = {};
@@ -1275,8 +1280,15 @@
              * Triggered when focusing on the container div. Will focus on the input field instead.
              * @private
              */
-            _onFocus: function() {
-                ms.input.focus();
+             _onFocus: function() {
+				if (!_cntInMf)
+				{
+					ms.input.focus();
+				}
+				else
+				{
+					_cntInMf = false;
+				}
             },
 
             /**
@@ -1284,7 +1296,7 @@
              * @private
              */
             _onInputClick: function(){
-                if (ms.isDisabled() === false && _hasFocus) {
+                if (ms.isDisabled() === false && _hasFocus && !_cntInMf) {
                     if (cfg.toggleOnClick === true) {
                         if (cfg.expanded){
                             ms.collapse();
@@ -1300,7 +1312,7 @@
              * @private
              */
             _onInputFocus: function() {
-                if(ms.isDisabled() === false && !_hasFocus) {
+                if(ms.isDisabled() === false && !_hasFocus && !_cntInMf) {
                     _hasFocus = true;
                     ms.container.addClass('ms-ctn-focus');
                     ms.container.removeClass(cfg.invalidCls);
@@ -1316,7 +1328,7 @@
                         self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
                     }
 
-                    self._renderSelection();
+                    setTimeout(function(){self._renderSelection()},300);
                     $(ms).trigger('focus', [ms]);
                 }
             },
@@ -1478,7 +1490,23 @@
             _onTagTriggerClick: function(e) {
                 ms.removeFromSelection($(e.currentTarget).data('json'));
             },
-
+			
+			/**
+			 * Triggerd when double clicking upon selected item in order to edit its content
+			 * @param e
+			 * @private
+			 */
+			_onTagEditTriggerDblClick: function(e) {
+				var itemData = $(e.currentTarget).data('json');
+				if (ms.input.val() === '')
+				{
+					ms.input.val(itemData.label);
+					ms.removeFromSelection(itemData);
+					ms.input.select();
+					_cntInMf = true; // item is in modification mode
+				}
+			},
+			
             /**
              * Triggered when clicking on the small trigger in the right
              * @private
