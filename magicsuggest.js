@@ -1111,7 +1111,7 @@
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
-                if(cfg.useClientFilter && qq.length > 0) {
+                if(cfg.useClientFilter && q.length > 0) {
                     $.each(data, function(index, obj) {
                         var name = obj[cfg.displayField];
                         if((cfg.matchCase === true && name.indexOf(q) > -1) ||
