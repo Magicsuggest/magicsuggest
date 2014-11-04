@@ -102,6 +102,11 @@
              * Name of JSON object property that defines the disabled behaviour
              */
             disabledField: null,
+            
+            /**
+             * Name of JSON object property that defines the close button disabled behaviour
+             */
+            closeDisabledField: null,            
 
             /**
              * Name of JSON object property displayed in the combo list
@@ -750,7 +755,7 @@
 
                 $.each(specialCharacters, function (index, value) {
                     q = q.replace(value, "\\" + value);
-                })
+                });
 
                 if(q.length === 0) {
                     return html; // nothing entered as input
@@ -817,7 +822,7 @@
                     }
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
-                        var queryParams = {}
+                        var queryParams = {};
                         queryParams[cfg.queryParam] = ms.input.val();
                         var params = $.extend(queryParams, cfg.dataUrlParams);
                         $.ajax($.extend({
@@ -1027,6 +1032,8 @@
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
+                    
+                    var closeDisabled = cfg.closeDisabledField !== null && value[cfg.closeDisabledField] === true;
 
                     // tag representing selected value
                     if(asText === true) {
@@ -1041,7 +1048,7 @@
                             html: selectedItemHtml
                         }).data('json', value);
 
-                        if(cfg.disabled === false){
+                        if(cfg.disabled === false && closeDisabled === false){
                             // small cross img
                             delItemEl = $('<span/>', {
                                 'class': 'ms-close-btn'
@@ -1413,29 +1420,29 @@
                 switch(e.keyCode) {
                     case KEYCODES.UPARROW:
                     case KEYCODES.DOWNARROW:
-                    e.preventDefault();
-                    break;
+                        e.preventDefault();
+                        break;
                     case KEYCODES.ENTER:
                     case KEYCODES.TAB:
                     case KEYCODES.COMMA:
-                    if(e.keyCode !== KEYCODES.COMMA || cfg.useCommaKey === true) {
-                        e.preventDefault();
-                        if(cfg.expanded === true){ // if a selection is performed, select it and reset field
-                            selected = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
-                            if(selected.length > 0) {
-                                self._selectItem(selected);
-                                return;
+                        if(e.keyCode !== KEYCODES.COMMA || cfg.useCommaKey === true) {
+                            e.preventDefault();
+                            if(cfg.expanded === true){ // if a selection is performed, select it and reset field
+                                selected = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
+                                if(selected.length > 0) {
+                                    self._selectItem(selected);
+                                    return;
+                                }
+                            }
+                            // if no selection or if freetext entered and free entries allowed, add new obj to selection
+                            if(inputValid === true && cfg.allowFreeEntries === true) {
+                                obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
+                                ms.addToSelection(obj);
+                                ms.collapse(); // reset combo suggestions
+                                ms.input.focus();
                             }
                         }
-                        // if no selection or if freetext entered and free entries allowed, add new obj to selection
-                        if(inputValid === true && cfg.allowFreeEntries === true) {
-                            obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
-                            ms.addToSelection(obj);
-                            ms.collapse(); // reset combo suggestions
-                            ms.input.focus();
-                        }
                         break;
-                    }
                     default:
                         if(_selection.length === cfg.maxSelection){
                             self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
