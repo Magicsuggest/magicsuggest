@@ -1073,6 +1073,9 @@
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
                     w = ms.container.width() - inputOffset - 42;
+                    if(w < 0) {
+                        w = ms.container.width();
+                    }
                     ms.input.width(w);
                 }
 
