@@ -162,6 +162,10 @@
     border: 1px solid #DDD;
     margin: 3px 0px 1px 0;
 }
+/* Width for single selection boxes */
+.ms-sel-ctn .ms-sel-item.ms-single{
+    width: 95%;
+}
 .ms-sel-ctn .ms-sel-invalid{
     border-color: rgb(248, 165, 165) !important;
     background: #FDF2F2 !important;

@@ -214,6 +214,12 @@
             maxSelection: 10,
 
             /**
+             * If set to true puts the magic suggest control in single-selection mode.
+             * This setting overrides the maxSelection attribute, effectively allowing only one selection and making some changes to the magic suggest behaviour.
+             */
+            singleSelection: false,
+
+            /**
              * A function that defines the helper text when the max selection amount has been reached. The function has a single
              *    parameter which is the number of selected elements.
              */
@@ -383,6 +389,11 @@
         var conf = $.extend({},options);
         var cfg = $.extend(true, {}, defaults, conf);
 
+        cfg._getMaxSelection = function () {
+            //should be called instead of just using cfg.maxSelection in most/all places in the control (to account for the added 'singleSelection' property)
+            return cfg.singleSelection ? 1 : cfg.maxSelection;
+        };
+
         /**********  PUBLIC METHODS ************/
         /**
          * Add one or multiple json items to the current selection
@@ -391,7 +402,7 @@
          */
         this.addToSelection = function(items, isSilent)
         {
-            if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
+            if (!cfg._getMaxSelection() || _selection.length < cfg._getMaxSelection()) {
                 if (!$.isArray(items)) {
                     items = [items];
                 }
@@ -566,7 +577,7 @@
                 if(isSilent !== true){
                     $(this).trigger('selectionchange', [this, this.getSelection()]);
                 }
-                if(cfg.expandOnFocus){
+                if(cfg.expandOnFocus && !cfg.singleSelection){
                     ms.expand();
                 }
                 if(cfg.expanded) {
@@ -1106,13 +1117,13 @@
                     // tag representing selected value
                     if(asText === true) {
                         selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
+                            'class': (cfg.singleSelection ? 'ms-sel-item ms-sel-text ms-single ' : 'ms-sel-item ms-sel-text ') + cfg.selectionCls + validCls,
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
                         }).data('json', value);
                     }
                     else {
                         selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
+                            'class': (cfg.singleSelection ? 'ms-sel-item ms-single ' : 'ms-sel-item ') + cfg.selectionCls + validCls,
                             html: selectedItemHtml
                         }).data('json', value);
 
@@ -1146,12 +1157,16 @@
 
                 if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.input.width(0);
-                    inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
-                    w = ms.container.width() - inputOffset - 42;
-                    ms.input.width(w);
+
+                    // We don't render the 'input' for 'singleSelection' controls, as it was readonly anyways
+                    if (!(cfg.singleSelection && _selection.length === cfg._getMaxSelection())) {
+                        inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
+                        w = ms.container.width() - inputOffset - 42;
+                        ms.input.width(w);
+                    }
                 }
 
-                if(_selection.length === cfg.maxSelection){
+                if(_selection.length === cfg._getMaxSelection()){
                     self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
                 } else {
                     ms.helper.hide();
@@ -1164,12 +1179,12 @@
              * @private
              */
             _selectItem: function(item) {
-                if(cfg.maxSelection === 1){
+                if(cfg._getMaxSelection() === 1){
                     _selection = [];
                 }
                 ms.addToSelection(item.data('json'));
                 item.removeClass('ms-res-item-active');
-                if(cfg.expandOnFocus === false || _selection.length === cfg.maxSelection){
+                if(cfg.expandOnFocus === false || _selection.length === cfg._getMaxSelection()){
                     ms.collapse();
                 }
                 if(!_hasFocus){
@@ -1385,7 +1400,7 @@
                         ms.expand();
                     }
 
-                    if(_selection.length === cfg.maxSelection) {
+                    if(_selection.length === cfg._getMaxSelection()) {
                         self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
                     } else if(curLength < cfg.minChars) {
                         self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
@@ -1451,7 +1466,7 @@
                         self._moveSelectedRow("up");
                         break;
                     default:
-                        if(_selection.length === cfg.maxSelection) {
+                        if(_selection.length === cfg._getMaxSelection()) {
                             e.preventDefault();
                         }
                         break;
@@ -1512,7 +1527,7 @@
                         break;
                     }
                     default:
-                        if(_selection.length === cfg.maxSelection){
+                        if(_selection.length === cfg._getMaxSelection()){
                             self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
                         }
                         else {
@@ -1559,18 +1574,19 @@
              * @private
              */
             _onTriggerClick: function() {
-                if(ms.isDisabled() === false && !(cfg.expandOnFocus === true && _selection.length === cfg.maxSelection)) {
-                    $(ms).trigger('triggerclick', [ms]);
-                    if(cfg.expanded === true) {
-                        ms.collapse();
+                if (ms.isDisabled()) return;
+                if ((cfg.expandOnFocus && _selection.length === cfg._getMaxSelection()) && !cfg.singleSelection) return;
+
+                $(ms).trigger('triggerclick', [ms]);
+                if(cfg.expanded === true) {
+                    ms.collapse();
+                } else {
+                    var curLength = ms.getRawValue().length;
+                    if(curLength >= cfg.minChars){
+                        ms.input.focus();
+                        ms.expand();
                     } else {
-                        var curLength = ms.getRawValue().length;
-                        if(curLength >= cfg.minChars){
-                            ms.input.focus();
-                            ms.expand();
-                        } else {
-                            self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
-                        }
+                        self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
                     }
                 }
             },
