@@ -89,6 +89,16 @@
             data: null,
 
             /**
+             * If set to true and 'data' is a function, it treats it as an asynchronous call that will receive the following arguments:
+             * 1) The magic suggest 'ms' js object
+             * 2) The query value
+             * 3) A callback function that MUST be called when the operation is finished and has two parameters:
+             * 3.1) The data
+             * 3.2) A boolean indicating if the call produced an error
+             */
+            dataFunctionHasCallback: false,
+
+            /**
              * If an URL is set for this property, the retrieved image is used and shown in the  dropdown when data is loading as an ajax/async call.
              */
             loadingImageUrl: null,
@@ -827,51 +837,34 @@
                 var json = null, data = source || cfg.data;
                 if(data !== null) {
                     if(typeof(data) === 'function'){
-                        data = data.call(ms, ms.getRawValue());
-                    }
-                    if(typeof(data) === 'string') { // get results from ajax
-                        $(ms).trigger('beforeload', [ms]);
+                        if (cfg.dataFunctionHasCallback) {
+                            $(ms).trigger('beforeload', [ms]);
 
-                        //display loading image if required
-                        if (cfg.loadingImageUrl && !ms.loadingImage)
-                        {
-                            ms.combobox.empty();
-                            ms.loadingImage = $('<img/>', {
-                                src: cfg.loadingImageUrl,
-                                'class': 'loading-image-cls '
-                            }).appendTo(ms.combobox);
-                            ms.combobox.height(cfg.loadingImageHeight);
+                            //Asynchronous function
+                            var asyncFunction = data;
+                            var callback = self._processSuggestionsAsyncCallback;
+                            self._processSuggestionsAsyncCall(asyncFunction, callback);
+                            return;
                         }
+                        else {
+                            //Synchronous function
+                            data = data.call(ms, ms.getRawValue());
+                        }
+                    }
+                    else if(typeof(data) === 'string') { // get results from ajax
+                        var asyncFunction = function () {
+                            var ajaxParams = $.extend({ query: ms.input.val() }, cfg.dataUrlParams);
+                            $.ajax($.extend({
+                                type: cfg.method,
+                                url: data,
+                                data: ajaxParams,
+                                beforeSend: cfg.beforeSend,
+                                success: function (asyncData) { self._processSuggestionsAsyncCallback(asyncData, false); },
+                                error: function (err) { self._processSuggestionsAsyncCallback(err, true); }
+                            }, cfg.ajaxConfig));
+                        };
 
-                        var queryParams = {}
-                        queryParams[cfg.queryParam] = ms.input.val();
-                        var params = $.extend(queryParams, cfg.dataUrlParams);
-                        $.ajax($.extend({
-                            type: cfg.method,
-                            url: data,
-                            data: params,
-                            beforeSend: cfg.beforeSend,
-                            success: function(asyncData){
-                                json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
-
-                                //hide loading image if present
-                                if (ms.loadingImage) {
-                                    ms.loadingImage.remove();
-                                    ms.loadingImage = null;
-                                }
-
-                                self._processSuggestions(json);
-                                $(ms).trigger('load', [ms, json]);
-                                if(self._asyncValues){
-                                    ms.setValue(typeof(self._asyncValues) === 'string' ? JSON.parse(self._asyncValues) : self._asyncValues);
-                                    self._renderSelection();
-                                    delete(self._asyncValues);
-                                }
-                            },
-                            error: function(){
-                                throw("Could not reach server");
-                            }
-                        }, cfg.ajaxConfig));
+                        self._processSuggestionsAsyncCall(asyncFunction);
                         return;
                     } else { // results from local array
                         if(data.length > 0 && typeof(data[0]) === 'string') { // results from array of strings
@@ -883,6 +876,55 @@
                     var sortedData = cfg.mode === 'remote' ? _cbData : self._sortAndTrim(_cbData);
                     self._displaySuggestions(self._group(sortedData));
 
+                }
+            },
+
+            /**
+             * Process the call of an asynchronous retrieval of the data to display
+             * @private
+             */
+            _processSuggestionsAsyncCall: function (asyncFunction, callback) {
+                $(ms).trigger('beforeload', [ms]);
+
+                //display loading image if required
+                if (cfg.loadingImageUrl && !ms.loadingImage)
+                {
+                    ms.combobox.empty();
+                    ms.loadingImage = $('<img/>', {
+                        src: cfg.loadingImageUrl,
+                        'class': 'loading-image-cls '
+                    }).appendTo(ms.combobox);
+                    ms.combobox.height(cfg.loadingImageHeight);
+                }
+
+                var query = ms.input.val();
+                asyncFunction(ms, query, callback);
+            },
+
+            /**
+             * Process the end and results of an asynchronous retrieval of the data to display
+             * @private
+             */
+            _processSuggestionsAsyncCallback: function (asyncData, isError) {
+                if (isError) {
+                    throw ("Could not reach server");
+                }
+
+                var json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
+
+                //hide loading image if present
+                if (ms.loadingImage) {
+                    ms.loadingImage.remove();
+                    ms.loadingImage = null;
+                }
+
+                self._processSuggestions(json);
+                $(ms).trigger('load', [ms, json]);
+
+                if(self._asyncValues){
+                    ms.setValue(typeof(self._asyncValues) === 'string' ? JSON.parse(self._asyncValues) : self._asyncValues);
+                    self._renderSelection();
+                    delete(self._asyncValues);
                 }
             },
 
