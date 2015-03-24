@@ -89,6 +89,16 @@
             data: null,
 
             /**
+             * If an URL is set for this property, the retrieved image is used and shown in the  dropdown when data is loading as an ajax/async call.
+             */
+            loadingImageUrl: null,
+
+            /**
+             * The height of the image that will be use as a loading image, to set the combobox height appropriately.
+             */
+            loadingImageHeight: 40,
+
+            /**
              * Additional parameters to the ajax call
              */
             dataUrlParams: {},
@@ -410,6 +420,10 @@
             if (cfg.expanded === true) {
                 this.combobox.detach();
                 cfg.expanded = false;
+
+                //get rid of the reference to the loading image just in case it was being shown
+                ms.loadingImage = null;
+
                 $(this).trigger('collapse', [this]);
             }
         };
@@ -817,6 +831,18 @@
                     }
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
+
+                        //display loading image if required
+                        if (cfg.loadingImageUrl && !ms.loadingImage)
+                        {
+                            ms.combobox.empty();
+                            ms.loadingImage = $('<img/>', {
+                                src: cfg.loadingImageUrl,
+                                'class': 'loading-image-cls '
+                            }).appendTo(ms.combobox);
+                            ms.combobox.height(cfg.loadingImageHeight);
+                        }
+
                         var queryParams = {}
                         queryParams[cfg.queryParam] = ms.input.val();
                         var params = $.extend(queryParams, cfg.dataUrlParams);
@@ -827,6 +853,13 @@
                             beforeSend: cfg.beforeSend,
                             success: function(asyncData){
                                 json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
+
+                                //hide loading image if present
+                                if (ms.loadingImage) {
+                                    ms.loadingImage.remove();
+                                    ms.loadingImage = null;
+                                }
+
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
                                 if(self._asyncValues){
