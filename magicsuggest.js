@@ -956,7 +956,7 @@
                 $(window).resize($.proxy(handlers._onWindowResized, this));
 
                 // do not perform an initial call if we are using ajax unless we have initial values
-                if(cfg.value !== null || cfg.data !== null){
+                if(cfg.value !== null && cfg.data !== null){
                     if(typeof(cfg.data) === 'string'){
                         self._asyncValues = cfg.value;
                         self._processSuggestions();
