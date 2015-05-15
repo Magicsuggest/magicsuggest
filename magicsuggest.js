@@ -372,6 +372,11 @@
                 if (!$.isArray(items)) {
                     items = [items];
                 }
+                items.sort(function (a, b) { // disabled fields first
+                    if (a[cfg.disabledField] === b[cfg.disabledField]) { return 0; }
+                    else if (a[cfg.disabledField]) { return -1; }
+                    return 1;
+                });
                 var valuechanged = false;
                 $.each(items, function (index, json) {
                     if (cfg.allowDuplicates || $.inArray(json[cfg.valueField], ms.getValue()) === -1) {
@@ -589,7 +594,7 @@
                 // first try to see if we have the full objects from our data set
                 var found = false;
                 $.each(_cbData, function (i, item) {
-                    if (item[cfg.valueField] == value) {
+                    if (item[cfg.valueField] === value) {
                         items.push(item);
                         found = true;
                         return false;
@@ -733,7 +738,7 @@
 
                 $.each(specialCharacters, function (index, value) {
                     q = q.replace(value, "\\" + value);
-                })
+                });
 
                 if (q.length === 0) {
                     return html; // nothing entered as input
@@ -800,7 +805,7 @@
                     }
                     if (typeof (data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
-                        var queryParams = {}
+                        var queryParams = {};
                         queryParams[cfg.queryParam] = ms.input.val();
                         var params = $.extend(queryParams, cfg.dataUrlParams);
                         $.ajax($.extend({
@@ -1007,6 +1012,8 @@
                 $.each(_selection, function (index, value) {
 
                     var selectedItemEl, delItemEl,
+                        disabled = cfg.disabledField !== null && value[cfg.disabledField] === true,
+                        disabledCls = " ms-res-item-disabled",
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
@@ -1014,7 +1021,7 @@
                     // tag representing selected value
                     if (asText === true) {
                         selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
+                            'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls + disabled ? disabledCls : '',
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
                         }).data('json', value);
                     }
@@ -1024,7 +1031,7 @@
                             html: selectedItemHtml
                         }).data('json', value);
 
-                        if (cfg.disabled === false) {
+                        if (cfg.disabled === false && !value[cfg.disabledField]) {
                             // small cross img
                             delItemEl = $('<span/>', {
                                 'class': 'ms-close-btn'
@@ -1148,7 +1155,7 @@
                     $.each(data, function (index, value) {
                         var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
                         var prop = value[cfg.groupBy];
-                        if (typeof (props) != 'string') {
+                        if (typeof (props) !== 'string') {
                             prop = value;
                             while (props.length > 0) {
                                 prop = prop[props.shift()];
@@ -1314,7 +1321,8 @@
             _onKeyDown: function (e) {
                 // check how tab should be handled
                 var active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
-                    freeInput = ms.input.val();
+                    freeInput = ms.input.val(),
+                    lastElement = _selection.length - 1;
                 $(ms).trigger('keydown', [ms, e]);
 
                 if (e.keyCode === KEYCODES.TAB && (cfg.useTabKey === false ||
@@ -1324,7 +1332,7 @@
                 }
                 switch (e.keyCode) {
                     case KEYCODES.BACKSPACE:
-                        if (freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
+                        if (freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner' && !_selection[lastElement][cfg.disabledField]) {
                             _selection.pop();
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
