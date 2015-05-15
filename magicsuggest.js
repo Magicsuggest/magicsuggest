@@ -8,11 +8,9 @@
  * Version:      2.1.4
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
-(function($)
-{
+(function ($) {
     "use strict";
-    var MagicSuggest = function(element, options)
-    {
+    var MagicSuggest = function (element, options) {
         var ms = this;
 
         /**
@@ -55,7 +53,7 @@
             /**
              * A function triggered just before the ajax request is sent, similar to jQuery
              */
-            beforeSend: function(){ },
+            beforeSend: function () { },
 
             /**
              * A custom CSS class to apply to the field's underlying element.
@@ -178,8 +176,8 @@
             /**
              * A function that defines the helper text when the max entry length has been surpassed.
              */
-            maxEntryRenderer: function(v) {
-                return 'Please reduce your entry by ' + v + ' character' + (v > 1 ? 's':'');
+            maxEntryRenderer: function (v) {
+                return 'Please reduce your entry by ' + v + ' character' + (v > 1 ? 's' : '');
             },
 
             /**
@@ -197,8 +195,8 @@
              * A function that defines the helper text when the max selection amount has been reached. The function has a single
              *    parameter which is the number of selected elements.
              */
-            maxSelectionRenderer: function(v) {
-                return 'You cannot choose more than ' + v + ' item' + (v > 1 ? 's':'');
+            maxSelectionRenderer: function (v) {
+                return 'You cannot choose more than ' + v + ' item' + (v > 1 ? 's' : '');
             },
 
             /**
@@ -215,8 +213,8 @@
              * A function that defines the helper text when not enough letters are set. The function has a single
              *    parameter which is the difference between the required amount of letters and the current one.
              */
-            minCharsRenderer: function(v) {
-                return 'Please type ' + v + ' more character' + (v > 1 ? 's':'');
+            minCharsRenderer: function (v) {
+                return 'Please type ' + v + ' more character' + (v > 1 ? 's' : '');
             },
 
             /**
@@ -360,7 +358,7 @@
             vtype: null
         };
 
-        var conf = $.extend({},options);
+        var conf = $.extend({}, options);
         var cfg = $.extend(true, {}, defaults, conf);
 
         /**********  PUBLIC METHODS ************/
@@ -369,20 +367,19 @@
          * @param items - json object or array of json objects
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.addToSelection = function(items, isSilent)
-        {
+        this.addToSelection = function (items, isSilent) {
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
                 if (!$.isArray(items)) {
                     items = [items];
                 }
                 var valuechanged = false;
-                $.each(items, function(index, json) {
+                $.each(items, function (index, json) {
                     if (cfg.allowDuplicates || $.inArray(json[cfg.valueField], ms.getValue()) === -1) {
                         _selection.push(json);
                         valuechanged = true;
                     }
                 });
-                if(valuechanged === true) {
+                if (valuechanged === true) {
                     self._renderSelection();
                     this.empty();
                     if (isSilent !== true) {
@@ -397,16 +394,14 @@
          * Clears the current selection
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.clear = function(isSilent)
-        {
+        this.clear = function (isSilent) {
             this.removeFromSelection(_selection.slice(0), isSilent); // clone array to avoid concurrency issues
         };
 
         /**
          * Collapse the drop down part of the combo
          */
-        this.collapse = function()
-        {
+        this.collapse = function () {
             if (cfg.expanded === true) {
                 this.combobox.detach();
                 cfg.expanded = false;
@@ -417,8 +412,7 @@
         /**
          * Set the component in a disabled state.
          */
-        this.disable = function()
-        {
+        this.disable = function () {
             this.container.addClass('ms-ctn-disabled');
             cfg.disabled = true;
             ms.input.attr('disabled', true);
@@ -427,15 +421,14 @@
         /**
          * Empties out the combo user text
          */
-        this.empty = function(){
+        this.empty = function () {
             this.input.val('');
         };
 
         /**
          * Set the component in a enable state.
          */
-        this.enable = function()
-        {
+        this.enable = function () {
             this.container.removeClass('ms-ctn-disabled');
             cfg.disabled = false;
             ms.input.attr('disabled', false);
@@ -444,8 +437,7 @@
         /**
          * Expand the drop drown part of the combo.
          */
-        this.expand = function()
-        {
+        this.expand = function () {
             if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().size() > 0)) {
                 this.combobox.appendTo(this.container);
                 self._processSuggestions();
@@ -457,8 +449,7 @@
         /**
          * Retrieve component enabled status
          */
-        this.isDisabled = function()
-        {
+        this.isDisabled = function () {
             return cfg.disabled;
         };
 
@@ -466,11 +457,10 @@
          * Checks whether the field is valid or not
          * @return {boolean}
          */
-        this.isValid = function()
-        {
+        this.isValid = function () {
             var valid = cfg.required === false || _selection.length > 0;
-            if(cfg.vtype || cfg.vregex){
-                $.each(_selection, function(index, item){
+            if (cfg.vtype || cfg.vregex) {
+                $.each(_selection, function (index, item) {
                     valid = valid && self._validateSingleItem(item[cfg.valueField]);
                 });
             }
@@ -480,16 +470,14 @@
         /**
          * Gets the data params for current ajax request
          */
-        this.getDataUrlParams = function()
-        {
+        this.getDataUrlParams = function () {
             return cfg.dataUrlParams;
         };
 
         /**
          * Gets the name given to the form input
          */
-        this.getName = function()
-        {
+        this.getName = function () {
             return cfg.name;
         };
 
@@ -497,24 +485,22 @@
          * Retrieve an array of selected json objects
          * @return {Array}
          */
-        this.getSelection = function()
-        {
+        this.getSelection = function () {
             return _selection;
         };
 
         /**
          * Retrieve the current text entered by the user
          */
-        this.getRawValue = function(){
+        this.getRawValue = function () {
             return ms.input.val();
         };
 
         /**
          * Retrieve an array of selected values
          */
-        this.getValue = function()
-        {
-            return $.map(_selection, function(o) {
+        this.getValue = function () {
+            return $.map(_selection, function (o) {
                 return o[cfg.valueField];
             });
         };
@@ -524,13 +510,12 @@
          * @param items - json object or array of json objects
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.removeFromSelection = function(items, isSilent)
-        {
+        this.removeFromSelection = function (items, isSilent) {
             if (!$.isArray(items)) {
                 items = [items];
             }
             var valuechanged = false;
-            $.each(items, function(index, json) {
+            $.each(items, function (index, json) {
                 var i = $.inArray(json[cfg.valueField], ms.getValue());
                 if (i > -1) {
                     _selection.splice(i, 1);
@@ -539,13 +524,13 @@
             });
             if (valuechanged === true) {
                 self._renderSelection();
-                if(isSilent !== true){
+                if (isSilent !== true) {
                     $(this).trigger('selectionchange', [this, this.getSelection()]);
                 }
-                if(cfg.expandOnFocus){
+                if (cfg.expandOnFocus) {
                     ms.expand();
                 }
-                if(cfg.expanded) {
+                if (cfg.expanded) {
                     self._processSuggestions();
                 }
             }
@@ -555,7 +540,7 @@
         /**
          * Get current data
          */
-        this.getData = function(){
+        this.getData = function () {
             return _cbData;
         };
 
@@ -563,7 +548,7 @@
          * Set up some combo data after it has been rendered
          * @param data
          */
-        this.setData = function(data){
+        this.setData = function (data) {
             cfg.data = data;
             self._processSuggestions();
         };
@@ -572,13 +557,13 @@
          * Sets the name for the input field so it can be fetched in the form
          * @param name
          */
-        this.setName = function(name){
+        this.setName = function (name) {
             cfg.name = name;
-            if(name){
+            if (name) {
                 cfg.name += name.indexOf('[]') > 0 ? '' : '[]';
             }
-            if(ms._valueContainer){
-                $.each(ms._valueContainer.children(), function(i, el){
+            if (ms._valueContainer) {
+                $.each(ms._valueContainer.children(), function (i, el) {
                     el.name = cfg.name;
                 });
             }
@@ -588,7 +573,7 @@
          * Sets the current selection with the JSON items provided
          * @param items
          */
-        this.setSelection = function(items){
+        this.setSelection = function (items) {
             this.clear();
             this.addToSelection(items);
         };
@@ -597,22 +582,21 @@
          * Sets a value for the combo box. Value must be an array of values with data type matching valueField one.
          * @param data
          */
-        this.setValue = function(values)
-        {
+        this.setValue = function (values) {
             var items = [];
 
-            $.each(values, function(index, value) {
+            $.each(values, function (index, value) {
                 // first try to see if we have the full objects from our data set
                 var found = false;
-                $.each(_cbData, function(i,item){
-                    if(item[cfg.valueField] == value){
+                $.each(_cbData, function (i, item) {
+                    if (item[cfg.valueField] == value) {
                         items.push(item);
                         found = true;
                         return false;
                     }
                 });
-                if(!found){
-                    if(typeof(value) === 'object'){
+                if (!found) {
+                    if (typeof (value) === 'object') {
                         items.push(value);
                     } else {
                         var json = {};
@@ -622,7 +606,7 @@
                     }
                 }
             });
-            if(items.length > 0) {
+            if (items.length > 0) {
                 this.addToSelection(items);
             }
         };
@@ -631,9 +615,8 @@
          * Sets data params for subsequent ajax requests
          * @param params
          */
-        this.setDataUrlParams = function(params)
-        {
-            cfg.dataUrlParams = $.extend({},params);
+        this.setDataUrlParams = function (params) {
+            cfg.dataUrlParams = $.extend({}, params);
         };
 
         /**********  PRIVATE ************/
@@ -662,19 +645,19 @@
              * Empties the result container and refills it with the array of json results in input
              * @private
              */
-            _displaySuggestions: function(data) {
+            _displaySuggestions: function (data) {
                 ms.combobox.show();
                 ms.combobox.empty();
 
                 var resHeight = 0, // total height taken by displayed results.
                     nbGroups = 0;
 
-                if(_groups === null) {
+                if (_groups === null) {
                     self._renderComboItems(data);
                     resHeight = _comboItemHeight * data.length;
                 }
                 else {
-                    for(var grpName in _groups) {
+                    for (var grpName in _groups) {
                         nbGroups += 1;
                         $('<div/>', {
                             'class': 'ms-res-group',
@@ -683,22 +666,22 @@
                         self._renderComboItems(_groups[grpName].items, true);
                     }
                     var _groupItemHeight = ms.combobox.find('.ms-res-group').outerHeight();
-                    if(_groupItemHeight !== null) {
-                      var tmpResHeight = nbGroups * _groupItemHeight;
-                      resHeight = (_comboItemHeight * data.length) + tmpResHeight;
+                    if (_groupItemHeight !== null) {
+                        var tmpResHeight = nbGroups * _groupItemHeight;
+                        resHeight = (_comboItemHeight * data.length) + tmpResHeight;
                     } else {
-                      resHeight = _comboItemHeight * (data.length + nbGroups);
+                        resHeight = _comboItemHeight * (data.length + nbGroups);
                     }
                 }
 
-                if(resHeight < ms.combobox.height() || resHeight <= cfg.maxDropHeight) {
+                if (resHeight < ms.combobox.height() || resHeight <= cfg.maxDropHeight) {
                     ms.combobox.height(resHeight);
                 }
-                else if(resHeight >= ms.combobox.height() && resHeight > cfg.maxDropHeight) {
+                else if (resHeight >= ms.combobox.height() && resHeight > cfg.maxDropHeight) {
                     ms.combobox.height(cfg.maxDropHeight);
                 }
 
-                if(data.length === 1 && cfg.autoSelect === true) {
+                if (data.length === 1 && cfg.autoSelect === true) {
                     ms.combobox.children().filter(':not(.ms-res-item-disabled):last').addClass('ms-res-item-active');
                 }
 
@@ -706,20 +689,20 @@
                     ms.combobox.children().filter(':not(.ms-res-item-disabled):first').addClass('ms-res-item-active');
                 }
 
-                if(data.length === 0 && ms.getRawValue() !== "") {
+                if (data.length === 0 && ms.getRawValue() !== "") {
                     var noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
                     self._updateHelper(noSuggestionText);
                     ms.collapse();
                 }
 
                 // When free entry is off, add invalid class to input if no data matches
-                if(cfg.allowFreeEntries === false) {
-                  if(data.length === 0) {
-                      $(ms.input).addClass(cfg.invalidCls);
-                      ms.combobox.hide();
-                  } else {
-                    $(ms.input).removeClass(cfg.invalidCls);
-                  }
+                if (cfg.allowFreeEntries === false) {
+                    if (data.length === 0) {
+                        $(ms.input).addClass(cfg.invalidCls);
+                        ms.combobox.hide();
+                    } else {
+                        $(ms.input).removeClass(cfg.invalidCls);
+                    }
                 }
             },
 
@@ -727,9 +710,9 @@
              * Returns an array of json objects from an array of strings.
              * @private
              */
-            _getEntriesFromStringArray: function(data) {
+            _getEntriesFromStringArray: function (data) {
                 var json = [];
-                $.each(data, function(index, s) {
+                $.each(data, function (index, s) {
                     var entry = {};
                     entry[cfg.displayField] = entry[cfg.valueField] = $.trim(s);
                     json.push(entry);
@@ -742,7 +725,7 @@
              * @param html
              * @private
              */
-            _highlightSuggestion: function(html) {
+            _highlightSuggestion: function (html) {
                 var q = ms.input.val();
 
                 //escape special regex characters
@@ -752,7 +735,7 @@
                     q = q.replace(value, "\\" + value);
                 })
 
-                if(q.length === 0) {
+                if (q.length === 0) {
                     return html; // nothing entered as input
                 }
 
@@ -765,38 +748,38 @@
              * @param dir - 'up' or 'down'
              * @private
              */
-            _moveSelectedRow: function(dir) {
-                if(!cfg.expanded) {
+            _moveSelectedRow: function (dir) {
+                if (!cfg.expanded) {
                     ms.expand();
                 }
                 var list, start, active, scrollPos;
                 list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
-                if(dir === 'down') {
+                if (dir === 'down') {
                     start = list.eq(0);
                 }
                 else {
                     start = list.filter(':last');
                 }
                 active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
-                if(active.length > 0) {
-                    if(dir === 'down') {
+                if (active.length > 0) {
+                    if (dir === 'down') {
                         start = active.nextAll('.ms-res-item:not(.ms-res-item-disabled)').first();
-                        if(start.length === 0) {
+                        if (start.length === 0) {
                             start = list.eq(0);
                         }
                         scrollPos = ms.combobox.scrollTop();
                         ms.combobox.scrollTop(0);
-                        if(start[0].offsetTop + start.outerHeight() > ms.combobox.height()) {
+                        if (start[0].offsetTop + start.outerHeight() > ms.combobox.height()) {
                             ms.combobox.scrollTop(scrollPos + _comboItemHeight);
                         }
                     }
                     else {
                         start = active.prevAll('.ms-res-item:not(.ms-res-item-disabled)').first();
-                        if(start.length === 0) {
+                        if (start.length === 0) {
                             start = list.filter(':last');
                             ms.combobox.scrollTop(_comboItemHeight * list.length);
                         }
-                        if(start[0].offsetTop < ms.combobox.scrollTop()) {
+                        if (start[0].offsetTop < ms.combobox.scrollTop()) {
                             ms.combobox.scrollTop(ms.combobox.scrollTop() - _comboItemHeight);
                         }
                     }
@@ -809,13 +792,13 @@
              * According to given data and query, sort and add suggestions in their container
              * @private
              */
-            _processSuggestions: function(source) {
+            _processSuggestions: function (source) {
                 var json = null, data = source || cfg.data;
-                if(data !== null) {
-                    if(typeof(data) === 'function'){
+                if (data !== null) {
+                    if (typeof (data) === 'function') {
                         data = data.call(ms, ms.getRawValue());
                     }
-                    if(typeof(data) === 'string') { // get results from ajax
+                    if (typeof (data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var queryParams = {}
                         queryParams[cfg.queryParam] = ms.input.val();
@@ -825,23 +808,23 @@
                             url: data,
                             data: params,
                             beforeSend: cfg.beforeSend,
-                            success: function(asyncData){
-                                json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
+                            success: function (asyncData) {
+                                json = typeof (asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
                                 self._processSuggestions(json);
                                 $(ms).trigger('load', [ms, json]);
-                                if(self._asyncValues){
-                                    ms.setValue(typeof(self._asyncValues) === 'string' ? JSON.parse(self._asyncValues) : self._asyncValues);
+                                if (self._asyncValues) {
+                                    ms.setValue(typeof (self._asyncValues) === 'string' ? JSON.parse(self._asyncValues) : self._asyncValues);
                                     self._renderSelection();
-                                    delete(self._asyncValues);
+                                    delete (self._asyncValues);
                                 }
                             },
-                            error: function(){
-                                throw("Could not reach server");
+                            error: function () {
+                                throw ("Could not reach server");
                             }
                         }, cfg.ajaxConfig));
                         return;
                     } else { // results from local array
-                        if(data.length > 0 && typeof(data[0]) === 'string') { // results from array of strings
+                        if (data.length > 0 && typeof (data[0]) === 'string') { // results from array of strings
                             _cbData = self._getEntriesFromStringArray(data);
                         } else { // regular json array or json object with results property
                             _cbData = data[cfg.resultsField] || data;
@@ -857,7 +840,7 @@
              * Render the component to the given input DOM element
              * @private
              */
-            _render: function(el) {
+            _render: function (el) {
                 ms.setName(cfg.name);  // make sure the form name is correct
                 // holds the main div, will relay the focus events to the contained input element.
                 ms.container = $('<div/>', {
@@ -896,7 +879,7 @@
                 ms.combobox.on('click', 'div.ms-res-item', $.proxy(handlers._onComboItemSelected, this));
                 ms.combobox.on('mouseover', 'div.ms-res-item', $.proxy(handlers._onComboItemMouseOver, this));
 
-                if(cfg.selectionContainer){
+                if (cfg.selectionContainer) {
                     ms.selectionContainer = cfg.selectionContainer;
                     $(ms.selectionContainer).addClass('ms-sel-ctn');
                 } else {
@@ -906,7 +889,7 @@
                 }
                 ms.selectionContainer.click($.proxy(handlers._onFocus, this));
 
-                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
+                if (cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.selectionContainer.append(ms.input);
                 }
                 else {
@@ -923,11 +906,11 @@
                 // Render the whole thing
                 $(el).replaceWith(ms.container);
 
-                if(!cfg.selectionContainer){
-                    switch(cfg.selectionPosition) {
+                if (!cfg.selectionContainer) {
+                    switch (cfg.selectionPosition) {
                         case 'bottom':
                             ms.selectionContainer.insertAfter(ms.container);
-                            if(cfg.selectionStacked === true) {
+                            if (cfg.selectionStacked === true) {
                                 ms.selectionContainer.width(ms.container.width());
                                 ms.selectionContainer.addClass('ms-stacked');
                             }
@@ -944,7 +927,7 @@
 
 
                 // holds the trigger on the right side
-                if(cfg.hideTrigger === false) {
+                if (cfg.hideTrigger === false) {
                     ms.trigger = $('<div/>', {
                         'class': 'ms-trigger',
                         html: '<div class="ms-trigger-ico"></div>'
@@ -956,13 +939,13 @@
                 $(window).resize($.proxy(handlers._onWindowResized, this));
 
                 // do not perform an initial call if we are using ajax unless we have initial values
-                if(cfg.value !== null || cfg.data !== null){
-                    if(typeof(cfg.data) === 'string'){
+                if (cfg.value !== null || cfg.data !== null) {
+                    if (typeof (cfg.data) === 'string') {
                         self._asyncValues = cfg.value;
                         self._processSuggestions();
                     } else {
                         self._processSuggestions();
-                        if(cfg.value !== null){
+                        if (cfg.value !== null) {
                             ms.setValue(cfg.value);
                             self._renderSelection();
                         }
@@ -970,8 +953,8 @@
 
                 }
 
-                $("body").click(function(e) {
-                    if(ms.container.hasClass('ms-ctn-focus') &&
+                $("body").click(function (e) {
+                    if (ms.container.hasClass('ms-ctn-focus') &&
                         ms.container.has(e.target).length === 0 &&
                         e.target.className.indexOf('ms-res-item') < 0 &&
                         e.target.className.indexOf('ms-close-btn') < 0 &&
@@ -980,7 +963,7 @@
                     }
                 });
 
-                if(cfg.expanded === true) {
+                if (cfg.expanded === true) {
                     cfg.expanded = false;
                     ms.expand();
                 }
@@ -990,14 +973,14 @@
              * Renders each element within the combo box
              * @private
              */
-            _renderComboItems: function(items, isGrouped) {
+            _renderComboItems: function (items, isGrouped) {
                 var ref = this, html = '';
-                $.each(items, function(index, value) {
+                $.each(items, function (index, value) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
                     var resultItemEl = $('<div/>', {
-                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ':'') +
-                            (disabled ? 'ms-res-item-disabled ':'') +
+                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
+                            (disabled ? 'ms-res-item-disabled ' : '') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
                         html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed,
                         'data-json': JSON.stringify(value)
@@ -1012,16 +995,16 @@
              * Renders the selected items into their container.
              * @private
              */
-            _renderSelection: function() {
+            _renderSelection: function () {
                 var ref = this, w = 0, inputOffset = 0, items = [],
                     asText = cfg.resultAsString === true && !_hasFocus;
 
                 ms.selectionContainer.find('.ms-sel-item').remove();
-                if(ms._valueContainer !== undefined) {
+                if (ms._valueContainer !== undefined) {
                     ms._valueContainer.remove();
                 }
 
-                $.each(_selection, function(index, value){
+                $.each(_selection, function (index, value) {
 
                     var selectedItemEl, delItemEl,
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
@@ -1029,7 +1012,7 @@
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
 
                     // tag representing selected value
-                    if(asText === true) {
+                    if (asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
@@ -1041,7 +1024,7 @@
                             html: selectedItemHtml
                         }).data('json', value);
 
-                        if(cfg.disabled === false){
+                        if (cfg.disabled === false) {
                             // small cross img
                             delItemEl = $('<span/>', {
                                 'class': 'ms-close-btn'
@@ -1059,7 +1042,7 @@
                 ms._valueContainer = $('<div/>', {
                     style: 'display: none;'
                 });
-                $.each(ms.getValue(), function(i, val){
+                $.each(ms.getValue(), function (i, val) {
                     var el = $('<input/>', {
                         type: 'hidden',
                         name: cfg.name,
@@ -1069,14 +1052,14 @@
                 });
                 ms._valueContainer.appendTo(ms.selectionContainer);
 
-                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
+                if (cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
                     w = ms.container.width() - inputOffset - 42;
                     ms.input.width(w);
                 }
 
-                if(_selection.length === cfg.maxSelection){
+                if (_selection.length === cfg.maxSelection) {
                     self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
                 } else {
                     ms.helper.hide();
@@ -1088,20 +1071,20 @@
              * @param item
              * @private
              */
-            _selectItem: function(item) {
-                if(cfg.maxSelection === 1){
+            _selectItem: function (item) {
+                if (cfg.maxSelection === 1) {
                     _selection = [];
                 }
                 ms.addToSelection(item.data('json'));
                 item.removeClass('ms-res-item-active');
-                if(cfg.expandOnFocus === false || _selection.length === cfg.maxSelection){
+                if (cfg.expandOnFocus === false || _selection.length === cfg.maxSelection) {
                     ms.collapse();
                 }
-                if(!_hasFocus){
+                if (!_hasFocus) {
                     ms.input.focus();
-                } else if(_hasFocus && (cfg.expandOnFocus || _ctrlDown)){
+                } else if (_hasFocus && (cfg.expandOnFocus || _ctrlDown)) {
                     self._processSuggestions();
-                    if(_ctrlDown){
+                    if (_ctrlDown) {
                         ms.expand();
                     }
                 }
@@ -1111,18 +1094,18 @@
              * Sorts the results and cut them down to max # of displayed results at once
              * @private
              */
-            _sortAndTrim: function(data) {
+            _sortAndTrim: function (data) {
                 var q = ms.getRawValue(),
                     filtered = [],
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
-                if(q.length > 0) {
-                    $.each(data, function(index, obj) {
+                if (q.length > 0) {
+                    $.each(data, function (index, obj) {
                         var name = obj[cfg.displayField];
-                        if((cfg.matchCase === true && name.indexOf(q) > -1) ||
+                        if ((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
-                            if(cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
+                            if (cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
                                 filtered.push(obj);
                             }
                         }
@@ -1132,47 +1115,47 @@
                     filtered = data;
                 }
                 // take out the ones that have already been selected
-                $.each(filtered, function(index, obj) {
+                $.each(filtered, function (index, obj) {
                     if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
                         newSuggestions.push(obj);
                     }
                 });
                 // sort the data
-                if(cfg.sortOrder !== null) {
-                    newSuggestions.sort(function(a,b) {
-                        if(a[cfg.sortOrder] < b[cfg.sortOrder]) {
+                if (cfg.sortOrder !== null) {
+                    newSuggestions.sort(function (a, b) {
+                        if (a[cfg.sortOrder] < b[cfg.sortOrder]) {
                             return cfg.sortDir === 'asc' ? -1 : 1;
                         }
-                        if(a[cfg.sortOrder] > b[cfg.sortOrder]) {
+                        if (a[cfg.sortOrder] > b[cfg.sortOrder]) {
                             return cfg.sortDir === 'asc' ? 1 : -1;
                         }
                         return 0;
                     });
                 }
                 // trim it down
-                if(cfg.maxSuggestions && cfg.maxSuggestions > 0) {
+                if (cfg.maxSuggestions && cfg.maxSuggestions > 0) {
                     newSuggestions = newSuggestions.slice(0, cfg.maxSuggestions);
                 }
                 return newSuggestions;
 
             },
 
-            _group: function(data){
+            _group: function (data) {
                 // build groups
-                if(cfg.groupBy !== null) {
+                if (cfg.groupBy !== null) {
                     _groups = {};
 
-                    $.each(data, function(index, value) {
+                    $.each(data, function (index, value) {
                         var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
                         var prop = value[cfg.groupBy];
-                        if(typeof(props) != 'string'){
+                        if (typeof (props) != 'string') {
                             prop = value;
-                            while(props.length > 0){
+                            while (props.length > 0) {
                                 prop = prop[props.shift()];
                             }
                         }
-                        if(_groups[prop] === undefined) {
-                            _groups[prop] = {title: prop, items: [value]};
+                        if (_groups[prop] === undefined) {
+                            _groups[prop] = { title: prop, items: [value] };
                         }
                         else {
                             _groups[prop].items.push(value);
@@ -1186,9 +1169,9 @@
              * Update the helper text
              * @private
              */
-            _updateHelper: function(html) {
+            _updateHelper: function (html) {
                 ms.helper.html(html);
-                if(!ms.helper.is(":visible")) {
+                if (!ms.helper.is(":visible")) {
                     ms.helper.fadeIn();
                 }
             },
@@ -1197,21 +1180,21 @@
              * Validate an item against vtype or vregex
              * @private
              */
-            _validateSingleItem: function(value){
-                if(cfg.vregex !== null && cfg.vregex instanceof RegExp){
+            _validateSingleItem: function (value) {
+                if (cfg.vregex !== null && cfg.vregex instanceof RegExp) {
                     return cfg.vregex.test(value);
-                } else if(cfg.vtype !== null) {
-                    switch(cfg.vtype){
+                } else if (cfg.vtype !== null) {
+                    switch (cfg.vtype) {
                         case 'alpha':
-                        return (/^[a-zA-Z_]+$/).test(value);
+                            return (/^[a-zA-Z_]+$/).test(value);
                         case 'alphanum':
-                        return (/^[a-zA-Z0-9_]+$/).test(value);
+                            return (/^[a-zA-Z0-9_]+$/).test(value);
                         case 'email':
-                        return (/^(\w+)([\-+.][\w]+)*@(\w[\-\w]*\.){1,5}([A-Za-z]){2,6}$/).test(value);
+                            return (/^(\w+)([\-+.][\w]+)*@(\w[\-\w]*\.){1,5}([A-Za-z]){2,6}$/).test(value);
                         case 'url':
-                        return (/(((^https?)|(^ftp)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\\\/+@&#;`~=%!]*)(\.\w{2,})?)*\/?)/i).test(value);
+                            return (/(((^https?)|(^ftp)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\\\/+@&#;`~=%!]*)(\.\w{2,})?)*\/?)/i).test(value);
                         case 'ipaddress':
-                        return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(value);
+                            return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(value);
                     }
                 }
                 return true;
@@ -1223,22 +1206,22 @@
              * Triggered when blurring out of the component
              * @private
              */
-            _onBlur: function() {
+            _onBlur: function () {
                 ms.container.removeClass('ms-ctn-focus');
                 ms.collapse();
                 _hasFocus = false;
-                if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
+                if (ms.getRawValue() !== '' && cfg.allowFreeEntries === true) {
                     var obj = {};
                     obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
                     ms.addToSelection(obj);
                 }
                 self._renderSelection();
 
-                if(ms.isValid() === false) {
+                if (ms.isValid() === false) {
                     ms.container.addClass(cfg.invalidCls);
                 }
 
-                else if(ms.input.val() !== '' && cfg.allowFreeEntries === false) {
+                else if (ms.input.val() !== '' && cfg.allowFreeEntries === false) {
                     ms.empty();
                     self._updateHelper('');
                 }
@@ -1251,9 +1234,9 @@
              * @param e
              * @private
              */
-            _onComboItemMouseOver: function(e) {
+            _onComboItemMouseOver: function (e) {
                 var target = $(e.currentTarget);
-                if(!target.hasClass('ms-res-item-disabled')){
+                if (!target.hasClass('ms-res-item-disabled')) {
                     ms.combobox.children().removeClass('ms-res-item-active');
                     target.addClass('ms-res-item-active');
                 }
@@ -1264,9 +1247,9 @@
              * @param e
              * @private
              */
-            _onComboItemSelected: function(e) {
+            _onComboItemSelected: function (e) {
                 var target = $(e.currentTarget);
-                if(!target.hasClass('ms-res-item-disabled')){
+                if (!target.hasClass('ms-res-item-disabled')) {
                     self._selectItem($(e.currentTarget));
                 }
             },
@@ -1275,7 +1258,7 @@
              * Triggered when focusing on the container div. Will focus on the input field instead.
              * @private
              */
-            _onFocus: function() {
+            _onFocus: function () {
                 ms.input.focus();
             },
 
@@ -1283,10 +1266,10 @@
              * Triggered when clicking on the input text field
              * @private
              */
-            _onInputClick: function(){
+            _onInputClick: function () {
                 if (ms.isDisabled() === false && _hasFocus) {
                     if (cfg.toggleOnClick === true) {
-                        if (cfg.expanded){
+                        if (cfg.expanded) {
                             ms.collapse();
                         } else {
                             ms.expand();
@@ -1299,20 +1282,20 @@
              * Triggered when focusing on the input text field.
              * @private
              */
-            _onInputFocus: function() {
-                if(ms.isDisabled() === false && !_hasFocus) {
+            _onInputFocus: function () {
+                if (ms.isDisabled() === false && !_hasFocus) {
                     _hasFocus = true;
                     ms.container.addClass('ms-ctn-focus');
                     ms.container.removeClass(cfg.invalidCls);
 
                     var curLength = ms.getRawValue().length;
-                    if(cfg.expandOnFocus === true){
+                    if (cfg.expandOnFocus === true) {
                         ms.expand();
                     }
 
-                    if(_selection.length === cfg.maxSelection) {
+                    if (_selection.length === cfg.maxSelection) {
                         self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
-                    } else if(curLength < cfg.minChars) {
+                    } else if (curLength < cfg.minChars) {
                         self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
                     }
 
@@ -1328,20 +1311,20 @@
              * @param e keyEvent
              * @private
              */
-            _onKeyDown: function(e) {
+            _onKeyDown: function (e) {
                 // check how tab should be handled
                 var active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
                     freeInput = ms.input.val();
                 $(ms).trigger('keydown', [ms, e]);
 
-                if(e.keyCode === KEYCODES.TAB && (cfg.useTabKey === false ||
+                if (e.keyCode === KEYCODES.TAB && (cfg.useTabKey === false ||
                     (cfg.useTabKey === true && active.length === 0 && ms.input.val().length === 0))) {
                     handlers._onBlur();
                     return;
                 }
-                switch(e.keyCode) {
+                switch (e.keyCode) {
                     case KEYCODES.BACKSPACE:
-                        if(freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
+                        if (freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
                             _selection.pop();
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
@@ -1355,12 +1338,12 @@
                         e.preventDefault();
                         break;
                     case KEYCODES.ENTER:
-                        if(freeInput !== '' || cfg.expanded){
+                        if (freeInput !== '' || cfg.expanded) {
                             e.preventDefault();
                         }
                         break;
                     case KEYCODES.COMMA:
-                        if(cfg.useCommaKey === true){
+                        if (cfg.useCommaKey === true) {
                             e.preventDefault();
                         }
                         break;
@@ -1376,7 +1359,7 @@
                         self._moveSelectedRow("up");
                         break;
                     default:
-                        if(_selection.length === cfg.maxSelection) {
+                        if (_selection.length === cfg.maxSelection) {
                             e.preventDefault();
                         }
                         break;
@@ -1388,7 +1371,7 @@
              * @param e
              * @private
              */
-            _onKeyUp: function(e) {
+            _onKeyUp: function (e) {
                 var freeInput = ms.getRawValue(),
                     inputValid = $.trim(ms.input.val()).length > 0 &&
                         (!cfg.maxEntryLength || $.trim(ms.input.val()).length <= cfg.maxEntryLength),
@@ -1400,64 +1383,64 @@
                 clearTimeout(_timer);
 
                 // collapse if escape, but keep focus.
-                if(e.keyCode === KEYCODES.ESC && cfg.expanded) {
+                if (e.keyCode === KEYCODES.ESC && cfg.expanded) {
                     ms.combobox.hide();
                 }
                 // ignore a bunch of keys
-                if((e.keyCode === KEYCODES.TAB && cfg.useTabKey === false) || (e.keyCode > KEYCODES.ENTER && e.keyCode < KEYCODES.SPACE)) {
-                    if(e.keyCode === KEYCODES.CTRL){
+                if ((e.keyCode === KEYCODES.TAB && cfg.useTabKey === false) || (e.keyCode > KEYCODES.ENTER && e.keyCode < KEYCODES.SPACE)) {
+                    if (e.keyCode === KEYCODES.CTRL) {
                         _ctrlDown = false;
                     }
                     return;
                 }
-                switch(e.keyCode) {
+                switch (e.keyCode) {
                     case KEYCODES.UPARROW:
                     case KEYCODES.DOWNARROW:
-                    e.preventDefault();
-                    break;
+                        e.preventDefault();
+                        break;
                     case KEYCODES.ENTER:
                     case KEYCODES.TAB:
                     case KEYCODES.COMMA:
-                    if(e.keyCode !== KEYCODES.COMMA || cfg.useCommaKey === true) {
-                        e.preventDefault();
-                        if(cfg.expanded === true){ // if a selection is performed, select it and reset field
-                            selected = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
-                            if(selected.length > 0) {
-                                self._selectItem(selected);
-                                return;
+                        if (e.keyCode !== KEYCODES.COMMA || cfg.useCommaKey === true) {
+                            e.preventDefault();
+                            if (cfg.expanded === true) { // if a selection is performed, select it and reset field
+                                selected = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
+                                if (selected.length > 0) {
+                                    self._selectItem(selected);
+                                    return;
+                                }
                             }
+                            // if no selection or if freetext entered and free entries allowed, add new obj to selection
+                            if (inputValid === true && cfg.allowFreeEntries === true) {
+                                obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
+                                ms.addToSelection(obj);
+                                ms.collapse(); // reset combo suggestions
+                                ms.input.focus();
+                            }
+                            break;
                         }
-                        // if no selection or if freetext entered and free entries allowed, add new obj to selection
-                        if(inputValid === true && cfg.allowFreeEntries === true) {
-                            obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
-                            ms.addToSelection(obj);
-                            ms.collapse(); // reset combo suggestions
-                            ms.input.focus();
-                        }
-                        break;
-                    }
                     default:
-                        if(_selection.length === cfg.maxSelection){
+                        if (_selection.length === cfg.maxSelection) {
                             self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
                         }
                         else {
-                            if(freeInput.length < cfg.minChars) {
+                            if (freeInput.length < cfg.minChars) {
                                 self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - freeInput.length));
-                                if(cfg.expanded === true) {
+                                if (cfg.expanded === true) {
                                     ms.collapse();
                                 }
                             }
-                            else if(cfg.maxEntryLength && freeInput.length > cfg.maxEntryLength) {
+                            else if (cfg.maxEntryLength && freeInput.length > cfg.maxEntryLength) {
                                 self._updateHelper(cfg.maxEntryRenderer.call(this, freeInput.length - cfg.maxEntryLength));
-                                if(cfg.expanded === true) {
+                                if (cfg.expanded === true) {
                                     ms.collapse();
                                 }
                             }
                             else {
                                 ms.helper.hide();
-                                if(cfg.minChars <= freeInput.length){
-                                    _timer = setTimeout(function() {
-                                        if(cfg.expanded === true) {
+                                if (cfg.minChars <= freeInput.length) {
+                                    _timer = setTimeout(function () {
+                                        if (cfg.expanded === true) {
                                             self._processSuggestions();
                                         } else {
                                             ms.expand();
@@ -1475,7 +1458,7 @@
              * @param e
              * @private
              */
-            _onTagTriggerClick: function(e) {
+            _onTagTriggerClick: function (e) {
                 ms.removeFromSelection($(e.currentTarget).data('json'));
             },
 
@@ -1483,14 +1466,14 @@
              * Triggered when clicking on the small trigger in the right
              * @private
              */
-            _onTriggerClick: function() {
-                if(ms.isDisabled() === false && !(cfg.expandOnFocus === true && _selection.length === cfg.maxSelection)) {
+            _onTriggerClick: function () {
+                if (ms.isDisabled() === false && !(cfg.expandOnFocus === true && _selection.length === cfg.maxSelection)) {
                     $(ms).trigger('triggerclick', [ms]);
-                    if(cfg.expanded === true) {
+                    if (cfg.expanded === true) {
                         ms.collapse();
                     } else {
                         var curLength = ms.getRawValue().length;
-                        if(curLength >= cfg.minChars){
+                        if (curLength >= cfg.minChars) {
                             ms.input.focus();
                             ms.expand();
                         } else {
@@ -1504,40 +1487,40 @@
              * Triggered when the browser window is resized
              * @private
              */
-            _onWindowResized: function() {
+            _onWindowResized: function () {
                 self._renderSelection();
             }
         };
 
         // startup point
-        if(element !== null) {
+        if (element !== null) {
             self._render(element);
         }
     };
 
-    $.fn.magicSuggest = function(options) {
+    $.fn.magicSuggest = function (options) {
         var obj = $(this);
 
-        if(obj.size() === 1 && obj.data('magicSuggest')) {
+        if (obj.size() === 1 && obj.data('magicSuggest')) {
             return obj.data('magicSuggest');
         }
 
-        obj.each(function(i) {
+        obj.each(function (i) {
             // assume $(this) is an element
             var cntr = $(this);
 
             // Return early if this element already has a plugin instance
-            if(cntr.data('magicSuggest')){
+            if (cntr.data('magicSuggest')) {
                 return;
             }
 
-            if(this.nodeName.toLowerCase() === 'select'){ // rendering from select
+            if (this.nodeName.toLowerCase() === 'select') { // rendering from select
                 options.data = [];
                 options.value = [];
-                $.each(this.children, function(index, child){
-                    if(child.nodeName && child.nodeName.toLowerCase() === 'option'){
-                        options.data.push({id: child.value, name: child.text});
-                        if($(child).attr('selected')){
+                $.each(this.children, function (index, child) {
+                    if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
+                        options.data.push({ id: child.value, name: child.text });
+                        if ($(child).attr('selected')) {
                             options.value.push(child.value);
                         }
                     }
@@ -1546,7 +1529,7 @@
 
             var def = {};
             // set values from DOM container element
-            $.each(this.attributes, function(i, att){
+            $.each(this.attributes, function (i, att) {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
@@ -1555,11 +1538,11 @@
             field.container.data('magicSuggest', field);
         });
 
-        if(obj.size() === 1) {
+        if (obj.size() === 1) {
             return obj.data('magicSuggest');
         }
         return obj;
     };
 
-   $.fn.magicSuggest.defaults = {};
+    $.fn.magicSuggest.defaults = {};
 })(jQuery);
