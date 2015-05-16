@@ -1332,7 +1332,8 @@
                 }
                 switch (e.keyCode) {
                     case KEYCODES.BACKSPACE:
-                        if (freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner' && !_selection[lastElement][cfg.disabledField]) {
+                        var isDisabled = typeof _selection[lastElement][cfg.disabledField] === "undefined" ? false : _selection[lastElement][cfg.disabledField];
+                        if (freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner' && !isDisabled) {
                             _selection.pop();
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
