@@ -1225,6 +1225,7 @@
              */
             _onBlur: function() {
                 ms.container.removeClass('ms-ctn-focus');
+                clearTimeout(_timer);
                 ms.collapse();
                 _hasFocus = false;
                 if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
@@ -1233,7 +1234,6 @@
                     ms.addToSelection(obj);
                 }
                 self._renderSelection();
-
                 if(ms.isValid() === false) {
                     ms.container.addClass(cfg.invalidCls);
                 }
