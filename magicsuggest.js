@@ -1228,9 +1228,26 @@
                 clearTimeout(_timer);
                 ms.collapse();
                 _hasFocus = false;
-                if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
-                    var obj = {};
-                    obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
+
+                var rawValue = ms.getRawValue().trim();
+                var item;
+                var found = false;
+                var obj = {};
+                if(rawValue !== '' && cfg.allowFreeEntries === true){
+                    for (var i = 0; i < cfg.data.length; i++) {
+                        item = cfg.data[i];
+                        if (rawValue === item[cfg.displayField]) {
+                            found = true;
+                            obj[cfg.valueField] = item[cfg.valueField];
+                            obj[cfg.displayField] = item[cfg.displayField];
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
+                    }
+
                     ms.addToSelection(obj);
                 }
                 self._renderSelection();
