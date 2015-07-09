@@ -550,6 +550,7 @@
                 }
             }
             this.input.attr('placeholder', (cfg.selectionPosition === 'inner' && this.getValue().length > 0) ? '' : cfg.placeholder);
+            this.input.css({width: '100%'});
         };
 
         /**
