@@ -1229,7 +1229,7 @@
                 _hasFocus = false;
                 if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
                     var obj = {};
-                    obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
+                    obj[cfg.displayField] = obj[cfg.valueField] = $.trim(ms.getRawValue());
                     ms.addToSelection(obj);
                 }
                 self._renderSelection();
@@ -1429,7 +1429,7 @@
                         }
                         // if no selection or if freetext entered and free entries allowed, add new obj to selection
                         if(inputValid === true && cfg.allowFreeEntries === true) {
-                            obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
+                            obj[cfg.displayField] = obj[cfg.valueField] = $.trim(freeInput);
                             ms.addToSelection(obj);
                             ms.collapse(); // reset combo suggestions
                             ms.input.focus();
