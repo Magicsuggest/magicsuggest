@@ -38,6 +38,11 @@
             ajaxConfig: {},
 
             /**
+             * If ajaxJSONMode is true, form data must be send in JSON format
+             */
+            ajaxJSONMode: false,
+
+            /**
              * If a single suggestion comes out, it is preselected.
              */
             autoSelect: true,
@@ -818,12 +823,35 @@
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var queryParams = {}
-                        queryParams[cfg.queryParam] = ms.input.val();
+						if(cfg.ajaxJSONMode) {
+							//CONVERT form data TO JSON
+							var tmpObj = {};
+							if(ms.input.val() !== "") {
+								var tmpData = ms.input.val().split("&");
+								for(var key in tmpData) {
+									tmpObj[tmpData[key].split("=")[0]] = tmpData[key].split("=")[1];
+								}
+							}
+							queryParams[cfg.queryParam] = tmpObj;
+						} else {
+							queryParams[cfg.queryParam] = ms.input.val();
+						}
                         var params = $.extend(queryParams, cfg.dataUrlParams);
+						
+						var processData = true;
+						var contentType = "application/x-www-form-urlencoded";
+						if(cfg.ajaxJSONMode) {
+							//ADjust request ajax call
+							processData = false;
+							contentType = 'application/json';
+							params = JSON.stringify(params);
+						} 
                         $.ajax($.extend({
                             type: cfg.method,
                             url: data,
                             data: params,
+							contentType: contentType,
+							processData: processData,
                             beforeSend: cfg.beforeSend,
                             success: function(asyncData){
                                 json = typeof(asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
