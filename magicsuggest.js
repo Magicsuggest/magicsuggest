@@ -823,25 +823,13 @@
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var queryParams = {}
-						if(cfg.ajaxJSONMode) {
-							//CONVERT form data TO JSON
-							var tmpObj = {};
-							if(ms.input.val() !== "") {
-								var tmpData = ms.input.val().split("&");
-								for(var key in tmpData) {
-									tmpObj[tmpData[key].split("=")[0]] = tmpData[key].split("=")[1];
-								}
-							}
-							queryParams[cfg.queryParam] = tmpObj;
-						} else {
-							queryParams[cfg.queryParam] = ms.input.val();
-						}
+						queryParams[cfg.queryParam] = ms.input.val();
                         var params = $.extend(queryParams, cfg.dataUrlParams);
 						
 						var processData = true;
 						var contentType = "application/x-www-form-urlencoded";
 						if(cfg.ajaxJSONMode) {
-							//ADjust request ajax call
+							//Adjust request ajax call
 							processData = false;
 							contentType = 'application/json';
 							params = JSON.stringify(params);
