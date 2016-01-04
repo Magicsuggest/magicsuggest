@@ -31,7 +31,13 @@
              * Defaults to false.
              */
             allowDuplicates: false,
-
+            
+            /**
+             * Restricts or allows the Backspace action when input is empty
+             * Defaults to true.
+             */
+            allowBackspace: true,
+            
             /**
              * Additional config object passed to each $.ajax call
              */
@@ -1341,7 +1347,7 @@
                 }
                 switch(e.keyCode) {
                     case KEYCODES.BACKSPACE:
-                        if(freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
+                        if(cfg.allowBackspace && freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
                             _selection.pop();
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
