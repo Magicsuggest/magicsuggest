@@ -357,7 +357,12 @@
             /**
              * type to validate against
              */
-            vtype: null
+            vtype: null,
+            
+            /**
+             * array of property names to match against
+             */
+            matchProperties: null
         };
 
         var conf = $.extend({},options);
@@ -1119,7 +1124,17 @@
                 // filter the data according to given input
                 if(q.length > 0) {
                     $.each(data, function(index, obj) {
-                        var name = obj[cfg.displayField];
+                        var name = "";
+                        var matchProperties = cfg.matchProperties;
+                        if (!!matchProperties && matchProperties.length) {
+                            $.each(matchProperties, function(propertyIndex, property) {
+                                if (obj.hasOwnProperty(property)) {
+                                    name += obj[property];
+                                }
+                            });
+                        } else {
+                            name = obj[cfg.displayField];
+                        }
                         if((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
                             if(cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
