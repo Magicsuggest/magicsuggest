@@ -569,6 +569,15 @@
         };
 
         /**
+		 * Set the maximum allowed selections
+		 * @param {integer} name
+		 */
+		this.setMaxSelection = function(max)
+		{
+			cfg.maxSelection = max;
+		};
+
+        /**
          * Sets the name for the input field so it can be fetched in the form
          * @param name
          */
@@ -1490,7 +1499,7 @@
             _onTagTriggerClick: function(e) {
                 ms.removeFromSelection($(e.currentTarget).data('json'));
             },
-			
+
 			/**
 			 * Triggerd when double clicking upon selected item in order to edit its content
 			 * @param e
@@ -1506,7 +1515,7 @@
 					_cntInMf = true; // item is in modification mode
 				}
 			},
-			
+
             /**
              * Triggered when clicking on the small trigger in the right
              * @private
