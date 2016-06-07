@@ -823,7 +823,7 @@
                 var json = null, data = source || cfg.data;
                 if(data !== null) {
                     if(typeof(data) === 'function'){
-                        data = data.call(ms, ms.getRawValue());
+                        data = data.call(ms, ms.getRawValue(),cfg);
                     }
                     if(typeof(data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
