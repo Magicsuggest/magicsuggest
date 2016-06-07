@@ -568,7 +568,7 @@
             self._processSuggestions();
         };
 
-        /**
+		/**
 		 * Set the maximum allowed selections
 		 * @param {integer} name
 		 */
@@ -1083,10 +1083,11 @@
                 ms._valueContainer.appendTo(ms.selectionContainer);
 
                 if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer && ms.container.is(':visible')) {
+					var inputPadding = ms.input.outerWidth(true) - ms.input.width();
                     ms.input.width(0);
-                    inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
-                    w = ms.container.width() - inputOffset - 42;
-                    ms.input.width(w);
+					inputOffset = Math.max(0,ms.input.offset().left - ms.selectionContainer.offset().left);
+					w = ms.container.width() - inputOffset - (cfg.hideTrigger ? inputPadding : 42);
+					ms.input.width(w);
                 }
 
                 if(_selection.length === cfg.maxSelection){
@@ -1228,7 +1229,7 @@
                     }
                 }
                 return true;
-            }
+			}
         };
 
         var handlers = {
