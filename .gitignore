@@ -2,3 +2,5 @@
 *.DS_Store
 /.settings
 /.project
+/magicsuggest/nbproject/private/
+/nbproject/private/

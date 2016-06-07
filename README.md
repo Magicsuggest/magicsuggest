@@ -1,3 +1,9 @@
+Magicsuggest Customized for EGroupware
+======================================
+- Make selected items editable by double clicking on them
+
+
+
 MagicSuggest v2.0.0
 --------------------------
 MagicSuggest has a new home here: http://nicolasbize.com/magicsuggest/
