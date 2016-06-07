@@ -966,7 +966,7 @@
                 $(window).resize($.proxy(handlers._onWindowResized, this));
 
                 // do not perform an initial call if we are using ajax unless we have initial values
-                if(cfg.value !== null || cfg.data !== null){
+                if((cfg.value !== null || cfg.data !== null) && ms.container.is(':visible')){
                     if(typeof(cfg.data) === 'string'){
                         self._asyncValues = cfg.value;
                         self._processSuggestions();
@@ -1082,7 +1082,7 @@
                 });
                 ms._valueContainer.appendTo(ms.selectionContainer);
 
-                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
+                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer && ms.container.is(':visible')) {
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
                     w = ms.container.width() - inputOffset - 42;
@@ -1337,7 +1337,7 @@
                         self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
                     }
 
-                    setTimeout(function(){self._renderSelection()},300);
+                    setTimeout(function(){self._renderSelection()},400);
                     $(ms).trigger('focus', [ms]);
                 }
             },
