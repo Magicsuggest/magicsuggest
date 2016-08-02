@@ -446,7 +446,7 @@
          */
         this.expand = function()
         {
-            if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().size() > 0)) {
+            if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().length > 0)) {
                 this.combobox.appendTo(this.container);
                 self._processSuggestions();
                 cfg.expanded = true;
@@ -1518,7 +1518,7 @@
     $.fn.magicSuggest = function(options) {
         var obj = $(this);
 
-        if(obj.size() === 1 && obj.data('magicSuggest')) {
+        if(obj.length === 1 && obj.data('magicSuggest')) {
             return obj.data('magicSuggest');
         }
 
@@ -1555,7 +1555,7 @@
             field.container.data('magicSuggest', field);
         });
 
-        if(obj.size() === 1) {
+        if(obj.length === 1) {
             return obj.data('magicSuggest');
         }
         return obj;
