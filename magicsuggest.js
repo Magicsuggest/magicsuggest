@@ -266,6 +266,11 @@
             resultsField: 'results',
 
             /**
+             * A custom string to be searched e.g.  searchStr: function(data) { return data.text+' '+data.value; } to search on both properties
+             */
+            searchStr: undefined,
+            
+            /**
              * A custom CSS class to add to a selected item
              */
             selectionCls: '',
@@ -1119,7 +1124,7 @@
                 // filter the data according to given input
                 if(q.length > 0) {
                     $.each(data, function(index, obj) {
-                        var name = obj[cfg.displayField];
+                        var name = cfg.searchStr !==undefined &&  cfg.searchStr !== null ? cfg.searchStr(obj) : obj[cfg.displayField];
                         if((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
                             if(cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
