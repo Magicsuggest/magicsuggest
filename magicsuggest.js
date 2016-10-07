@@ -407,6 +407,9 @@
          */
         this.collapse = function()
         {
+            if (cfg.neverCollapse) {
+                return;
+            }
             if (cfg.expanded === true) {
                 this.combobox.detach();
                 cfg.expanded = false;
