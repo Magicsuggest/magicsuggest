@@ -448,7 +448,8 @@
         {
             if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().size() > 0)) {
                 if (cfg.container) {
-                    this.combobox.appendTo(cfg.container);
+                    var containerToAdd = (typeof cfg.container === 'string' ? $(cfg.container) : cfg.container);
+                    this.combobox.appendTo(containerToAdd);
                 } else {
                     this.combobox.appendTo(this.container);
                 }
