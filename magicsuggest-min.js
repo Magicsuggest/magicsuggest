@@ -23,7 +23,9 @@ e.each(t,function(t,i){var a=!1
 if(e.each(m,function(e,t){if(t[o.valueField]==i)return n.push(t),a=!0,!1}),!a)if("object"==typeof i)n.push(i)
 else{var s={}
 s[o.valueField]=i,s[o.displayField]=i,n.push(s)}}),n.length>0&&this.addToSelection(n)},this.setDataUrlParams=function(t){o.dataUrlParams=e.extend({},t)}
-var r,l=[],c=0,d=!1,u=null,m=[],g=!1,p={BACKSPACE:8,TAB:9,ENTER:13,CTRL:17,ESC:27,SPACE:32,UPARROW:38,DOWNARROW:40,COMMA:188},h={_displaySuggestions:function(t){i.combobox.show(),i.combobox.empty()
+var r,l=[],c=0,d=!1,u=null,m=[],g=!1,p={BACKSPACE:8,TAB:9,ENTER:13,CTRL:17,ESC:27,SPACE:32,UPARROW:38,DOWNARROW:40,COMMA:188}
+o.languageUsesComma&&delete p.COMMA
+var h={_displaySuggestions:function(t){i.combobox.show(),i.combobox.empty()
 var n=0,a=0
 if(null===u)h._renderComboItems(t),n=c*t.length
 else{for(var s in u)a+=1,e("<div/>",{class:"ms-res-group",html:s}).appendTo(i.combobox),h._renderComboItems(u[s].items,!0)

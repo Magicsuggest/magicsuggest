@@ -663,6 +663,9 @@
                 DOWNARROW: 40,
                 COMMA: 188
             };
+            if (cfg.languageUsesComma) {
+                delete KEYCODES.COMMA;
+            }
 
         var self = {
 
