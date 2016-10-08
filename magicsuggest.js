@@ -405,9 +405,9 @@
         /**
          * Collapse the drop down part of the combo
          */
-        this.collapse = function()
+        this.collapse = function(force)
         {
-            if (cfg.neverCollapse) {
+            if (cfg.neverCollapse && !force) {
                 return;
             }
             if (cfg.expanded === true) {
