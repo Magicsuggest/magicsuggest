@@ -1312,7 +1312,7 @@
 
                     if(_selection.length === cfg.maxSelection) {
                         self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
-                    } else if(curLength < cfg.minChars) {
+                    } else if(curLength <= cfg.minChars) {
                         self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
                     }
 
