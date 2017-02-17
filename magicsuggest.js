@@ -1433,13 +1433,16 @@
                 return;
             }
 
-            if(this.nodeName.toLowerCase() === 'select'){ // rendering from select
-                options.data = [];
+            if (this.nodeName.toLowerCase() === 'select') { // rendering from select
+                hasData = options.data != null; // Verify id data is null, necessary for .NET components integretions
+                if (!hasData)
+                    options.data = [];
                 options.value = [];
-                $.each(this.children, function(index, child){
-                    if(child.nodeName && child.nodeName.toLowerCase() === 'option'){
-                        options.data.push({id: child.value, name: child.text});
-                        if($(child).attr('selected')){
+                $.each(this.children, function (index, child) {
+                    if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
+                        if (!hasData)
+                            options.data.push({ id: child.value, name: child.text });
+                        if ($(child).attr('selected')) {
                             options.value.push(child.value);
                         }
                     }
