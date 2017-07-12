@@ -1045,7 +1045,7 @@
                             // small cross img
                             delItemEl = $('<span/>', {
                                 'class': 'ms-close-btn'
-                            }).data('json', value).appendTo(selectedItemEl);
+                            }).data('json', value).prependTo(selectedItemEl);
 
                             delItemEl.click($.proxy(handlers._onTagTriggerClick, ref));
                         }
