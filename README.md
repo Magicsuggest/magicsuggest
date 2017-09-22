@@ -1,3 +1,7 @@
+Looking for maintainers
+-----------------------
+Please see: https://github.com/nicolasbize/magicsuggest/issues/307
+
 MagicSuggest v2.0.0
 --------------------------
 MagicSuggest has a new home here: http://nicolasbize.com/magicsuggest/
