@@ -1098,7 +1098,7 @@
                     ms.collapse();
                 }
                 if(!_hasFocus){
-                    ms.input.focus();
+                    ms.input.trigger('focus');
                 } else if(_hasFocus && (cfg.expandOnFocus || _ctrlDown)){
                     self._processSuggestions();
                     if(_ctrlDown){
@@ -1276,7 +1276,7 @@
              * @private
              */
             _onFocus: function() {
-                ms.input.focus();
+                ms.input.trigger('focus');
             },
 
             /**
@@ -1346,7 +1346,7 @@
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
                             ms.input.attr('placeholder', (cfg.selectionPosition === 'inner' && ms.getValue().length > 0) ? '' : cfg.placeholder);
-                            ms.input.focus();
+                            ms.input.trigger('focus');
                             e.preventDefault();
                         }
                         break;
@@ -1432,7 +1432,7 @@
                             obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
                             ms.addToSelection(obj);
                             ms.collapse(); // reset combo suggestions
-                            ms.input.focus();
+                            ms.input.trigger('focus');
                         }
                         break;
                     }
@@ -1491,7 +1491,7 @@
                     } else {
                         var curLength = ms.getRawValue().length;
                         if(curLength >= cfg.minChars){
-                            ms.input.focus();
+                            ms.input.trigger('focus');
                             ms.expand();
                         } else {
                             self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
