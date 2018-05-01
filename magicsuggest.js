@@ -636,6 +636,24 @@
             cfg.dataUrlParams = $.extend({},params);
         };
 
+        /**
+         * Sets a new max select size. Removes any selections beyond the new selection size
+         * @param newSelectionSize
+         */
+        this.setMaxSelection = function(newSelectionSize)
+        {
+            if (newSelectionSize < 0) {
+                return ;
+            }
+            
+            if (currentSelections.length > newSelectionSize) {
+                var truncatedSelections =  currentSelections.slice(0, newSelectionSize - 1);
+                this.setValue(truncatedSelections);
+            }
+
+            cfg.maxSelection = newSelectionSize;
+        };
+
         /**********  PRIVATE ************/
         var _selection = [],      // selected objects
             _comboItemHeight = 0, // height for each combo item.
