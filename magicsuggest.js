@@ -645,7 +645,7 @@
             if (newSelectionSize < 0) {
                 return ;
             }
-            
+
             if (currentSelections.length > newSelectionSize) {
                 var truncatedSelections =  currentSelections.slice(0, newSelectionSize - 1);
                 this.setValue(truncatedSelections);
