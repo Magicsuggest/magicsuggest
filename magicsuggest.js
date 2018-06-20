@@ -446,7 +446,7 @@
          */
         this.expand = function()
         {
-            if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().size() > 0)) {
+            if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().length > 0)) {
                 this.combobox.appendTo(this.container);
                 self._processSuggestions();
                 cfg.expanded = true;
@@ -880,10 +880,10 @@
                     style: cfg.style,
                     id: cfg.id
                 });
-                ms.container.focus($.proxy(handlers._onFocus, this));
-                ms.container.blur($.proxy(handlers._onBlur, this));
-                ms.container.keydown($.proxy(handlers._onKeyDown, this));
-                ms.container.keyup($.proxy(handlers._onKeyUp, this));
+                ms.container.on('focus', $.proxy(handlers._onFocus, this));
+                ms.container.on('blur', $.proxy(handlers._onBlur, this));
+                ms.container.on('keydown', $.proxy(handlers._onKeyDown, this));
+                ms.container.on('keyup', $.proxy(handlers._onKeyUp, this));
 
                 // holds the input field
                 ms.input = $('<input/>', $.extend({
@@ -894,8 +894,8 @@
                     disabled: cfg.disabled
                 }, cfg.inputCfg));
 
-                ms.input.focus($.proxy(handlers._onInputFocus, this));
-                ms.input.click($.proxy(handlers._onInputClick, this));
+                ms.input.on('focus', $.proxy(handlers._onInputFocus, this));
+                ms.input.on('click', $.proxy(handlers._onInputClick, this));
 
                 // holds the suggestions. will always be placed on focus
                 ms.combobox = $('<div/>', {
@@ -914,7 +914,7 @@
                         'class': 'ms-sel-ctn'
                     });
                 }
-                ms.selectionContainer.click($.proxy(handlers._onFocus, this));
+                ms.selectionContainer.on('click', $.proxy(handlers._onFocus, this));
 
                 if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.selectionContainer.append(ms.input);
@@ -959,11 +959,11 @@
                         'class': 'ms-trigger',
                         html: '<div class="ms-trigger-ico"></div>'
                     });
-                    ms.trigger.click($.proxy(handlers._onTriggerClick, this));
+                    ms.trigger.on('click', $.proxy(handlers._onTriggerClick, this));
                     ms.container.append(ms.trigger);
                 }
 
-                $(window).resize($.proxy(handlers._onWindowResized, this));
+                $(window).on('resize', $.proxy(handlers._onWindowResized, this));
 
                 // do not perform an initial call if we are using ajax unless we have initial values
                 if((cfg.value !== null || cfg.data !== null) && ms.container.is(':visible')){
@@ -980,7 +980,7 @@
 
                 }
 
-                $("body").click(function(e) {
+                $("body").on('click', function(e) {
                     if(ms.container.hasClass('ms-ctn-focus') &&
                         ms.container.has(e.target).length === 0 &&
                         e.target.className.indexOf('ms-res-item') < 0 &&
@@ -1112,7 +1112,7 @@
                     ms.collapse();
                 }
                 if(!_hasFocus){
-                    ms.input.focus();
+                    ms.input.trigger('focus');
                 } else if(_hasFocus && (cfg.expandOnFocus || _ctrlDown)){
                     self._processSuggestions();
                     if(_ctrlDown){
@@ -1244,7 +1244,7 @@
                 _hasFocus = false;
                 if(ms.getRawValue() !== '' && cfg.allowFreeEntries === true){
                     var obj = {};
-                    obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
+                    obj[cfg.displayField] = obj[cfg.valueField] = $.trim(ms.getRawValue());
                     ms.addToSelection(obj);
                 }
                 self._renderSelection();
@@ -1368,7 +1368,7 @@
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
                             ms.input.attr('placeholder', (cfg.selectionPosition === 'inner' && ms.getValue().length > 0) ? '' : cfg.placeholder);
-                            ms.input.focus();
+                            ms.input.trigger('focus');
                             e.preventDefault();
                         }
                         break;
@@ -1451,10 +1451,10 @@
                         }
                         // if no selection or if freetext entered and free entries allowed, add new obj to selection
                         if(inputValid === true && cfg.allowFreeEntries === true) {
-                            obj[cfg.displayField] = obj[cfg.valueField] = freeInput.trim();
+                            obj[cfg.displayField] = obj[cfg.valueField] = $.trim(freeInput);
                             ms.addToSelection(obj);
                             ms.collapse(); // reset combo suggestions
-                            ms.input.focus();
+                            ms.input.trigger('focus');
                         }
                         break;
                     }
@@ -1529,7 +1529,7 @@
                     } else {
                         var curLength = ms.getRawValue().length;
                         if(curLength >= cfg.minChars){
-                            ms.input.focus();
+                            ms.input.trigger('focus');
                             ms.expand();
                         } else {
                             self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - curLength));
@@ -1556,7 +1556,7 @@
     $.fn.magicSuggest = function(options) {
         var obj = $(this);
 
-        if(obj.size() === 1 && obj.data('magicSuggest')) {
+        if(obj.length === 1 && obj.data('magicSuggest')) {
             return obj.data('magicSuggest');
         }
 
@@ -1593,7 +1593,7 @@
             field.container.data('magicSuggest', field);
         });
 
-        if(obj.size() === 1) {
+        if(obj.length === 1) {
             return obj.data('magicSuggest');
         }
         return obj;
