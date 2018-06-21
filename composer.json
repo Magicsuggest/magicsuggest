@@ -1,9 +1,9 @@
 {
-    "name": "nicolasbize/magicsuggest",
-    "description": "MagicSuggest is a multiple selection auto suggest combo box for Bootstrap 3.",
+	"name": "egroupware/magicsuggest",
+	"description": "Compiled version of magicsuggest customized for EGroupware project.",
+	"type": "component",
+	"homepage": "https://github.com/EGroupware/magicsuggest",
     "version": "2.1.4",
-    "type": "component",
-    "homepage": "http://nicolasbize.com/magicsuggest",
     "license": "MIT",
     "require": {
         "components/bootstrap": ">=3.0.0",
