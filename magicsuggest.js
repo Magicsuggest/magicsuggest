@@ -1064,7 +1064,7 @@
 
                             delItemEl.on('click', $.proxy(handlers._onTagTriggerClick, ref));
 
-							if (cfg.allowFreeEntries === true && cfg.editModeEnabled === true){
+							if (cfg.allowFreeEntries === true && cfg.editModeEnabled === true && !Number.isInteger(parseInt(value.id))){
                                 editItemEl = $('<span/>', {
                                     'class': 'ms-edit-btn'
                                 }).data('json', value).prependTo(selectedItemEl);
@@ -1520,8 +1520,7 @@
                 {
                     var index = $.inArray(itemData.id, ms.getValue());
                     var el = $(ms.selectionContainer.children().get(index));
-                    var elW = el.width();
-                    var elH = el.children().height();
+                    var deltaW = el.width() - (el.find('.ms-close-btn').width()+ el.find('.ms-edit-btn').width());
                     el.off();
                     el.children().hide();
 
@@ -1566,8 +1565,8 @@
                     var cancel = $('<span class="ms-close-btn"/>')
                             .on('click', $.proxy(__onCancelCallback, this))
                             .appendTo(editor);
-                    input.width(elW - (check.width() + cancel.width()));
-                    input.height(elH);
+                    input.width(deltaW);
+                    input.height(el.children().height());
                     $(ms).trigger('editorClicked', [ms, e]);
                     _cntInMf = true; // item is in modification mode
                 }

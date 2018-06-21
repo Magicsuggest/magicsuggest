@@ -244,6 +244,10 @@
 .ms-sel-ctn .ms-sel-item .ms-close-btn:hover{
     background-position: 0 0;
 }
+.ms-sel-ctn .ms-sel-item .ms-editor-wrap input{
+	padding: 1px;
+    border: none;
+}
 .ms-helper{
     color: #AAA;
     font-size: 10px;
