@@ -643,12 +643,12 @@
         this.setMaxSelection = function(newSelectionSize)
         {
             if (newSelectionSize < 0) {
-                return ;
+                newSelectionSize = null;
             }
 
-            if (currentSelections.length > newSelectionSize) {
-                var truncatedSelections =  currentSelections.slice(0, newSelectionSize - 1);
-                this.setValue(truncatedSelections);
+            //if the number that is currently selected is larger than the max selection, truncate down to the max size
+            if (newSelectionSize !== null && _selection.length > newSelectionSize) {
+                this.removeFromSelection(_selection.slice(newSelectionSize));
             }
 
             cfg.maxSelection = newSelectionSize;
