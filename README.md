@@ -1,6 +1,6 @@
 Magicsuggest Customized for EGroupware
 ======================================
-- Make selected items editable by double clicking on them
+- Add edit mode feature in order to be able to modify an already entered tag
 
 
 
