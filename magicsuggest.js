@@ -1541,7 +1541,7 @@
                         handlers._onBlur();
                         e.stopImmediatePropagation();
                     };
-                    var editor = $('<div id="ms-editor-warp">').appendTo(el);
+                    var editor = $('<div class="ms-editor-wrap">').appendTo(el);
                     var input = $('<input type="text">')
                             .val(itemData.id)
                             .select()
