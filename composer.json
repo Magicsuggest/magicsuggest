@@ -3,7 +3,7 @@
 	"description": "Compiled version of magicsuggest customized for EGroupware project.",
 	"type": "component",
 	"homepage": "https://github.com/EGroupware/magicsuggest",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "license": "MIT",
     "require": {
         "components/bootstrap": ">=3.0.0",
