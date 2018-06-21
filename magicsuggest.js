@@ -115,6 +115,11 @@
             editable: true,
 
             /**
+             * Allow to modify a tag by clicking on edit icon. It only can be enabled if only allowFreeEntries is true.
+             */
+            editModeEnabled: false,
+
+            /**
              * Set starting state for combo.
              */
             expanded: false,
@@ -538,7 +543,7 @@
                 }
             });
             if (valuechanged === true) {
-                self._renderSelection();
+				self._renderSelection();
                 if(isSilent !== true){
                     $(this).trigger('selectionchange', [this, this.getSelection()]);
                 }
@@ -568,7 +573,7 @@
             self._processSuggestions();
         };
 
-		/**
+        /**
 		 * Set the maximum allowed selections
 		 * @param {integer} name
 		 */
@@ -1033,7 +1038,7 @@
 
                 $.each(_selection, function(index, value){
 
-                    var selectedItemEl, delItemEl,
+                    var selectedItemEl, delItemEl, editItemEl,
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
@@ -1057,11 +1062,15 @@
                                 'class': 'ms-close-btn'
                             }).data('json', value).appendTo(selectedItemEl);
 
-                            delItemEl.click($.proxy(handlers._onTagTriggerClick, ref));
-							if (cfg.allowFreeEntries === true){
-								selectedItemEl.dblclick($.proxy(handlers._onTagEditTriggerDblClick, ref));
-							}
-                        }
+                            delItemEl.on('click', $.proxy(handlers._onTagTriggerClick, ref));
+
+							if (cfg.allowFreeEntries === true && cfg.editModeEnabled === true){
+                                editItemEl = $('<span/>', {
+                                    'class': 'ms-edit-btn'
+                                }).data('json', value).prependTo(selectedItemEl);
+                                editItemEl.on('click', $.proxy(handlers._onTagEditTriggerClick, ref));
+                            }
+						}
                     }
 
                     items.push(selectedItemEl);
@@ -1082,12 +1091,12 @@
                 });
                 ms._valueContainer.appendTo(ms.selectionContainer);
 
-                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer && ms.container.is(':visible')) {
+                if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer && (ms.container.is(':visible') || ms.getValue().length>0)) {
 					var inputPadding = ms.input.outerWidth(true) - ms.input.width();
-                    ms.input.width(0);
+					ms.input.width(0);
 					inputOffset = Math.max(0,ms.input.offset().left - ms.selectionContainer.offset().left);
 					w = ms.container.width() - inputOffset - (cfg.hideTrigger ? inputPadding : 42);
-					ms.input.width(w);
+                    ms.input.width(w);
                 }
 
                 if(_selection.length === cfg.maxSelection){
@@ -1229,7 +1238,7 @@
                     }
                 }
                 return true;
-			}
+            }
         };
 
         var handlers = {
@@ -1290,15 +1299,11 @@
              * Triggered when focusing on the container div. Will focus on the input field instead.
              * @private
              */
-             _onFocus: function() {
-				if (!_cntInMf)
-				{
-					ms.input.focus();
-				}
-				else
-				{
-					_cntInMf = false;
-				}
+            _onFocus: function() {
+                if (!_cntInMf)
+                {
+	                ms.input.trigger('focus');
+                }
             },
 
             /**
@@ -1351,6 +1356,7 @@
              * @private
              */
             _onKeyDown: function(e) {
+				if (_cntInMf) return;
                 // check how tab should be handled
                 var active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
                     freeInput = ms.input.val();
@@ -1411,6 +1417,7 @@
              * @private
              */
             _onKeyUp: function(e) {
+                if (_cntInMf) return;
                 var freeInput = ms.getRawValue(),
                     inputValid = $.trim(ms.input.val()).length > 0 &&
                         (!cfg.maxEntryLength || $.trim(ms.input.val()).length <= cfg.maxEntryLength),
@@ -1501,21 +1508,70 @@
                 ms.removeFromSelection($(e.currentTarget).data('json'));
             },
 
-			/**
-			 * Triggerd when double clicking upon selected item in order to edit its content
-			 * @param e
-			 * @private
-			 */
-			_onTagEditTriggerDblClick: function(e) {
-				var itemData = $(e.currentTarget).data('json');
-				if (ms.input.val() === '')
-				{
-					ms.input.val(itemData.label);
-					ms.removeFromSelection(itemData);
-					ms.input.select();
-					_cntInMf = true; // item is in modification mode
-				}
-			},
+            /**
+             * Triggerd when clicking on edit button upon selected item in order to edit its content
+             * @param e
+             * @private
+             */
+            _onTagEditTriggerClick: function(e) {
+                var itemData = $(e.currentTarget).data('json');
+                e.stopImmediatePropagation();
+                if (ms.input.val() === '')
+                {
+                    var index = $.inArray(itemData.id, ms.getValue());
+                    var el = $(ms.selectionContainer.children().get(index));
+                    var elW = el.width();
+                    var elH = el.children().height();
+                    el.off();
+                    el.children().hide();
+
+                    var __onConfirmCallback = function () {
+                        var values = ms.getValue().slice();
+                        var selection = ms.getSelection().slice();
+                        var scrollTop = ms.selectionContainer[0].scrollTop;
+                        values[index] = selection[index].id = selection[index].label = input.val();
+                        ms.setValue(values);
+                        ms.setSelection(selection);
+                        ms.selectionContainer.scrollTop(scrollTop);
+                        _cntInMf = false;
+                    };
+                    var __onCancelCallback = function (e)
+                    {
+                        _cntInMf = false;
+                        handlers._onBlur();
+                        e.stopImmediatePropagation();
+                    };
+                    var editor = $('<div id="ms-editor-warp">').appendTo(el);
+                    var input = $('<input type="text">')
+                            .val(itemData.id)
+                            .select()
+                            .on('focus', function(){_cntInMf = true;})
+                            .on('keydown', function(e){
+                                e.stopImmediatePropagation();
+                                switch(e.keyCode)
+                                {
+                                    case KEYCODES.TAB:
+                                    case KEYCODES.ENTER:
+                                        e.preventDefault();
+                                        __onConfirmCallback();
+                                        break;
+                                    case KEYCODES.ESC:
+                                        __onCancelCallback();
+                                }
+                            })
+                            .appendTo(editor);
+                    var check = $('<span class="ms-check-btn"/>')
+                            .on('click', $.proxy(__onConfirmCallback, this))
+                            .appendTo(editor);
+                    var cancel = $('<span class="ms-close-btn"/>')
+                            .on('click', $.proxy(__onCancelCallback, this))
+                            .appendTo(editor);
+                    input.width(elW - (check.width() + cancel.width()));
+                    input.height(elH);
+                    $(ms).trigger('editorClicked', [ms, e]);
+                    _cntInMf = true; // item is in modification mode
+                }
+            },
 
             /**
              * Triggered when clicking on the small trigger in the right
