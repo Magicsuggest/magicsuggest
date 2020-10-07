@@ -835,8 +835,8 @@
                                     delete(self._asyncValues);
                                 }
                             },
-                            error: function(){
-                                throw("Could not reach server");
+                            error: function( jqXHR, textStatus, errorThrown){
+                                $(ms).trigger('error', [ms, jqXHR, textStatus, errorThrown]);
                             }
                         }, cfg.ajaxConfig));
                         return;
