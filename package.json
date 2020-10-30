@@ -1,7 +1,7 @@
 {
   "name": "magicsuggest",
   "version": "2.1.5",
-  "description": "MagicSuggest is a multiple selection auto suggest combo box for Bootstrap 3.",
+  "description": "MagicSuggest is a multiple selection auto-suggest input box for Bootstrap 3.",
   "main": "magicsuggest.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
