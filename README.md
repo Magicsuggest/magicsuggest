@@ -1,5 +1,6 @@
 MagicSuggest v2.1.5
-## Changed*  updated version
+## Changed
+ *  updated version
  * prepend close button instead of appending it.
  * updated magicsuggest-min.js with current master code
 
