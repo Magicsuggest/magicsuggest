@@ -1,6 +1,6 @@
 {
   "name": "magicsuggest",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "MagicSuggest is a multiple selection auto suggest combo box for Bootstrap 3.",
   "main": "magicsuggest.js",
   "scripts": {
