@@ -1,13 +1,14 @@
 MagicSuggest v2.1.5
-## Changed*  updated version
- * prepend close button instead of appending it.
- * updated magicsuggest-min.js with current master code
-
+--------------------------
+## Changed
+- (fix) prepend close button instead of appending it
+- (fix) updated magicsuggest-min.js with current master code
 ## Added
- * dynamically update max selection size.
+- (fea) dynamically update max selection size
+
 
 MagicSuggest v2.0.0
---------------------------
+====================
 MagicSuggest has a new home here: http://nicolasbize.com/magicsuggest/
 It includes a great new API documentation, examples, tutorials and more!
 
