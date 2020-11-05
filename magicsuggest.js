@@ -506,7 +506,14 @@
          * Retrieve the current text entered by the user
          */
         this.getRawValue = function(){
-            return ms.input.val();
+            return this.stripHtml(ms.input.val());
+        };
+
+        /**
+         * remove html from raw user input 
+         */
+        this.stripHtml = function(inputString){
+            return inputString.replace(/(<([^>]+)>)/gi, "");
         };
 
         /**
