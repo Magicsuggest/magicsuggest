@@ -8,11 +8,9 @@
  * Version:      2.1.4
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
-(function($)
-{
+(function($){
     "use strict";
-    var MagicSuggest = function(element, options)
-    {
+    var MagicSuggest = function(element, options){
         var ms = this;
 
         /**
@@ -369,8 +367,7 @@
          * @param items - json object or array of json objects
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.addToSelection = function(items, isSilent)
-        {
+        this.addToSelection = function(items, isSilent){
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
                 if (!$.isArray(items)) {
                     items = [items];
@@ -397,16 +394,14 @@
          * Clears the current selection
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.clear = function(isSilent)
-        {
+        this.clear = function(isSilent){
             this.removeFromSelection(_selection.slice(0), isSilent); // clone array to avoid concurrency issues
         };
 
         /**
          * Collapse the drop down part of the combo
          */
-        this.collapse = function()
-        {
+        this.collapse = function(){
             if (cfg.expanded === true) {
                 this.combobox.detach();
                 cfg.expanded = false;
@@ -417,8 +412,7 @@
         /**
          * Set the component in a disabled state.
          */
-        this.disable = function()
-        {
+        this.disable = function(){
             this.container.addClass('ms-ctn-disabled');
             cfg.disabled = true;
             ms.input.attr('disabled', true);
@@ -434,8 +428,7 @@
         /**
          * Set the component in a enable state.
          */
-        this.enable = function()
-        {
+        this.enable = function(){
             this.container.removeClass('ms-ctn-disabled');
             cfg.disabled = false;
             ms.input.attr('disabled', false);
@@ -444,8 +437,7 @@
         /**
          * Expand the drop drown part of the combo.
          */
-        this.expand = function()
-        {
+        this.expand = function(){
             if (!cfg.expanded && (this.input.val().length >= cfg.minChars || this.combobox.children().length > 0)) {
                 this.combobox.appendTo(this.container);
                 self._processSuggestions();
@@ -457,8 +449,7 @@
         /**
          * Retrieve component enabled status
          */
-        this.isDisabled = function()
-        {
+        this.isDisabled = function(){
             return cfg.disabled;
         };
 
@@ -466,8 +457,7 @@
          * Checks whether the field is valid or not
          * @return {boolean}
          */
-        this.isValid = function()
-        {
+        this.isValid = function(){
             var valid = cfg.required === false || _selection.length > 0;
             if(cfg.vtype || cfg.vregex){
                 $.each(_selection, function(index, item){
@@ -488,8 +478,7 @@
         /**
          * Gets the name given to the form input
          */
-        this.getName = function()
-        {
+        this.getName = function(){
             return cfg.name;
         };
 
@@ -497,8 +486,7 @@
          * Retrieve an array of selected json objects
          * @return {Array}
          */
-        this.getSelection = function()
-        {
+        this.getSelection = function(){
             return _selection;
         };
 
@@ -519,8 +507,7 @@
         /**
          * Retrieve an array of selected values
          */
-        this.getValue = function()
-        {
+        this.getValue = function(){
             return $.map(_selection, function(o) {
                 return o[cfg.valueField];
             });
@@ -531,8 +518,7 @@
          * @param items - json object or array of json objects
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
-        this.removeFromSelection = function(items, isSilent)
-        {
+        this.removeFromSelection = function(items, isSilent){
             if (!$.isArray(items)) {
                 items = [items];
             }
@@ -604,10 +590,8 @@
          * Sets a value for the combo box. Value must be an array of values with data type matching valueField one.
          * @param data
          */
-        this.setValue = function(values)
-        {
+        this.setValue = function(values){
             var items = [];
-
             $.each(values, function(index, value) {
                 // first try to see if we have the full objects from our data set
                 var found = false;
@@ -638,8 +622,7 @@
          * Sets data params for subsequent ajax requests
          * @param params
          */
-        this.setDataUrlParams = function(params)
-        {
+        this.setDataUrlParams = function(params){
             cfg.dataUrlParams = $.extend({},params);
         };
 
@@ -647,8 +630,7 @@
          * Sets a new max select size. Removes any selections beyond the new selection size
          * @param newSelectionSize
          */
-        this.setMaxSelection = function(newSelectionSize)
-        {
+        this.setMaxSelection = function(newSelectionSize){
             if (newSelectionSize < 0) {
                 newSelectionSize = null;
             }
@@ -682,7 +664,6 @@
             };
 
         var self = {
-
             /**
              * Empties the result container and refills it with the array of json results in input
              * @private
@@ -690,15 +671,14 @@
             _displaySuggestions: function(data) {
                 ms.combobox.show();
                 ms.combobox.empty();
-
+                
                 var resHeight = 0, // total height taken by displayed results.
                     nbGroups = 0;
 
                 if(_groups === null) {
                     self._renderComboItems(data);
                     resHeight = _comboItemHeight * data.length;
-                }
-                else {
+                } else {
                     for(var grpName in _groups) {
                         nbGroups += 1;
                         $('<div/>', {
@@ -718,8 +698,7 @@
 
                 if(resHeight < ms.combobox.height() || resHeight <= cfg.maxDropHeight) {
                     ms.combobox.height(resHeight);
-                }
-                else if(resHeight >= ms.combobox.height() && resHeight > cfg.maxDropHeight) {
+                } else if(resHeight >= ms.combobox.height() && resHeight > cfg.maxDropHeight) {
                     ms.combobox.height(cfg.maxDropHeight);
                 }
 
@@ -739,12 +718,12 @@
 
                 // When free entry is off, add invalid class to input if no data matches
                 if(cfg.allowFreeEntries === false) {
-                  if(data.length === 0) {
-                      $(ms.input).addClass(cfg.invalidCls);
-                      ms.combobox.hide();
-                  } else {
-                    $(ms.input).removeClass(cfg.invalidCls);
-                  }
+                    if(data.length === 0) {
+                        $(ms.input).addClass(cfg.invalidCls);
+                        ms.combobox.hide();
+                    } else {
+                        $(ms.input).removeClass(cfg.invalidCls);
+                    }
                 }
             },
 
@@ -933,14 +912,14 @@
 
                 if(cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.selectionContainer.append(ms.input);
-                }
-                else {
+                } else {
                     ms.container.append(ms.input);
                 }
 
                 ms.helper = $('<span/>', {
                     'class': 'ms-helper ' + cfg.infoMsgCls
                 });
+
                 self._updateHelper();
                 ms.container.append(ms.helper);
 
@@ -966,7 +945,6 @@
                             break;
                     }
                 }
-
 
                 // holds the trigger on the right side
                 if(cfg.hideTrigger === false) {
@@ -1059,14 +1037,13 @@
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
                         }).data('json', value);
-                    }
-                    else {
+                    } else {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
                             html: selectedItemHtml
                         }).data('json', value);
 
-                        if(cfg.disabled === false){
+                        if(cfg.disabled === false) {
                             // small cross img
                             delItemEl = $('<span/>', {
                                 'class': 'ms-close-btn'
@@ -1084,7 +1061,8 @@
                 ms._valueContainer = $('<div/>', {
                     style: 'display: none;'
                 });
-                $.each(ms.getValue(), function(i, val){
+
+                $.each(ms.getValue(), function(i, val) {
                     var el = $('<input/>', {
                         type: 'hidden',
                         name: cfg.name,
@@ -1152,8 +1130,7 @@
                             }
                         }
                     });
-                }
-                else {
+                } else {
                     filtered = data;
                 }
                 // take out the ones that have already been selected
@@ -1261,13 +1238,10 @@
 
                 if(ms.isValid() === false) {
                     ms.container.addClass(cfg.invalidCls);
-                }
-
-                else if(ms.input.val() !== '' && cfg.allowFreeEntries === false) {
+                } else if(ms.input.val() !== '' && cfg.allowFreeEntries === false) {
                     ms.empty();
                     self._updateHelper('');
                 }
-
                 $(ms).trigger('blur', [ms]);
             },
 
@@ -1308,7 +1282,7 @@
              * Triggered when clicking on the input text field
              * @private
              */
-            _onInputClick: function(){
+            _onInputClick: function() {
                 if (ms.isDisabled() === false && _hasFocus) {
                     if (cfg.toggleOnClick === true) {
                         if (cfg.expanded){
@@ -1464,21 +1438,18 @@
                     default:
                         if(_selection.length === cfg.maxSelection){
                             self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
-                        }
-                        else {
+                        } else {
                             if(freeInput.length < cfg.minChars) {
                                 self._updateHelper(cfg.minCharsRenderer.call(this, cfg.minChars - freeInput.length));
                                 if(cfg.expanded === true) {
                                     ms.collapse();
                                 }
-                            }
-                            else if(cfg.maxEntryLength && freeInput.length > cfg.maxEntryLength) {
+                            } else if(cfg.maxEntryLength && freeInput.length > cfg.maxEntryLength) {
                                 self._updateHelper(cfg.maxEntryRenderer.call(this, freeInput.length - cfg.maxEntryLength));
                                 if(cfg.expanded === true) {
                                     ms.collapse();
                                 }
-                            }
-                            else {
+                            } else {
                                 ms.helper.hide();
                                 if(cfg.minChars <= freeInput.length){
                                     _timer = setTimeout(function() {
@@ -1491,7 +1462,7 @@
                                 }
                             }
                         }
-                        break;
+                    break;
                 }
             },
 
