@@ -4,7 +4,6 @@ MagicSuggest v2.1.6 Bug Fix
 
 MagicSuggest v2.1.5
 --------------------------
-## Changed
 - (fix) prepend close button instead of appending it
 - (fix) updated magicsuggest-min.js with current master code
 - (fea) dynamically update max selection size
