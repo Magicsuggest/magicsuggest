@@ -1,9 +1,12 @@
+MagicSuggest v2.1.6 Bug Fix
+--------------------------
+- (fix) Disabled arbitrary HTML and SCRIPT execution on input.
+
 MagicSuggest v2.1.5
 --------------------------
 ## Changed
 - (fix) prepend close button instead of appending it
 - (fix) updated magicsuggest-min.js with current master code
-## Added
 - (fea) dynamically update max selection size
 
 
