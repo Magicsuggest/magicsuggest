@@ -1,3 +1,9 @@
+![GitHub issues](https://img.shields.io/github/issues/magicsuggest/magicsuggest)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/magicsuggest/magicsuggest)
+![GitHub milestones](https://img.shields.io/github/milestones/all/Magicsuggest/Magicsuggest)
+![npm](https://img.shields.io/npm/dt/magicsuggest)
+![GitHub Release Date](https://img.shields.io/github/release-date/magicsuggest/magicsuggest)
+--------------------------
 MagicSuggest v2.1.6 Bug Fix
 --------------------------
 - (fix) Disabled arbitrary HTML and SCRIPT execution on input.
