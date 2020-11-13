@@ -315,7 +315,6 @@
              */
             toggleOnClick: false,
 
-
             /**
              * Amount (in ms) between keyboard registers.
              */
@@ -330,7 +329,6 @@
              * If set to true, using comma will validate the user's choice
              */
             useCommaKey: true,
-
 
             /**
              * Determines whether or not the results will be displayed with a zebra table style
