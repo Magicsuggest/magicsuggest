@@ -10,6 +10,7 @@
  */
 (function ($) {
     "use strict";
+    
     var MagicSuggest = function (element, options) {
         var ms = this;
 
