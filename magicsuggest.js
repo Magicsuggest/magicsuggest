@@ -367,7 +367,7 @@
          */
         this.addToSelection = function (items, isSilent) {
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
-                if (!$.isArray(items)) {
+                if (!Array.isArray(items)) {
                     items = [items];
                 }
                 var valuechanged = false;
@@ -516,7 +516,7 @@
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
         this.removeFromSelection = function (items, isSilent) {
-            if (!$.isArray(items)) {
+            if (!Array.isArray(items)) {
                 items = [items];
             }
             var valuechanged = false;
