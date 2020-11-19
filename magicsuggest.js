@@ -974,8 +974,8 @@
                 $("body").on('click', function (e) {
                     if (ms.container.hasClass('ms-ctn-focus') &&
                         ms.container.has(e.target).length === 0 &&
-                        e.target.className.indexOf('ms-res-item') < 0 &&
-                        e.target.className.indexOf('ms-close-btn') < 0 &&
+                        $(e.target).attr('class').indexOf('ms-res-item') < 0 &&
+                        $(e.target).attr('class').indexOf('ms-close-btn') < 0 &&
                         ms.container[0] !== e.target) {
                         handlers._onBlur();
                     }
