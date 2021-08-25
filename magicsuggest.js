@@ -653,6 +653,7 @@
                 BACKSPACE: 8,
                 TAB: 9,
                 ENTER: 13,
+                SHIFT: 16,
                 CTRL: 17,
                 ESC: 27,
                 SPACE: 32,
@@ -1394,7 +1395,9 @@
 
                 $(ms).trigger('keyup', [ms, e]);
 
-                clearTimeout(_timer);
+                if(e.keyCode !== KEYCODES.SHIFT) {
+                    clearTimeout(_timer);
+                }
 
                 // collapse if escape, but keep focus.
                 if (e.keyCode === KEYCODES.ESC && cfg.expanded) {
