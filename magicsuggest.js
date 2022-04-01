@@ -1395,7 +1395,7 @@
 
                 $(ms).trigger('keyup', [ms, e]);
 
-                if(e.keyCode !== KEYCODES.SHIFT) {
+                if(e.keyCode !== KEYCODES.SHIFT && e.keyCode !== KEYCODES.CTRL) {
                     clearTimeout(_timer);
                 }
 
