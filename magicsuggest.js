@@ -106,6 +106,11 @@
              * Name of JSON object property displayed in the combo list
              */
             displayField: 'name',
+            
+             /**
+             * Name of JSON object property used as tooltip of items selected
+             */
+             tooltipField: 'title',
 
             /**
              * Set to false if you only want mouse interaction. In that case the combo will
@@ -1001,10 +1006,12 @@
                 $.each(items, function (index, value) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
-                    var resultItemEl = $('<div/>', {
-                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
+                    var resultItemEl = $('<div/>', {                        
+                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +                        
                             (disabled ? 'ms-res-item-disabled ' : '') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
+                        'title': titleText,
                         html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed,
                         'data-json': JSON.stringify(value)
                     });
@@ -1033,16 +1040,18 @@
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
-
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
                     // tag representing selected value
                     if (asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
+                            'title': titleText,
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
                         }).data('json', value);
                     } else {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
+                            'title': titleText,
                             html: selectedItemHtml
                         }).data('json', value);
 
@@ -1547,7 +1556,7 @@
 
             var def = {};
             // set values from DOM container element
-            $.each(this.attributes, function (i, att) {
+            $.each(this.attributes, function (i, att) { 
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
