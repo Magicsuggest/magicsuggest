@@ -1,16 +1,17 @@
 /**
+ * @license MIT
  * Multiple Selection Component for Bootstrap
  * Check nicolasbize.github.io/magicsuggest/ for latest updates.
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Nov 5, 2020
- * Version:      2.1.6
+ * Last Updated: sept 26, 2023
+ * Version:      @VERSION@
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function ($) {
     "use strict";
-    
+
     var MagicSuggest = function (element, options) {
         var ms = this;
 
@@ -106,6 +107,11 @@
              * Name of JSON object property displayed in the combo list
              */
             displayField: 'name',
+
+             /**
+             * Name of JSON object property used as tooltip of items selected
+             */
+             tooltipField: 'title',
 
             /**
              * Set to false if you only want mouse interaction. In that case the combo will
@@ -496,7 +502,7 @@
         };
 
         /**
-         * remove html from raw user input 
+         * remove html from raw user input
          */
         this.stripHtml = function (inputString) {
             return inputString.replace(/(<([^>]+)>)/gi, "");
@@ -976,7 +982,7 @@
                     if (targetClass === undefined) {
                         targetClass = "";
                     }
-                    
+
                     if (ms.container.hasClass('ms-ctn-focus') &&
                         ms.container.has(e.target).length === 0 &&
                         targetClass.indexOf('ms-res-item') < 0 &&
@@ -1001,10 +1007,12 @@
                 $.each(items, function (index, value) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
                     var resultItemEl = $('<div/>', {
                         'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
                             (disabled ? 'ms-res-item-disabled ' : '') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
+                        'title': titleText,
                         html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed,
                         'data-json': JSON.stringify(value)
                     });
@@ -1033,16 +1041,18 @@
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
-
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
                     // tag representing selected value
                     if (asText === true) {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
+                            'title': titleText,
                             html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
                         }).data('json', value);
                     } else {
                         selectedItemEl = $('<div/>', {
                             'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
+                            'title': titleText,
                             html: selectedItemHtml
                         }).data('json', value);
 
