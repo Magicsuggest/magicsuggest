@@ -1,16 +1,17 @@
 /**
+ * @license MIT
  * Multiple Selection Component for Bootstrap
  * Check nicolasbize.github.io/magicsuggest/ for latest updates.
  *
  * Author:       Nicolas Bize
  * Created:      Feb 8th 2013
- * Last Updated: Nov 5, 2020
- * Version:      2.1.6
+ * Last Updated: sept 26, 2023
+ * Version:      @VERSION@
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function ($) {
     "use strict";
-    
+
     var MagicSuggest = function (element, options) {
         var ms = this;
 
@@ -106,7 +107,7 @@
              * Name of JSON object property displayed in the combo list
              */
             displayField: 'name',
-            
+
              /**
              * Name of JSON object property used as tooltip of items selected
              */
@@ -501,7 +502,7 @@
         };
 
         /**
-         * remove html from raw user input 
+         * remove html from raw user input
          */
         this.stripHtml = function (inputString) {
             return inputString.replace(/(<([^>]+)>)/gi, "");
@@ -981,7 +982,7 @@
                     if (targetClass === undefined) {
                         targetClass = "";
                     }
-                    
+
                     if (ms.container.hasClass('ms-ctn-focus') &&
                         ms.container.has(e.target).length === 0 &&
                         targetClass.indexOf('ms-res-item') < 0 &&
@@ -1007,8 +1008,8 @@
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
                     var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
-                    var resultItemEl = $('<div/>', {                        
-                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +                        
+                    var resultItemEl = $('<div/>', {
+                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
                             (disabled ? 'ms-res-item-disabled ' : '') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
                         'title': titleText,
@@ -1556,7 +1557,7 @@
 
             var def = {};
             // set values from DOM container element
-            $.each(this.attributes, function (i, att) { 
+            $.each(this.attributes, function (i, att) {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
