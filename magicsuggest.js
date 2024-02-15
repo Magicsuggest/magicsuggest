@@ -1,24 +1,24 @@
 /**
  * @license MIT
  * Multiple Selection Component for Bootstrap
- * Check nicolasbize.github.io/magicsuggest/ for latest updates.
  *
  * Author:       Nicolas Bize
+ * Maintainer:   Sergio F. Rodriguez
  * Created:      Feb 8th 2013
- * Last Updated: sept 26, 2023
+ * Last Updated: Feb 15, 2024
  * Version:      @VERSION@
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
 (function ($) {
     "use strict";
 
-    var MagicSuggest = function (element, options) {
-        var ms = this;
+    let MagicSuggest = function (element, options) {
+        let ms = this;
 
         /**
          * Initializes the MagicSuggest component
          */
-        var defaults = {
+        let defaults = {
             /**********  CONFIGURATION PROPERTIES ************/
             /**
              * Restricts or allows the user to validate typed entries.
@@ -60,7 +60,8 @@
             /**
              * A function triggered just before the ajax request is sent, similar to jQuery
              */
-            beforeSend: function () { },
+            beforeSend: function () {
+            },
 
             /**
              * A custom CSS class to apply to the field's underlying element.
@@ -113,10 +114,10 @@
              */
             displayField: 'name',
 
-             /**
+            /**
              * Name of JSON object property used as tooltip of items selected
              */
-             tooltipField: 'title',
+            tooltipField: 'title',
 
             /**
              * Set to false if you only want mouse interaction. In that case the combo will
@@ -230,7 +231,7 @@
             },
 
             /**
-             * Whether or not sorting / filtering should be done remotely or locally.
+             * Whether sorting / filtering should be done remotely or locally.
              * Use either 'local' or 'remote'
              */
             mode: 'local',
@@ -368,8 +369,8 @@
             vtype: null
         };
 
-        var conf = $.extend({}, options);
-        var cfg = $.extend(true, {}, defaults, conf);
+        let conf = $.extend({}, options);
+        let cfg = $.extend(true, {}, defaults, conf);
 
         /**********  PUBLIC METHODS ************/
         /**
@@ -382,8 +383,8 @@
                 if (!Array.isArray(items)) {
                     items = [items];
                 }
-                var valuechanged = false;
-                $.each(items, function (index, json) {
+                let valuechanged = false;
+                items.forEach((json)  => {
                     if (cfg.allowDuplicates || $.inArray(json[cfg.valueField], ms.getValue()) === -1) {
                         _selection.push(json);
                         valuechanged = true;
@@ -409,7 +410,7 @@
         };
 
         /**
-         * Collapse the drop down part of the combo
+         * Collapse the dropdown part of the combo
          */
         this.collapse = function () {
             if (cfg.expanded === true) {
@@ -470,7 +471,7 @@
         this.isValid = function () {
             var valid = cfg.required === false || _selection.length > 0;
             if (cfg.vtype || cfg.vregex) {
-                $.each(_selection, function (index, item) {
+                _selection.forEach((item)  => {
                     valid = valid && self._validateSingleItem(item[cfg.valueField]);
                 });
             }
@@ -532,7 +533,7 @@
                 items = [items];
             }
             var valuechanged = false;
-            $.each(items, function (index, json) {
+            items.forEach((json)=> {
                 var i = $.inArray(json[cfg.valueField], ms.getValue());
                 if (i > -1) {
                     _selection.splice(i, 1);
@@ -788,8 +789,7 @@
                 list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
                 if (dir === 'down') {
                     start = list.eq(0);
-                }
-                else {
+                } else {
                     start = list.filter(':last');
                 }
                 active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
@@ -804,8 +804,7 @@
                         if (start[0].offsetTop + start.outerHeight() > ms.combobox.height()) {
                             ms.combobox.scrollTop(scrollPos + _comboItemHeight);
                         }
-                    }
-                    else {
+                    } else {
                         start = active.prevAll('.ms-res-item:not(.ms-res-item-disabled)').first();
                         if (start.length === 0) {
                             start = list.filter(':last');
@@ -833,23 +832,23 @@
                     if (typeof (data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
                         var queryParams = {}
-						queryParams[cfg.queryParam] = ms.input.val();
+                        queryParams[cfg.queryParam] = ms.input.val();
                         var params = $.extend(queryParams, cfg.dataUrlParams);
-						
-						var processData = true;
-						var contentType = "application/x-www-form-urlencoded";
-						if(cfg.ajaxJSONMode) {
-							//Adjust request ajax call
-							processData = false;
-							contentType = 'application/json';
-							params = JSON.stringify(params);
-						} 
+
+                        var processData = true;
+                        var contentType = "application/x-www-form-urlencoded";
+                        if (cfg.ajaxJSONMode) {
+                            //Adjust request ajax call
+                            processData = false;
+                            contentType = 'application/json';
+                            params = JSON.stringify(params);
+                        }
                         $.ajax($.extend({
                             type: cfg.method,
                             url: data,
                             data: params,
-							contentType: contentType,
-							processData: processData,
+                            contentType: contentType,
+                            processData: processData,
                             beforeSend: cfg.beforeSend,
                             success: function (asyncData) {
                                 json = typeof (asyncData) === 'string' ? JSON.parse(asyncData) : asyncData;
@@ -1024,7 +1023,7 @@
                 $.each(items, function (index, value) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
-                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
                     var resultItemEl = $('<div/>', {
                         'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
                             (disabled ? 'ms-res-item-disabled ' : '') +
@@ -1058,7 +1057,7 @@
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
-                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField]:'';
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
                     // tag representing selected value
                     if (asText === true) {
                         selectedItemEl = $('<div/>', {
@@ -1106,7 +1105,7 @@
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
                     w = ms.container.width() - inputOffset - 42;
-                    if(w < 0) {
+                    if (w < 0) {
                         w = ms.container.width();
                     }
                     ms.input.width(w);
@@ -1154,12 +1153,12 @@
                     selectedValues = ms.getValue();
                 // filter the data according to given input
                 if (q.length > 0) {
-                    $.each(data, function (index, obj) {
-                        var name = obj[cfg.displayField];
+                    data.forEach((item) => {
+                        var name = item[cfg.displayField];
                         if ((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
                             if (cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
-                                filtered.push(obj);
+                                filtered.push(item);
                             }
                         }
                     });
@@ -1167,9 +1166,9 @@
                     filtered = data;
                 }
                 // take out the ones that have already been selected
-                $.each(filtered, function (index, obj) {
-                    if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
-                        newSuggestions.push(obj);
+                filtered.forEach((item) => {
+                    if (cfg.allowDuplicates || $.inArray(item[cfg.valueField], selectedValues) === -1) {
+                        newSuggestions.push(item);
                     }
                 });
                 // sort the data
@@ -1197,20 +1196,19 @@
                 if (cfg.groupBy !== null) {
                     _groups = {};
 
-                    $.each(data, function (index, value) {
+                    data.forEach((item) => {
                         var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
-                        var prop = value[cfg.groupBy];
+                        var prop = item[cfg.groupBy];
                         if (typeof (props) != 'string') {
-                            prop = value;
+                            prop = item;
                             while (props.length > 0) {
                                 prop = prop[props.shift()];
                             }
                         }
                         if (_groups[prop] === undefined) {
-                            _groups[prop] = { title: prop, items: [value] };
-                        }
-                        else {
-                            _groups[prop].items.push(value);
+                            _groups[prop] = {title: prop, items: [item]};
+                        } else {
+                            _groups[prop].items.push(item);
                         }
                     });
                 }
@@ -1429,7 +1427,7 @@
 
                 $(ms).trigger('keyup', [ms, e]);
 
-                if(e.keyCode !== KEYCODES.SHIFT && e.keyCode !== KEYCODES.CTRL) {
+                if (e.keyCode !== KEYCODES.SHIFT && e.keyCode !== KEYCODES.CTRL) {
                     clearTimeout(_timer);
                 }
 
@@ -1565,7 +1563,7 @@
             if (this.nodeName.toLowerCase() === 'select') { // rendering from select
                 options.data = [];
                 options.value = [];
-                $.each(this.children, function (index, child) {
+                this.children.forEach((child) => {
                     if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
                         options.data.push({ id: child.value, name: child.text });
                         if ($(child).attr('selected')) {
@@ -1577,7 +1575,7 @@
 
             var def = {};
             // set values from DOM container element
-            $.each(this.attributes, function (i, att) {
+            this.attributes.forEach((att) => {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
