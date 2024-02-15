@@ -383,14 +383,16 @@
                 if (!Array.isArray(items)) {
                     items = [items];
                 }
-                let valuechanged = false;
-                $.each(items, function (index, json) {
-                    if (cfg.allowDuplicates || $.inArray(json[cfg.valueField], ms.getValue()) === -1) {
+
+                let valueChanged = false;
+                items.forEach(function (json) {
+                    if (cfg.allowDuplicates || !_selection.some(item => item[cfg.valueField] === json[cfg.valueField])) {
                         _selection.push(json);
-                        valuechanged = true;
+                        valueChanged = true;
                     }
                 });
-                if (valuechanged === true) {
+
+                if (valueChanged === true) {
                     self._renderSelection();
                     this.empty();
                     if (isSilent !== true) {
