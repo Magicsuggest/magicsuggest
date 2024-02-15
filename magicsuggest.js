@@ -379,7 +379,9 @@
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
         this.addToSelection = function (items, isSilent) {
-            if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
+            const isMaxSelectionReached = !cfg.maxSelection || _selection.length < cfg.maxSelection;
+
+            if (isMaxSelectionReached) {
                 let valueChanged = false;
 
                 if (!Array.isArray(items)) {
