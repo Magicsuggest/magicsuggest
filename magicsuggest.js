@@ -379,23 +379,18 @@
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
         this.addToSelection = function (items, isSilent) {
-            const isMaxSelectionReached = !cfg.maxSelection || _selection.length < cfg.maxSelection;
-
-            if (isMaxSelectionReached) {
-                let valueChanged = false;
-
+            if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
                 if (!Array.isArray(items)) {
                     items = [items];
                 }
-
-                items.forEach((selection) => {
-                    if (cfg.allowDuplicates || $.inArray(selection[cfg.valueField], ms.getValue()) === -1) {
-                        _selection.push(selection);
-                        valueChanged = true;
+                let valuechanged = false;
+                items.forEach((json)  => {
+                    if (cfg.allowDuplicates || $.inArray(json[cfg.valueField], ms.getValue()) === -1) {
+                        _selection.push(json);
+                        valuechanged = true;
                     }
                 });
-
-                if (valueChanged === true) {
+                if (valuechanged === true) {
                     self._renderSelection();
                     this.empty();
                     if (isSilent !== true) {
@@ -403,14 +398,7 @@
                     }
                 }
             }
-
-            // If the selection is inner and has a value, set the placeholder to an empty string
-            const isInnerSelection = cfg.selectionPosition === 'inner';
-            const hasValue = this.getValue().length > 0;
-            const placeholder = isInnerSelection && hasValue ? '' : cfg.placeholder;
-
-            // Set the placeholder to an empty string if the selection is inner and has a value
-            this.input.attr('placeholder', placeholder);
+            this.input.attr('placeholder', (cfg.selectionPosition === 'inner' && this.getValue().length > 0) ? '' : cfg.placeholder);
         };
 
         /**
@@ -483,7 +471,7 @@
         this.isValid = function () {
             var valid = cfg.required === false || _selection.length > 0;
             if (cfg.vtype || cfg.vregex) {
-                $.each(_selection, function (index, item) {
+                _selection.forEach((item)  => {
                     valid = valid && self._validateSingleItem(item[cfg.valueField]);
                 });
             }
@@ -545,7 +533,7 @@
                 items = [items];
             }
             var valuechanged = false;
-            $.each(items, function (index, json) {
+            items.forEach((json)=> {
                 var i = $.inArray(json[cfg.valueField], ms.getValue());
                 if (i > -1) {
                     _selection.splice(i, 1);
@@ -1165,12 +1153,12 @@
                     selectedValues = ms.getValue();
                 // filter the data according to given input
                 if (q.length > 0) {
-                    $.each(data, function (index, obj) {
-                        var name = obj[cfg.displayField];
+                    data.forEach((item) => {
+                        var name = item[cfg.displayField];
                         if ((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
                             if (cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
-                                filtered.push(obj);
+                                filtered.push(item);
                             }
                         }
                     });
@@ -1178,9 +1166,9 @@
                     filtered = data;
                 }
                 // take out the ones that have already been selected
-                $.each(filtered, function (index, obj) {
-                    if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
-                        newSuggestions.push(obj);
+                filtered.forEach((item) => {
+                    if (cfg.allowDuplicates || $.inArray(item[cfg.valueField], selectedValues) === -1) {
+                        newSuggestions.push(item);
                     }
                 });
                 // sort the data
@@ -1208,19 +1196,19 @@
                 if (cfg.groupBy !== null) {
                     _groups = {};
 
-                    $.each(data, function (index, value) {
+                    data.forEach((item) => {
                         var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
-                        var prop = value[cfg.groupBy];
+                        var prop = item[cfg.groupBy];
                         if (typeof (props) != 'string') {
-                            prop = value;
+                            prop = item;
                             while (props.length > 0) {
                                 prop = prop[props.shift()];
                             }
                         }
                         if (_groups[prop] === undefined) {
-                            _groups[prop] = {title: prop, items: [value]};
+                            _groups[prop] = {title: prop, items: [item]};
                         } else {
-                            _groups[prop].items.push(value);
+                            _groups[prop].items.push(item);
                         }
                     });
                 }
@@ -1575,7 +1563,7 @@
             if (this.nodeName.toLowerCase() === 'select') { // rendering from select
                 options.data = [];
                 options.value = [];
-                $.each(this.children, function (index, child) {
+                this.children.forEach((child) => {
                     if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
                         options.data.push({ id: child.value, name: child.text });
                         if ($(child).attr('selected')) {
@@ -1587,7 +1575,7 @@
 
             var def = {};
             // set values from DOM container element
-            $.each(this.attributes, function (i, att) {
+            this.attributes.forEach((att) => {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
