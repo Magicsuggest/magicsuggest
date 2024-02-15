@@ -38,7 +38,7 @@
             ajaxConfig: {},
 
             /**
-             * If ajaxJSONMode is true, form data must be sent in JSON format
+             * If ajaxJSONMode is true, form data must be send in JSON format
              */
             ajaxJSONMode: false,
 
@@ -380,14 +380,15 @@
          */
         this.addToSelection = function (items, isSilent) {
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
+                let valueChanged = false;
+
                 if (!Array.isArray(items)) {
                     items = [items];
                 }
 
-                let valueChanged = false;
-                items.forEach(function (json) {
-                    if (cfg.allowDuplicates || !_selection.some(item => item[cfg.valueField] === json[cfg.valueField])) {
-                        _selection.push(json);
+                items.forEach((selection) => {
+                    if (cfg.allowDuplicates || $.inArray(selection[cfg.valueField], ms.getValue()) === -1) {
+                        _selection.push(selection);
                         valueChanged = true;
                     }
                 });
@@ -400,7 +401,14 @@
                     }
                 }
             }
-            this.input.attr('placeholder', (cfg.selectionPosition === 'inner' && this.getValue().length > 0) ? '' : cfg.placeholder);
+
+            // If the selection is inner and has a value, set the placeholder to an empty string
+            const isInnerSelection = cfg.selectionPosition === 'inner';
+            const hasValue = this.getValue().length > 0;
+            const placeholder = isInnerSelection && hasValue ? '' : cfg.placeholder;
+
+            // Set the placeholder to an empty string if the selection is inner and has a value
+            this.input.attr('placeholder', placeholder);
         };
 
         /**
@@ -471,9 +479,9 @@
          * @return {boolean}
          */
         this.isValid = function () {
-            let valid = cfg.required === false || _selection.length > 0;
+            var valid = cfg.required === false || _selection.length > 0;
             if (cfg.vtype || cfg.vregex) {
-                _selection.forEach(item => {
+                $.each(_selection, function (index, item) {
                     valid = valid && self._validateSingleItem(item[cfg.valueField]);
                 });
             }
@@ -534,16 +542,14 @@
             if (!Array.isArray(items)) {
                 items = [items];
             }
-
-            let valuechanged = false;
-            items.forEach(json => {
-                let i = ms.getValue().indexOf(json[cfg.valueField]);
+            var valuechanged = false;
+            $.each(items, function (index, json) {
+                var i = $.inArray(json[cfg.valueField], ms.getValue());
                 if (i > -1) {
                     _selection.splice(i, 1);
                     valuechanged = true;
                 }
             });
-
             if (valuechanged === true) {
                 self._renderSelection();
                 if (isSilent !== true) {
@@ -606,29 +612,28 @@
          * @param data
          */
         this.setValue = function (values) {
-            let items = [];
-            values.forEach(value => {
-                let found = false;
-                _cbData.forEach(item => {
+            var items = [];
+            $.each(values, function (index, value) {
+                // first try to see if we have the full objects from our data set
+                var found = false;
+                $.each(_cbData, function (i, item) {
                     if (item[cfg.valueField] == value) {
                         items.push(item);
                         found = true;
                         return false;
                     }
                 });
-
                 if (!found) {
-                    if (typeof value === 'object') {
+                    if (typeof (value) === 'object') {
                         items.push(value);
                     } else {
-                        let json = {};
+                        var json = {};
                         json[cfg.valueField] = value;
                         json[cfg.displayField] = value;
                         items.push(json);
                     }
                 }
             });
-
             if (items.length > 0) {
                 this.addToSelection(items);
             }
@@ -660,7 +665,7 @@
         };
 
         /**********  PRIVATE ************/
-        let _selection = [],      // selected objects
+        var _selection = [],      // selected objects
             _comboItemHeight = 0, // height for each combo item.
             _timer,
             _hasFocus = false,
@@ -680,7 +685,7 @@
                 COMMA: 188
             };
 
-        let self = {
+        var self = {
             /**
              * Empties the result container and refills it with the array of json results in input
              * @private
@@ -689,14 +694,14 @@
                 ms.combobox.show();
                 ms.combobox.empty();
 
-                let resHeight = 0, // total height taken by displayed results.
+                var resHeight = 0, // total height taken by displayed results.
                     nbGroups = 0;
 
                 if (_groups === null) {
                     self._renderComboItems(data);
                     resHeight = _comboItemHeight * data.length;
                 } else {
-                    for (let grpName in _groups) {
+                    for (var grpName in _groups) {
                         nbGroups += 1;
                         $('<div/>', {
                             'class': 'ms-res-group',
@@ -704,9 +709,9 @@
                         }).appendTo(ms.combobox);
                         self._renderComboItems(_groups[grpName].items, true);
                     }
-                    let _groupItemHeight = ms.combobox.find('.ms-res-group').outerHeight();
+                    var _groupItemHeight = ms.combobox.find('.ms-res-group').outerHeight();
                     if (_groupItemHeight !== null) {
-                        let tmpResHeight = nbGroups * _groupItemHeight;
+                        var tmpResHeight = nbGroups * _groupItemHeight;
                         resHeight = (_comboItemHeight * data.length) + tmpResHeight;
                     } else {
                         resHeight = _comboItemHeight * (data.length + nbGroups);
@@ -728,7 +733,7 @@
                 }
 
                 if (data.length === 0 && ms.getRawValue() !== "") {
-                    let noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
+                    var noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
                     self._updateHelper(noSuggestionText);
                     ms.collapse();
                 }
@@ -749,10 +754,10 @@
              * @private
              */
             _getEntriesFromStringArray: function (data) {
-                let json = [];
-                data.forEach(s => {
-                    let entry = {};
-                    entry[cfg.displayField] = entry[cfg.valueField] = s.trim();
+                var json = [];
+                $.each(data, function (index, s) {
+                    var entry = {};
+                    entry[cfg.displayField] = entry[cfg.valueField] = $.trim(s);
                     json.push(entry);
                 });
                 return json;
@@ -764,21 +769,20 @@
              * @private
              */
             _highlightSuggestion: function (html) {
-                let q = ms.input.val();
+                var q = ms.input.val();
 
                 //escape special regex characters
-                const specialCharacters = ['^', '$', '*', '+', '?', '.', '(', ')', ':', '!', '|', '{', '}', '[', ']'];
+                var specialCharacters = ['^', '$', '*', '+', '?', '.', '(', ')', ':', '!', '|', '{', '}', '[', ']'];
 
-                specialCharacters.forEach(value => {
+                $.each(specialCharacters, function (index, value) {
                     q = q.replace(value, "\\" + value);
-                });
+                })
 
                 if (q.length === 0) {
                     return html; // nothing entered as input
                 }
 
-                let glob = cfg.matchCase === true ? 'g' : 'gi';
-
+                var glob = cfg.matchCase === true ? 'g' : 'gi';
                 return html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)', glob), '<em>$1</em>');
             },
 
@@ -791,7 +795,7 @@
                 if (!cfg.expanded) {
                     ms.expand();
                 }
-                let list, start, active, scrollPos;
+                var list, start, active, scrollPos;
                 list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
                 if (dir === 'down') {
                     start = list.eq(0);
@@ -830,19 +834,19 @@
              * @private
              */
             _processSuggestions: function (source) {
-                let json = null, data = source || cfg.data;
+                var json = null, data = source || cfg.data;
                 if (data !== null) {
                     if (typeof (data) === 'function') {
                         data = data.call(ms, ms.getRawValue());
                     }
                     if (typeof (data) === 'string') { // get results from ajax
                         $(ms).trigger('beforeload', [ms]);
-                        let queryParams = {}
+                        var queryParams = {}
                         queryParams[cfg.queryParam] = ms.input.val();
-                        let params = $.extend(queryParams, cfg.dataUrlParams);
+                        var params = $.extend(queryParams, cfg.dataUrlParams);
 
-                        let processData = true;
-                        let contentType = "application/x-www-form-urlencoded";
+                        var processData = true;
+                        var contentType = "application/x-www-form-urlencoded";
                         if (cfg.ajaxJSONMode) {
                             //Adjust request ajax call
                             processData = false;
@@ -878,7 +882,7 @@
                             _cbData = data[cfg.resultsField] || data;
                         }
                     }
-                    let sortedData = cfg.mode === 'remote' ? _cbData : self._sortAndTrim(_cbData);
+                    var sortedData = cfg.mode === 'remote' ? _cbData : self._sortAndTrim(_cbData);
                     self._displaySuggestions(self._group(sortedData));
 
                 }
@@ -1000,7 +1004,7 @@
                 }
 
                 $("body").on('click', function (e) {
-                    let targetClass = $(e.target).attr('class');
+                    var targetClass = $(e.target).attr('class');
                     if (targetClass === undefined) {
                         targetClass = "";
                     }
@@ -1025,12 +1029,12 @@
              * @private
              */
             _renderComboItems: function (items, isGrouped) {
-                let ref = this, html = '';
-                items.forEach((index, value) => {
-                    let displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
-                    let disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
-                    let titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
-                    let resultItemEl = $('<div/>', {
+                var ref = this, html = '';
+                $.each(items, function (index, value) {
+                    var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
+                    var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
+                    var resultItemEl = $('<div/>', {
                         'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
                             (disabled ? 'ms-res-item-disabled ' : '') +
                             (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
@@ -1049,7 +1053,7 @@
              * @private
              */
             _renderSelection: function () {
-                let ref = this, w = 0, inputOffset = 0, items = [],
+                var ref = this, w = 0, inputOffset = 0, items = [],
                     asText = cfg.resultAsString === true && !_hasFocus;
 
                 ms.selectionContainer.find('.ms-sel-item').remove();
@@ -1057,13 +1061,13 @@
                     ms._valueContainer.remove();
                 }
 
-                _selection.forEach((index, value) => {
-                    let selectedItemEl,
-                        delItemEl,
+                $.each(_selection, function (index, value) {
+
+                    var selectedItemEl, delItemEl,
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
-                    let validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
-                    let titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
+                    var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
+                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
                     // tag representing selected value
                     if (asText === true) {
                         selectedItemEl = $('<div/>', {
@@ -1097,8 +1101,8 @@
                     style: 'display: none;'
                 });
 
-                ms.getValue().forEach((i, val) => {
-                    let el = $('<input/>', {
+                $.each(ms.getValue(), function (i, val) {
+                    var el = $('<input/>', {
                         type: 'hidden',
                         name: cfg.name,
                         value: val
@@ -1153,14 +1157,14 @@
              * @private
              */
             _sortAndTrim: function (data) {
-                let q = ms.getRawValue(),
+                var q = ms.getRawValue(),
                     filtered = [],
                     newSuggestions = [],
                     selectedValues = ms.getValue();
                 // filter the data according to given input
                 if (q.length > 0) {
-                    data.forEach((index, obj) => {
-                        let name = obj[cfg.displayField];
+                    $.each(data, function (index, obj) {
+                        var name = obj[cfg.displayField];
                         if ((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
                             if (cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
@@ -1172,7 +1176,7 @@
                     filtered = data;
                 }
                 // take out the ones that have already been selected
-                filtered.forEach((index, obj) => {
+                $.each(filtered, function (index, obj) {
                     if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
                         newSuggestions.push(obj);
                     }
@@ -1202,9 +1206,9 @@
                 if (cfg.groupBy !== null) {
                     _groups = {};
 
-                    data.forEach((index, value) => {
-                        let props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
-                        let prop = value[cfg.groupBy];
+                    $.each(data, function (index, value) {
+                        var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
+                        var prop = value[cfg.groupBy];
                         if (typeof (props) != 'string') {
                             prop = value;
                             while (props.length > 0) {
@@ -1257,7 +1261,7 @@
             }
         };
 
-        let handlers = {
+        var handlers = {
             /**
              * Triggered when blurring out of the component
              * @private
@@ -1267,7 +1271,7 @@
                 ms.collapse();
                 _hasFocus = false;
                 if (ms.getRawValue() !== '' && cfg.allowFreeEntries === true) {
-                    let obj = {};
+                    var obj = {};
                     obj[cfg.displayField] = obj[cfg.valueField] = $.trim(ms.getRawValue());
                     ms.addToSelection(obj);
                 }
@@ -1288,7 +1292,7 @@
              * @private
              */
             _onComboItemMouseOver: function (e) {
-                let target = $(e.currentTarget);
+                var target = $(e.currentTarget);
                 if (!target.hasClass('ms-res-item-disabled')) {
                     ms.combobox.children().removeClass('ms-res-item-active');
                     target.addClass('ms-res-item-active');
@@ -1301,7 +1305,7 @@
              * @private
              */
             _onComboItemSelected: function (e) {
-                let target = $(e.currentTarget);
+                var target = $(e.currentTarget);
                 if (!target.hasClass('ms-res-item-disabled')) {
                     self._selectItem($(e.currentTarget));
                 }
@@ -1341,7 +1345,7 @@
                     ms.container.addClass('ms-ctn-focus');
                     ms.container.removeClass(cfg.invalidCls);
 
-                    let curLength = ms.getRawValue().length;
+                    var curLength = ms.getRawValue().length;
                     if (cfg.expandOnFocus === true) {
                         ms.expand();
                     }
@@ -1366,7 +1370,7 @@
              */
             _onKeyDown: function (e) {
                 // check how tab should be handled
-                let active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
+                var active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
                     freeInput = ms.input.val();
                 $(ms).trigger('keydown', [ms, e]);
 
@@ -1425,7 +1429,7 @@
              * @private
              */
             _onKeyUp: function (e) {
-                let freeInput = ms.getRawValue(),
+                var freeInput = ms.getRawValue(),
                     inputValid = $.trim(ms.input.val()).length > 0 &&
                         (!cfg.maxEntryLength || $.trim(ms.input.val()).length <= cfg.maxEntryLength),
                     selected,
@@ -1524,7 +1528,7 @@
                     if (cfg.expanded === true) {
                         ms.collapse();
                     } else {
-                        let curLength = ms.getRawValue().length;
+                        var curLength = ms.getRawValue().length;
                         if (curLength >= cfg.minChars) {
                             ms.input.trigger('focus');
                             ms.expand();
@@ -1551,7 +1555,7 @@
     };
 
     $.fn.magicSuggest = function (options) {
-        let obj = $(this);
+        var obj = $(this);
 
         if (obj.length === 1 && obj.data('magicSuggest')) {
             return obj.data('magicSuggest');
@@ -1559,7 +1563,7 @@
 
         obj.each(function (i) {
             // assume $(this) is an element
-            let cntr = $(this);
+            var cntr = $(this);
 
             // Return early if this element already has a plugin instance
             if (cntr.data('magicSuggest')) {
@@ -1569,7 +1573,7 @@
             if (this.nodeName.toLowerCase() === 'select') { // rendering from select
                 options.data = [];
                 options.value = [];
-                this.children.forEach((index, child) => {
+                $.each(this.children, function (index, child) {
                     if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
                         options.data.push({ id: child.value, name: child.text });
                         if ($(child).attr('selected')) {
@@ -1579,13 +1583,13 @@
                 });
             }
 
-            let def = {};
+            var def = {};
             // set values from DOM container element
-            this.attributes.forEach((i, att) => {
+            $.each(this.attributes, function (i, att) {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
-            let field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
+            var field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
             cntr.data('magicSuggest', field);
             field.container.data('magicSuggest', field);
         });
