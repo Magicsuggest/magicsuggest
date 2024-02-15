@@ -473,7 +473,7 @@
         this.isValid = function () {
             let valid = cfg.required === false || _selection.length > 0;
             if (cfg.vtype || cfg.vregex) {
-                $.each(_selection, function (index, item) {
+                _selection.forEach(item => {
                     valid = valid && self._validateSingleItem(item[cfg.valueField]);
                 });
             }
@@ -534,14 +534,16 @@
             if (!Array.isArray(items)) {
                 items = [items];
             }
+
             let valuechanged = false;
-            $.each(items, function (index, json) {
-                let i = $.inArray(json[cfg.valueField], ms.getValue());
+            items.forEach(json => {
+                let i = ms.getValue().indexOf(json[cfg.valueField]);
                 if (i > -1) {
                     _selection.splice(i, 1);
                     valuechanged = true;
                 }
             });
+
             if (valuechanged === true) {
                 self._renderSelection();
                 if (isSilent !== true) {
@@ -605,18 +607,18 @@
          */
         this.setValue = function (values) {
             let items = [];
-            $.each(values, function (index, value) {
-                // first try to see if we have the full objects from our data set
+            values.forEach(value => {
                 let found = false;
-                $.each(_cbData, function (i, item) {
+                _cbData.forEach(item => {
                     if (item[cfg.valueField] == value) {
                         items.push(item);
                         found = true;
                         return false;
                     }
                 });
+
                 if (!found) {
-                    if (typeof (value) === 'object') {
+                    if (typeof value === 'object') {
                         items.push(value);
                     } else {
                         let json = {};
@@ -626,6 +628,7 @@
                     }
                 }
             });
+
             if (items.length > 0) {
                 this.addToSelection(items);
             }
@@ -747,9 +750,9 @@
              */
             _getEntriesFromStringArray: function (data) {
                 let json = [];
-                $.each(data, function (index, s) {
+                data.forEach(s => {
                     let entry = {};
-                    entry[cfg.displayField] = entry[cfg.valueField] = $.trim(s);
+                    entry[cfg.displayField] = entry[cfg.valueField] = s.trim();
                     json.push(entry);
                 });
                 return json;
@@ -764,17 +767,18 @@
                 let q = ms.input.val();
 
                 //escape special regex characters
-                let specialCharacters = ['^', '$', '*', '+', '?', '.', '(', ')', ':', '!', '|', '{', '}', '[', ']'];
+                const specialCharacters = ['^', '$', '*', '+', '?', '.', '(', ')', ':', '!', '|', '{', '}', '[', ']'];
 
-                $.each(specialCharacters, function (index, value) {
+                specialCharacters.forEach(value => {
                     q = q.replace(value, "\\" + value);
-                })
+                });
 
                 if (q.length === 0) {
                     return html; // nothing entered as input
                 }
 
                 let glob = cfg.matchCase === true ? 'g' : 'gi';
+
                 return html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)', glob), '<em>$1</em>');
             },
 
@@ -1022,7 +1026,7 @@
              */
             _renderComboItems: function (items, isGrouped) {
                 let ref = this, html = '';
-                $.each(items, function (index, value) {
+                items.forEach((index, value) => {
                     let displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     let disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
                     let titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
@@ -1053,9 +1057,9 @@
                     ms._valueContainer.remove();
                 }
 
-                $.each(_selection, function (index, value) {
-
-                    let selectedItemEl, delItemEl,
+                _selection.forEach((index, value) => {
+                    let selectedItemEl,
+                        delItemEl,
                         selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
 
                     let validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
@@ -1093,7 +1097,7 @@
                     style: 'display: none;'
                 });
 
-                $.each(ms.getValue(), function (i, val) {
+                ms.getValue().forEach((i, val) => {
                     let el = $('<input/>', {
                         type: 'hidden',
                         name: cfg.name,
@@ -1155,7 +1159,7 @@
                     selectedValues = ms.getValue();
                 // filter the data according to given input
                 if (q.length > 0) {
-                    $.each(data, function (index, obj) {
+                    data.forEach((index, obj) => {
                         let name = obj[cfg.displayField];
                         if ((cfg.matchCase === true && name.indexOf(q) > -1) ||
                             (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
@@ -1168,7 +1172,7 @@
                     filtered = data;
                 }
                 // take out the ones that have already been selected
-                $.each(filtered, function (index, obj) {
+                filtered.forEach((index, obj) => {
                     if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
                         newSuggestions.push(obj);
                     }
@@ -1198,7 +1202,7 @@
                 if (cfg.groupBy !== null) {
                     _groups = {};
 
-                    $.each(data, function (index, value) {
+                    data.forEach((index, value) => {
                         let props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
                         let prop = value[cfg.groupBy];
                         if (typeof (props) != 'string') {
@@ -1565,7 +1569,7 @@
             if (this.nodeName.toLowerCase() === 'select') { // rendering from select
                 options.data = [];
                 options.value = [];
-                $.each(this.children, function (index, child) {
+                this.children.forEach((index, child) => {
                     if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
                         options.data.push({ id: child.value, name: child.text });
                         if ($(child).attr('selected')) {
@@ -1577,7 +1581,7 @@
 
             let def = {};
             // set values from DOM container element
-            $.each(this.attributes, function (i, att) {
+            this.attributes.forEach((i, att) => {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
