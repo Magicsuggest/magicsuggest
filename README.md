@@ -3,6 +3,14 @@
 ![GitHub milestones](https://img.shields.io/github/milestones/all/Magicsuggest/Magicsuggest)
 ![npm](https://img.shields.io/npm/dt/magicsuggest)
 ![GitHub Release Date](https://img.shields.io/github/release-date/magicsuggest/magicsuggest)
+
+--------------------------
+MagicSuggest v2.1.7 Updates deprecated jQuery methods
+--------------------------
+- (fix) updates deprecated jQuery methods such as trim(), $.isArray, and Proxy().
+- (Update) It replaces them with native JavaScript alternatives. 
+- (Fix) the jQuery method each() is also replaced with native JavaScript forEach() - where possible.
+
 --------------------------
 MagicSuggest v2.1.6 Bug Fix
 --------------------------
