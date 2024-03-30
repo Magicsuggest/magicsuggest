@@ -1,7 +1,7 @@
 {
     "name": "nicolasbize/magicsuggest",
     "description": "MagicSuggest is a multiple selection auto-suggest input box for Bootstrap 3.",
-    "version": "2.1.5",
+    "version": "2.1.7",
     "type": "component",
     "homepage": "http://nicolasbize.com/magicsuggest",
     "license": "MIT",
