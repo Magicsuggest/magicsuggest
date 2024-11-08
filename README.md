@@ -79,9 +79,9 @@ v1.3.0 Some more features and bugfixing (Minor Tagged Milestone - May 25th, 2013
 - (fix) empty suggestion text was wrongly triggered when performing initial ajax call (credits to curtgrimes - https://github.com/curtgrimes)
 - (fea) added cfg(selectionRenderer) (credits to pstuart2 - https://github.com/pstuart2)
 - (fix) empty text class was not triggered properly (credits to jods4 - https://github.com/jods4)
-- (fix) IE8 compatibility (credits to Airborn22 - https://github.com/Airborn22)
+- (fix) IE8 compatibility (credits to sandormajor - https://github.com/sandormajor)
 - (fea) MagicSuggest can now be rendered from a select dom component. (credits to Yogu - https://github.com/Yogu)
-- (fea) on blur now automatically adds the typed text to the selection if free entries are allowed (credits to Airborn22 - https://github.com/Airborn22)
+- (fea) on blur now automatically adds the typed text to the selection if free entries are allowed (credits to sandormajor - https://github.com/sandormajor)
 - (fea) new public method empty() which will clear the user text.
 - (fix) make sure combo is filled prior to triggering load event
 - (fea) renamed some events for better readability
