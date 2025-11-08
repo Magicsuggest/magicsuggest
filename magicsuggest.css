@@ -140,7 +140,7 @@
     background-color: #F5F5F5;
 }
 .ms-res-ctn .ms-res-item-disabled{
-    color: #CCC;
+    color: #CCC !important;
     cursor: default;
 }
 .ms-sel-ctn{
