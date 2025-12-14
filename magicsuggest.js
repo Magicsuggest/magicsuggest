@@ -910,7 +910,7 @@
                         }
 
                         $(ms).trigger('beforeload', [ms]);
-                        var queryParams = {}
+                        var queryParams = {};
                         queryParams[cfg.queryParam] = ms.input.val();
                         var params = $.extend(queryParams, cfg.dataUrlParams);
 
@@ -1169,7 +1169,7 @@
              * @private
              */
             _renderSelection: function () {
-                var ref = this, w = 0, inputOffset = 0;
+                var w = 0, inputOffset = 0;
                 var asText = cfg.resultAsString === true && !_hasFocus;
                 var currentValues = ms.getValue();
 
@@ -1358,7 +1358,7 @@
                     $.each(data, function (index, value) {
                         var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
                         var prop = value[cfg.groupBy];
-                        if (typeof (props) != 'string') {
+                        if (typeof (props) !== 'string') {
                             prop = value;
                             while (props.length > 0) {
                                 prop = prop[props.shift()];
@@ -1627,6 +1627,7 @@
                             }
                             break;
                         }
+                        /* falls through */
                     default:
                         if (_selection.length === cfg.maxSelection) {
                             self._updateHelper(cfg.maxSelectionRenderer.call(this, _selection.length));
@@ -1710,7 +1711,7 @@
             return obj.data('magicSuggest');
         }
 
-        obj.each(function (i) {
+        obj.each(function () {
             // assume $(this) is an element
             var cntr = $(this);
 
