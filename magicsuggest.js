@@ -12,7 +12,11 @@
 (function ($) {
     "use strict";
 
+    // Instance counter for unique namespaced events
+    var _instanceCounter = 0;
+
     let MagicSuggest = function (element, options) {
+        var _instanceId = ++_instanceCounter;
         let ms = this;
 
         /**
@@ -381,7 +385,8 @@
         this.addToSelection = function (items, isSilent) {
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
 
-                // If the selection is inner and has a value, set the placeholder to an empty string
+                // Cache current values for performance (avoid repeated getValue() calls)
+                var currentValues = ms.getValue();
                 let valueChanged = false;
 
                 // If the items is not an array, convert it to an array
@@ -391,13 +396,14 @@
 
                 // Add the items to the selection
                 items.forEach((selection) => {
-                    if (cfg.allowDuplicates || $.inArray(selection[cfg.valueField], ms.getValue()) === -1) {
+                    if (cfg.allowDuplicates || $.inArray(selection[cfg.valueField], currentValues) === -1) {
                         _selection.push(selection);
+                        currentValues.push(selection[cfg.valueField]); // Keep cache in sync
                         valueChanged = true;
                     }
                 });
 
-                // If the selection is inner and has a value, set the placeholder to an empty string
+                // If the selection changed, re-render and trigger event
                 if (valueChanged === true) {
                     self._renderSelection();
                     this.empty();
@@ -407,12 +413,11 @@
                 }
             }
 
-            // If the selection is inner and has a value, set the placeholder to an empty string
+            // Set placeholder based on selection state
             const isInnerSelection = cfg.selectionPosition === 'inner';
-            const hasValue = this.getValue().length > 0;
+            const hasValue = _selection.length > 0; // Use _selection.length instead of getValue()
             const placeholder = isInnerSelection && hasValue ? '' : cfg.placeholder;
 
-            // Set the placeholder to an empty string if the selection is inner and has a value
             this.input.attr('placeholder', placeholder);
         };
 
@@ -548,10 +553,13 @@
                 items = [items];
             }
             var valuechanged = false;
+            // Cache current values for performance
+            var currentValues = ms.getValue();
             $.each(items, function (index, json) {
-                var i = $.inArray(json[cfg.valueField], ms.getValue());
+                var i = $.inArray(json[cfg.valueField], currentValues);
                 if (i > -1) {
                     _selection.splice(i, 1);
+                    currentValues.splice(i, 1); // Keep cache in sync
                     valuechanged = true;
                 }
             });
@@ -567,7 +575,7 @@
                     self._processSuggestions();
                 }
             }
-            this.input.attr('placeholder', (cfg.selectionPosition === 'inner' && this.getValue().length > 0) ? '' : cfg.placeholder);
+            this.input.attr('placeholder', (cfg.selectionPosition === 'inner' && _selection.length > 0) ? '' : cfg.placeholder);
             this.input.css({width: '100%'});
         };
 
@@ -617,28 +625,27 @@
          * @param data
          */
         this.setValue = function (values) {
-            var items = [];
-            $.each(values, function (index, value) {
-                // first try to see if we have the full objects from our data set
-                var found = false;
-                $.each(_cbData, function (i, item) {
-                    if (item[cfg.valueField] == value) {
-                        items.push(item);
-                        found = true;
-                        return false;
-                    }
-                });
-                if (!found) {
-                    if (typeof (value) === 'object') {
-                        items.push(value);
-                    } else {
-                        var json = {};
-                        json[cfg.valueField] = value;
-                        json[cfg.displayField] = value;
-                        items.push(json);
-                    }
-                }
+            // Create lookup map from _cbData for O(1) access instead of O(n) nested loop
+            var dataMap = {};
+            _cbData.forEach(function(item) {
+                dataMap[item[cfg.valueField]] = item;
             });
+
+            var items = values.map(function(value) {
+                // First check the lookup map
+                if (dataMap[value]) {
+                    return dataMap[value];
+                }
+                // If not found in data, create entry
+                if (typeof value === 'object') {
+                    return value;
+                }
+                var json = {};
+                json[cfg.valueField] = value;
+                json[cfg.displayField] = value;
+                return json;
+            });
+
             if (items.length > 0) {
                 this.addToSelection(items);
             }
@@ -669,10 +676,58 @@
             cfg.maxSelection = newSelectionSize;
         };
 
+        /**
+         * Destroys the component and cleans up event listeners to prevent memory leaks.
+         * Call this method when removing the component from the DOM.
+         */
+        this.destroy = function () {
+            // Cancel any pending AJAX request
+            if (_pendingRequest && _pendingRequest.readyState !== 4) {
+                _pendingRequest.abort();
+            }
+
+            // Clear timers
+            clearTimeout(_timer);
+            clearTimeout(_resizeTimer);
+
+            // Remove namespaced event handlers from body and window
+            $("body").off('click.magicsuggest' + _instanceId);
+            $(window).off('resize.magicsuggest' + _instanceId);
+
+            // Remove event handlers from component elements
+            if (ms.container) {
+                ms.container.off();
+                ms.container.remove();
+            }
+            if (ms.selectionContainer && !cfg.selectionContainer) {
+                ms.selectionContainer.off();
+                ms.selectionContainer.remove();
+            }
+            if (ms.combobox) {
+                ms.combobox.off();
+            }
+            if (ms.input) {
+                ms.input.off();
+            }
+            if (ms.trigger) {
+                ms.trigger.off();
+            }
+
+            // Clear data references
+            _selection = [];
+            _cbData = [];
+            _groups = null;
+
+            // Trigger destroy event
+            $(ms).trigger('destroy', [ms]);
+        };
+
         /**********  PRIVATE ************/
         var _selection = [],      // selected objects
             _comboItemHeight = 0, // height for each combo item.
             _timer,
+            _resizeTimer,         // debounce timer for window resize
+            _pendingRequest,      // track pending AJAX request for cancellation
             _hasFocus = false,
             _groups = null,
             _cbData = [],
@@ -776,19 +831,15 @@
             _highlightSuggestion: function (html) {
                 var q = ms.input.val();
 
-                //escape special regex characters
-                var specialCharacters = ['^', '$', '*', '+', '?', '.', '(', ')', ':', '!', '|', '{', '}', '[', ']'];
-
-                $.each(specialCharacters, function (index, value) {
-                    q = q.replace(value, "\\" + value);
-                })
-
                 if (q.length === 0) {
                     return html; // nothing entered as input
                 }
 
+                // Escape all special regex characters in one pass (more efficient than loop)
+                var escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
                 var glob = cfg.matchCase === true ? 'g' : 'gi';
-                return html.replace(new RegExp('(' + q + ')(?!([^<]+)?>)', glob), '<em>$1</em>');
+                return html.replace(new RegExp('(' + escaped + ')(?!([^<]+)?>)', glob), '<em>$1</em>');
             },
 
             /**
@@ -800,14 +851,19 @@
                 if (!cfg.expanded) {
                     ms.expand();
                 }
-                var list, start, active, scrollPos;
-                list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
+                // Cache DOM queries for performance
+                var list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
+                var start, scrollPos;
+                var comboHeight = ms.combobox.height();
+
                 if (dir === 'down') {
                     start = list.eq(0);
                 } else {
                     start = list.filter(':last');
                 }
-                active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first');
+
+                // Find active item from the already-queried list (avoid second DOM query)
+                var active = list.filter('.ms-res-item-active').first();
                 if (active.length > 0) {
                     if (dir === 'down') {
                         start = active.nextAll('.ms-res-item:not(.ms-res-item-disabled)').first();
@@ -816,7 +872,7 @@
                         }
                         scrollPos = ms.combobox.scrollTop();
                         ms.combobox.scrollTop(0);
-                        if (start[0].offsetTop + start.outerHeight() > ms.combobox.height()) {
+                        if (start[0].offsetTop + start.outerHeight() > comboHeight) {
                             ms.combobox.scrollTop(scrollPos + _comboItemHeight);
                         }
                     } else {
@@ -825,8 +881,9 @@
                             start = list.filter(':last');
                             ms.combobox.scrollTop(_comboItemHeight * list.length);
                         }
-                        if (start[0].offsetTop < ms.combobox.scrollTop()) {
-                            ms.combobox.scrollTop(ms.combobox.scrollTop() - _comboItemHeight);
+                        var currentScrollTop = ms.combobox.scrollTop();
+                        if (start[0].offsetTop < currentScrollTop) {
+                            ms.combobox.scrollTop(currentScrollTop - _comboItemHeight);
                         }
                     }
                 }
@@ -845,6 +902,11 @@
                         data = data.call(ms, ms.getRawValue());
                     }
                     if (typeof (data) === 'string') { // get results from ajax
+                        // Cancel any pending request to avoid race conditions
+                        if (_pendingRequest && _pendingRequest.readyState !== 4) {
+                            _pendingRequest.abort();
+                        }
+
                         $(ms).trigger('beforeload', [ms]);
                         var queryParams = {}
                         queryParams[cfg.queryParam] = ms.input.val();
@@ -858,7 +920,7 @@
                             contentType = 'application/json';
                             params = JSON.stringify(params);
                         }
-                        $.ajax($.extend({
+                        _pendingRequest = $.ajax($.extend({
                             type: cfg.method,
                             url: data,
                             data: params,
@@ -996,7 +1058,10 @@
                     ms.container.append(ms.trigger);
                 }
 
-                $(window).on('resize', handlers._onWindowResized.bind(this));
+                $(window).on('resize.magicsuggest' + _instanceId, function() {
+                    clearTimeout(_resizeTimer);
+                    _resizeTimer = setTimeout(handlers._onWindowResized.bind(this), 150);
+                });
 
                 // do not perform an initial call if we are using ajax unless we have initial values
                 if (cfg.value !== null || cfg.data !== null) {
@@ -1012,7 +1077,7 @@
                     }
                 }
 
-                $("body").on('click', function (e) {
+                $("body").on('click.magicsuggest' + _instanceId, function (e) {
                     var targetClass = $(e.target).attr('class');
                     if (targetClass === undefined) {
                         targetClass = "";
@@ -1038,22 +1103,24 @@
              * @private
              */
             _renderComboItems: function (items, isGrouped) {
-                var ref = this, html = '';
-                $.each(items, function (index, value) {
+                var ref = this;
+                // Build HTML string directly for better performance (avoid jQuery object creation in loop)
+                var htmlParts = items.map(function(value, index) {
                     var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
                     var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
-                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
-                    var resultItemEl = $('<div/>', {
-                        'class': 'ms-res-item ' + (isGrouped ? 'ms-res-item-grouped ' : '') +
-                            (disabled ? 'ms-res-item-disabled ' : '') +
-                            (index % 2 === 1 && cfg.useZebraStyle === true ? 'ms-res-odd' : ''),
-                        'title': titleText,
-                        html: cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed,
-                        'data-json': JSON.stringify(value)
-                    });
-                    html += $('<div/>').append(resultItemEl).html();
+                    var titleText = cfg.tooltipField !== null ? (value[cfg.tooltipField] || '') : '';
+                    var cls = 'ms-res-item' +
+                        (isGrouped ? ' ms-res-item-grouped' : '') +
+                        (disabled ? ' ms-res-item-disabled' : '') +
+                        (index % 2 === 1 && cfg.useZebraStyle === true ? ' ms-res-odd' : '');
+                    var content = cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed;
+                    // Escape double quotes in JSON for attribute safety
+                    var jsonAttr = JSON.stringify(value).replace(/"/g, '&quot;');
+                    // Escape title for HTML attribute
+                    var escapedTitle = String(titleText).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    return '<div class="' + cls + '" title="' + escapedTitle + '" data-json="' + jsonAttr + '">' + content + '</div>';
                 });
-                ms.combobox.append(html);
+                ms.combobox.append(htmlParts.join(''));
                 _comboItemHeight = ms.combobox.find('.ms-res-item:first').outerHeight();
             },
 
@@ -1166,30 +1233,33 @@
              * @private
              */
             _sortAndTrim: function (data) {
-                var q = ms.getRawValue(),
-                    filtered = [],
-                    newSuggestions = [],
-                    selectedValues = ms.getValue();
-                // filter the data according to given input
-                if (q.length > 0) {
-                    $.each(data, function (index, obj) {
-                        var name = obj[cfg.displayField];
-                        if ((cfg.matchCase === true && name.indexOf(q) > -1) ||
-                            (cfg.matchCase === false && name.toLowerCase().indexOf(q.toLowerCase()) > -1)) {
-                            if (cfg.strictSuggest === false || name.toLowerCase().indexOf(q.toLowerCase()) === 0) {
-                                filtered.push(obj);
-                            }
-                        }
-                    });
-                } else {
-                    filtered = data;
-                }
-                // take out the ones that have already been selected
-                $.each(filtered, function (index, obj) {
-                    if (cfg.allowDuplicates || $.inArray(obj[cfg.valueField], selectedValues) === -1) {
-                        newSuggestions.push(obj);
+                var q = ms.getRawValue();
+                var qLower = q.toLowerCase();
+                var selectedValues = ms.getValue();
+                // Use Set for O(1) lookup instead of $.inArray O(n)
+                var selectedSet = new Set(selectedValues);
+
+                // Combined filter and dedup in single pass for better performance
+                var newSuggestions = data.filter(function(obj) {
+                    // Skip if already selected (unless duplicates allowed)
+                    if (!cfg.allowDuplicates && selectedSet.has(obj[cfg.valueField])) {
+                        return false;
                     }
+                    // Filter by query if present
+                    if (q.length > 0) {
+                        var name = obj[cfg.displayField];
+                        var nameLower = name.toLowerCase();
+                        var matchIndex = cfg.matchCase ? name.indexOf(q) : nameLower.indexOf(qLower);
+                        if (matchIndex === -1) {
+                            return false;
+                        }
+                        if (cfg.strictSuggest && matchIndex !== 0) {
+                            return false;
+                        }
+                    }
+                    return true;
                 });
+
                 // sort the data
                 if (cfg.sortOrder !== null) {
                     newSuggestions.sort(function (a, b) {
@@ -1207,7 +1277,6 @@
                     newSuggestions = newSuggestions.slice(0, cfg.maxSuggestions);
                 }
                 return newSuggestions;
-
             },
 
             _group: function (data) {
@@ -1390,11 +1459,11 @@
                 }
                 switch (e.keyCode) {
                     case KEYCODES.BACKSPACE:
-                        if (freeInput.length === 0 && ms.getSelection().length > 0 && cfg.selectionPosition === 'inner') {
+                        if (freeInput.length === 0 && _selection.length > 0 && cfg.selectionPosition === 'inner') {
                             _selection.pop();
                             self._renderSelection();
                             $(ms).trigger('selectionchange', [ms, ms.getSelection()]);
-                            ms.input.attr('placeholder', (cfg.selectionPosition === 'inner' && ms.getValue().length > 0) ? '' : cfg.placeholder);
+                            ms.input.attr('placeholder', (cfg.selectionPosition === 'inner' && _selection.length > 0) ? '' : cfg.placeholder);
                             ms.input.trigger('focus');
                             e.preventDefault();
                         }
