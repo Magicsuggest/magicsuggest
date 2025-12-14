@@ -715,6 +715,7 @@
 
             // Clear data references
             _selection = [];
+            _renderedValues = [];
             _cbData = [];
             _groups = null;
 
@@ -724,6 +725,7 @@
 
         /**********  PRIVATE ************/
         var _selection = [],      // selected objects
+            _renderedValues = [],  // track rendered values for incremental updates
             _comboItemHeight = 0, // height for each combo item.
             _timer,
             _resizeTimer,         // debounce timer for window resize
@@ -1125,68 +1127,137 @@
             },
 
             /**
+             * Creates a single selection item element
+             * @private
+             */
+            _createSelectionItem: function (value, index, asText, totalCount) {
+                var ref = this;
+                var selectedItemEl, delItemEl;
+                var selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
+                var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
+                var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
+
+                if (asText === true) {
+                    selectedItemEl = $('<div/>', {
+                        'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
+                        'title': titleText,
+                        html: selectedItemHtml + (index === (totalCount - 1) ? '' : cfg.resultAsStringDelimiter)
+                    }).data('json', value);
+                } else {
+                    selectedItemEl = $('<div/>', {
+                        'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
+                        'title': titleText,
+                        html: selectedItemHtml
+                    }).data('json', value);
+
+                    if (cfg.disabled === false) {
+                        delItemEl = $('<span/>', {
+                            'class': 'ms-close-btn'
+                        }).data('json', value).prependTo(selectedItemEl);
+                        delItemEl.on('click', handlers._onTagTriggerClick.bind(ref));
+                    }
+                }
+
+                // Store value for tracking
+                selectedItemEl.attr('data-ms-value', value[cfg.valueField]);
+                return selectedItemEl;
+            },
+
+            /**
              * Renders the selected items into their container.
+             * Uses incremental updates when possible for better performance.
              * @private
              */
             _renderSelection: function () {
-                var ref = this, w = 0, inputOffset = 0, items = [],
-                    asText = cfg.resultAsString === true && !_hasFocus;
+                var ref = this, w = 0, inputOffset = 0;
+                var asText = cfg.resultAsString === true && !_hasFocus;
+                var currentValues = ms.getValue();
 
-                ms.selectionContainer.find('.ms-sel-item').remove();
-                if (ms._valueContainer !== undefined) {
-                    ms._valueContainer.remove();
+                // For resultAsString mode, always do full re-render due to delimiter handling
+                // Also do full re-render if this is the first render or selection was cleared
+                var needsFullRender = asText || _renderedValues.length === 0 || currentValues.length === 0;
+
+                if (!needsFullRender) {
+                    // Check if we can do incremental update
+                    var currentSet = new Set(currentValues);
+                    var renderedSet = new Set(_renderedValues);
+
+                    // Find items to add and remove
+                    var toAdd = currentValues.filter(function(v) { return !renderedSet.has(v); });
+                    var toRemove = _renderedValues.filter(function(v) { return !currentSet.has(v); });
+
+                    // If changes are simple (only additions or only removals), do incremental
+                    if (toAdd.length > 0 && toRemove.length === 0) {
+                        // Only additions - append new items
+                        toAdd.forEach(function(val) {
+                            var item = _selection.find(function(s) { return s[cfg.valueField] === val; });
+                            if (item) {
+                                var idx = currentValues.indexOf(val);
+                                var el = self._createSelectionItem(item, idx, false, currentValues.length);
+                                // Insert before input or at end
+                                if (ms.input.parent()[0] === ms.selectionContainer[0]) {
+                                    el.insertBefore(ms.input);
+                                } else {
+                                    ms.selectionContainer.append(el);
+                                }
+                                // Add hidden input
+                                if (ms._valueContainer) {
+                                    $('<input/>', {
+                                        type: 'hidden',
+                                        name: cfg.name,
+                                        value: val
+                                    }).appendTo(ms._valueContainer);
+                                }
+                            }
+                        });
+                        _renderedValues = currentValues.slice();
+                    } else if (toRemove.length > 0 && toAdd.length === 0) {
+                        // Only removals - remove specific items
+                        toRemove.forEach(function(val) {
+                            ms.selectionContainer.find('.ms-sel-item[data-ms-value="' + val + '"]').remove();
+                            if (ms._valueContainer) {
+                                ms._valueContainer.find('input[value="' + val + '"]').remove();
+                            }
+                        });
+                        _renderedValues = currentValues.slice();
+                    } else {
+                        // Complex change - fall back to full re-render
+                        needsFullRender = true;
+                    }
                 }
 
-                $.each(_selection, function (index, value) {
-
-                    var selectedItemEl, delItemEl,
-                        selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
-
-                    var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
-                    var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
-                    // tag representing selected value
-                    if (asText === true) {
-                        selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ms-sel-text ' + cfg.selectionCls + validCls,
-                            'title': titleText,
-                            html: selectedItemHtml + (index === (_selection.length - 1) ? '' : cfg.resultAsStringDelimiter)
-                        }).data('json', value);
-                    } else {
-                        selectedItemEl = $('<div/>', {
-                            'class': 'ms-sel-item ' + cfg.selectionCls + validCls,
-                            'title': titleText,
-                            html: selectedItemHtml
-                        }).data('json', value);
-
-                        if (cfg.disabled === false) {
-                            // small cross img
-                            delItemEl = $('<span/>', {
-                                'class': 'ms-close-btn'
-                            }).data('json', value).prependTo(selectedItemEl);
-
-                            delItemEl.on('click', handlers._onTagTriggerClick.bind(ref));
-                        }
+                if (needsFullRender) {
+                    // Full re-render
+                    var items = [];
+                    ms.selectionContainer.find('.ms-sel-item').remove();
+                    if (ms._valueContainer !== undefined) {
+                        ms._valueContainer.remove();
                     }
 
-                    items.push(selectedItemEl);
-                });
-                ms.selectionContainer.prepend(items);
-
-                // store the values, behaviour of multiple select
-                ms._valueContainer = $('<div/>', {
-                    style: 'display: none;'
-                });
-
-                $.each(ms.getValue(), function (i, val) {
-                    var el = $('<input/>', {
-                        type: 'hidden',
-                        name: cfg.name,
-                        value: val
+                    _selection.forEach(function(value, index) {
+                        items.push(self._createSelectionItem(value, index, asText, _selection.length));
                     });
-                    el.appendTo(ms._valueContainer);
-                });
-                ms._valueContainer.appendTo(ms.selectionContainer);
+                    ms.selectionContainer.prepend(items);
 
+                    // Store the values as hidden inputs
+                    ms._valueContainer = $('<div/>', {
+                        style: 'display: none;'
+                    });
+
+                    currentValues.forEach(function(val) {
+                        $('<input/>', {
+                            type: 'hidden',
+                            name: cfg.name,
+                            value: val
+                        }).appendTo(ms._valueContainer);
+                    });
+                    ms._valueContainer.appendTo(ms.selectionContainer);
+
+                    // Update tracking
+                    _renderedValues = currentValues.slice();
+                }
+
+                // Adjust input width for inner selection
                 if (cfg.selectionPosition === 'inner' && !cfg.selectionContainer) {
                     ms.input.width(0);
                     inputOffset = ms.input.offset().left - ms.selectionContainer.offset().left;
