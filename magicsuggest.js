@@ -622,7 +622,7 @@
 
         /**
          * Sets a value for the combo box. Value must be an array of values with data type matching valueField one.
-         * @param data
+         * @param values
          */
         this.setValue = function (values) {
             // Create lookup map from _cbData for O(1) access instead of O(n) nested loop
