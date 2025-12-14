@@ -1,7 +1,7 @@
 {
   "name": "magicsuggest",
-  "version": "2.1.7",
-  "description": "MagicSuggest is a multiple selection auto-suggest input box for Bootstrap 3.",
+  "version": "2.2.0",
+  "description": "MagicSuggest is a multiple selection auto-suggest input box for Bootstrap 3/5.",
   "main": "magicsuggest.js",
   "scripts": {
     "set-version": "cross-var \"replace-in-file @VERSION@ $npm_package_version ./magicsuggest.min.js\"",
@@ -20,12 +20,13 @@
   },
   "homepage": "https://github.com/Magicsuggest/magicsuggest#readme",
   "dependencies": {
-    "bootstrap": "~3",
+    "bootstrap": "^5.3.2",
     "jquery": ">= 1.8.3"
   },
   "keywords": [
     "autocomplete",
     "bootstrap3",
+    "bootstrap5",
     "JQuery"
   ],
   "devDependencies": {
