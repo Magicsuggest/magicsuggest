@@ -423,7 +423,7 @@
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
         this.clear = function (isSilent) {
-            this.removeFromSelection(_selection.slice(0), isSilent); // clone array to avoid concurrency issues
+            this.removeFromSelection([..._selection], isSilent);
         };
 
         /**
