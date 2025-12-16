@@ -348,7 +348,7 @@
             useCommaKey: true,
 
             /**
-             * Determines whether or not the results will be displayed with a zebra table style
+             * Determines whether the results will be displayed with a zebra table style
              */
             useZebraStyle: false,
 
