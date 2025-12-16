@@ -430,7 +430,7 @@
          * Collapse the dropdown part of the combo
          */
         this.collapse = function () {
-            if (cfg.expanded === true) {
+            if (cfg.expanded) {
                 this.combobox.detach();
                 cfg.expanded = false;
                 $(this).trigger('collapse', [this]);
