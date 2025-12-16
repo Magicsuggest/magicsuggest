@@ -1703,50 +1703,47 @@
         }
     };
 
-    $.fn.magicSuggest = function (options) {
-        let obj = $(this);
+    // Helper: Parse <select> element into data/value arrays
+    function parseSelectOptions(selectEl) {
+        const data = [], value = [];
+        $.each(selectEl.children, function (_, child) {
+            if (child.nodeName?.toLowerCase() === 'option') {
+                data.push({ id: child.value, name: child.text });
+                if ($(child).attr('selected')) value.push(child.value);
+            }
+        });
+        return { data, value };
+    }
 
-        if (obj.length === 1 && obj.data('magicSuggest')) {
-            return obj.data('magicSuggest');
-        }
+    // Helper: Parse DOM element attributes into options object
+    function parseAttributes(element) {
+        const def = {};
+        $.each(element.attributes, function (_, att) {
+            def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
+        });
+        return def;
+    }
+
+    $.fn.magicSuggest = function (options) {
+        const obj = $(this);
+        const existing = obj.length === 1 && obj.data('magicSuggest');
+        if (existing) return existing;
 
         obj.each(function () {
-            // assume $(this) is an element
-            let cntr = $(this);
+            const cntr = $(this);
+            if (cntr.data('magicSuggest')) return;
 
-            // Return early if this element already has a plugin instance
-            if (cntr.data('magicSuggest')) {
-                return;
+            if (this.nodeName.toLowerCase() === 'select') {
+                Object.assign(options, parseSelectOptions(this));
             }
 
-            if (this.nodeName.toLowerCase() === 'select') { // rendering from select
-                options.data = [];
-                options.value = [];
-                $.each(this.children, function (index, child) {
-                    if (child.nodeName && child.nodeName.toLowerCase() === 'option') {
-                        options.data.push({ id: child.value, name: child.text });
-                        if ($(child).attr('selected')) {
-                            options.value.push(child.value);
-                        }
-                    }
-                });
-            }
-
-            let def = {};
-            // set values from DOM container element
-            $.each(this.attributes, function (i, att) {
-                def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
-            });
-
-            let field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
+            const def = parseAttributes(this);
+            const field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
             cntr.data('magicSuggest', field);
             field.container.data('magicSuggest', field);
         });
 
-        if (obj.length === 1) {
-            return obj.data('magicSuggest');
-        }
-        return obj;
+        return obj.length === 1 ? obj.data('magicSuggest') : obj;
     };
 
     $.fn.magicSuggest.defaults = {};
