@@ -5,7 +5,7 @@
  * Author:       Nicolas Bize
  * Maintainer:   Sergio F. Rodriguez
  * Created:      Feb 8th 2013
- * Last Updated: Feb 15, 2024
+ * Last Updated: DEC 12, 2025
  * Version:      @VERSION@
  * Licence:      MagicSuggest is licenced under MIT licence (http://opensource.org/licenses/MIT)
  */
