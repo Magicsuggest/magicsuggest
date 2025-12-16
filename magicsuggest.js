@@ -13,10 +13,10 @@
     "use strict";
 
     // Instance counter for unique namespaced events
-    var _instanceCounter = 0;
+    let _instanceCounter = 0;
 
     let MagicSuggest = function (element, options) {
-        var _instanceId = ++_instanceCounter;
+        let _instanceId = ++_instanceCounter;
         let ms = this;
 
         /**
@@ -386,7 +386,7 @@
             if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
 
                 // Cache current values for performance (avoid repeated getValue() calls)
-                var currentValues = ms.getValue();
+                let currentValues = ms.getValue();
                 let valueChanged = false;
 
                 // If the items is not an array, convert it to an array
@@ -489,7 +489,7 @@
          * @return {boolean}
          */
         this.isValid = function () {
-            var valid = cfg.required === false || _selection.length > 0;
+            let valid = cfg.required === false || _selection.length > 0;
             if (cfg.vtype || cfg.vregex) {
                 $.each(_selection, function (index, item) {
                     valid = valid && self._validateSingleItem(item[cfg.valueField]);
@@ -552,11 +552,11 @@
             if (!Array.isArray(items)) {
                 items = [items];
             }
-            var valuechanged = false;
+            let valuechanged = false;
             // Cache current values for performance
-            var currentValues = ms.getValue();
+            let currentValues = ms.getValue();
             $.each(items, function (index, json) {
-                var i = $.inArray(json[cfg.valueField], currentValues);
+                let i = $.inArray(json[cfg.valueField], currentValues);
                 if (i > -1) {
                     _selection.splice(i, 1);
                     currentValues.splice(i, 1); // Keep cache in sync
@@ -626,12 +626,12 @@
          */
         this.setValue = function (values) {
             // Create lookup map from _cbData for O(1) access instead of O(n) nested loop
-            var dataMap = {};
+            let dataMap = {};
             _cbData.forEach(function(item) {
                 dataMap[item[cfg.valueField]] = item;
             });
 
-            var items = values.map(function(value) {
+            let items = values.map(function(value) {
                 // First check the lookup map
                 if (dataMap[value]) {
                     return dataMap[value];
@@ -640,7 +640,7 @@
                 if (typeof value === 'object') {
                     return value;
                 }
-                var json = {};
+                let json = {};
                 json[cfg.valueField] = value;
                 json[cfg.displayField] = value;
                 return json;
@@ -724,7 +724,7 @@
         };
 
         /**********  PRIVATE ************/
-        var _selection = [],      // selected objects
+        let _selection = [],      // selected objects
             _renderedValues = [],  // track rendered values for incremental updates
             _comboItemHeight = 0, // height for each combo item.
             _timer,
@@ -747,7 +747,7 @@
                 COMMA: 188
             };
 
-        var self = {
+        let self = {
             /**
              * Empties the result container and refills it with the array of json results in input
              * @private
@@ -756,14 +756,14 @@
                 ms.combobox.show();
                 ms.combobox.empty();
 
-                var resHeight = 0, // total height taken by displayed results.
+                let resHeight = 0, // total height taken by displayed results.
                     nbGroups = 0;
 
                 if (_groups === null) {
                     self._renderComboItems(data);
                     resHeight = _comboItemHeight * data.length;
                 } else {
-                    for (var grpName in _groups) {
+                    for (let grpName in _groups) {
                         nbGroups += 1;
                         $('<div/>', {
                             'class': 'ms-res-group',
@@ -771,9 +771,9 @@
                         }).appendTo(ms.combobox);
                         self._renderComboItems(_groups[grpName].items, true);
                     }
-                    var _groupItemHeight = ms.combobox.find('.ms-res-group').outerHeight();
+                    let _groupItemHeight = ms.combobox.find('.ms-res-group').outerHeight();
                     if (_groupItemHeight !== null) {
-                        var tmpResHeight = nbGroups * _groupItemHeight;
+                        let tmpResHeight = nbGroups * _groupItemHeight;
                         resHeight = (_comboItemHeight * data.length) + tmpResHeight;
                     } else {
                         resHeight = _comboItemHeight * (data.length + nbGroups);
@@ -795,7 +795,7 @@
                 }
 
                 if (data.length === 0 && ms.getRawValue() !== "") {
-                    var noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
+                    let noSuggestionText = cfg.noSuggestionText.replace(/\{\{.*\}\}/, ms.input.val());
                     self._updateHelper(noSuggestionText);
                     ms.collapse();
                 }
@@ -816,9 +816,9 @@
              * @private
              */
             _getEntriesFromStringArray: function (data) {
-                var json = [];
+                let json = [];
                 $.each(data, function (index, element) {
-                    var entry = {};
+                    let entry = {};
                     entry[cfg.displayField] = entry[cfg.valueField] = element.trim();
                     json.push(entry);
                 });
@@ -831,16 +831,16 @@
              * @private
              */
             _highlightSuggestion: function (html) {
-                var q = ms.input.val();
+                let q = ms.input.val();
 
                 if (q.length === 0) {
                     return html; // nothing entered as input
                 }
 
                 // Escape all special regex characters in one pass (more efficient than loop)
-                var escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                let escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-                var glob = cfg.matchCase === true ? 'g' : 'gi';
+                let glob = cfg.matchCase === true ? 'g' : 'gi';
                 return html.replace(new RegExp('(' + escaped + ')(?!([^<]+)?>)', glob), '<em>$1</em>');
             },
 
@@ -854,9 +854,9 @@
                     ms.expand();
                 }
                 // Cache DOM queries for performance
-                var list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
-                var start, scrollPos;
-                var comboHeight = ms.combobox.height();
+                let list = ms.combobox.find(".ms-res-item:not(.ms-res-item-disabled)");
+                let start, scrollPos;
+                let comboHeight = ms.combobox.height();
 
                 if (dir === 'down') {
                     start = list.eq(0);
@@ -865,7 +865,7 @@
                 }
 
                 // Find active item from the already-queried list (avoid second DOM query)
-                var active = list.filter('.ms-res-item-active').first();
+                let active = list.filter('.ms-res-item-active').first();
                 if (active.length > 0) {
                     if (dir === 'down') {
                         start = active.nextAll('.ms-res-item:not(.ms-res-item-disabled)').first();
@@ -883,7 +883,7 @@
                             start = list.filter(':last');
                             ms.combobox.scrollTop(_comboItemHeight * list.length);
                         }
-                        var currentScrollTop = ms.combobox.scrollTop();
+                        let currentScrollTop = ms.combobox.scrollTop();
                         if (start[0].offsetTop < currentScrollTop) {
                             ms.combobox.scrollTop(currentScrollTop - _comboItemHeight);
                         }
@@ -898,7 +898,7 @@
              * @private
              */
             _processSuggestions: function (source) {
-                var json = null, data = source || cfg.data;
+                let json = null, data = source || cfg.data;
                 if (data !== null) {
                     if (typeof (data) === 'function') {
                         data = data.call(ms, ms.getRawValue());
@@ -910,12 +910,12 @@
                         }
 
                         $(ms).trigger('beforeload', [ms]);
-                        var queryParams = {};
+                        let queryParams = {};
                         queryParams[cfg.queryParam] = ms.input.val();
-                        var params = $.extend(queryParams, cfg.dataUrlParams);
+                        let params = $.extend(queryParams, cfg.dataUrlParams);
 
-                        var processData = true;
-                        var contentType = "application/x-www-form-urlencoded";
+                        let processData = true;
+                        let contentType = "application/x-www-form-urlencoded";
                         if (cfg.ajaxJSONMode) {
                             //Adjust request ajax call
                             processData = false;
@@ -951,7 +951,7 @@
                             _cbData = data[cfg.resultsField] || data;
                         }
                     }
-                    var sortedData = cfg.mode === 'remote' ? _cbData : self._sortAndTrim(_cbData);
+                    let sortedData = cfg.mode === 'remote' ? _cbData : self._sortAndTrim(_cbData);
                     self._displaySuggestions(self._group(sortedData));
 
                 }
@@ -1080,7 +1080,7 @@
                 }
 
                 $("body").on('click.magicsuggest' + _instanceId, function (e) {
-                    var targetClass = $(e.target).attr('class');
+                    let targetClass = $(e.target).attr('class');
                     if (targetClass === undefined) {
                         targetClass = "";
                     }
@@ -1105,21 +1105,21 @@
              * @private
              */
             _renderComboItems: function (items, isGrouped) {
-                var ref = this;
+                let ref = this;
                 // Build HTML string directly for better performance (avoid jQuery object creation in loop)
-                var htmlParts = items.map(function(value, index) {
-                    var displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
-                    var disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
-                    var titleText = cfg.tooltipField !== null ? (value[cfg.tooltipField] || '') : '';
-                    var cls = 'ms-res-item' +
+                let htmlParts = items.map(function(value, index) {
+                    let displayed = cfg.renderer !== null ? cfg.renderer.call(ref, value) : value[cfg.displayField];
+                    let disabled = cfg.disabledField !== null && value[cfg.disabledField] === true;
+                    let titleText = cfg.tooltipField !== null ? (value[cfg.tooltipField] || '') : '';
+                    let cls = 'ms-res-item' +
                         (isGrouped ? ' ms-res-item-grouped' : '') +
                         (disabled ? ' ms-res-item-disabled' : '') +
                         (index % 2 === 1 && cfg.useZebraStyle === true ? ' ms-res-odd' : '');
-                    var content = cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed;
+                    let content = cfg.highlight === true ? self._highlightSuggestion(displayed) : displayed;
                     // Escape double quotes in JSON for attribute safety
-                    var jsonAttr = JSON.stringify(value).replace(/"/g, '&quot;');
+                    let jsonAttr = JSON.stringify(value).replace(/"/g, '&quot;');
                     // Escape title for HTML attribute
-                    var escapedTitle = String(titleText).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    let escapedTitle = String(titleText).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     return '<div class="' + cls + '" title="' + escapedTitle + '" data-json="' + jsonAttr + '">' + content + '</div>';
                 });
                 ms.combobox.append(htmlParts.join(''));
@@ -1131,11 +1131,11 @@
              * @private
              */
             _createSelectionItem: function (value, index, asText, totalCount) {
-                var ref = this;
-                var selectedItemEl, delItemEl;
-                var selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
-                var validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
-                var titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
+                let ref = this;
+                let selectedItemEl, delItemEl;
+                let selectedItemHtml = cfg.selectionRenderer !== null ? cfg.selectionRenderer.call(ref, value) : value[cfg.displayField];
+                let validCls = self._validateSingleItem(value[cfg.displayField]) ? '' : ' ms-sel-invalid';
+                let titleText = cfg.tooltipField !== null ? value[cfg.tooltipField] : '';
 
                 if (asText === true) {
                     selectedItemEl = $('<div/>', {
@@ -1169,31 +1169,31 @@
              * @private
              */
             _renderSelection: function () {
-                var w = 0, inputOffset = 0;
-                var asText = cfg.resultAsString === true && !_hasFocus;
-                var currentValues = ms.getValue();
+                let w = 0, inputOffset = 0;
+                let asText = cfg.resultAsString === true && !_hasFocus;
+                let currentValues = ms.getValue();
 
                 // For resultAsString mode, always do full re-render due to delimiter handling
                 // Also do full re-render if this is the first render or selection was cleared
-                var needsFullRender = asText || _renderedValues.length === 0 || currentValues.length === 0;
+                let needsFullRender = asText || _renderedValues.length === 0 || currentValues.length === 0;
 
                 if (!needsFullRender) {
                     // Check if we can do incremental update
-                    var currentSet = new Set(currentValues);
-                    var renderedSet = new Set(_renderedValues);
+                    let currentSet = new Set(currentValues);
+                    let renderedSet = new Set(_renderedValues);
 
                     // Find items to add and remove
-                    var toAdd = currentValues.filter(function(v) { return !renderedSet.has(v); });
-                    var toRemove = _renderedValues.filter(function(v) { return !currentSet.has(v); });
+                    let toAdd = currentValues.filter(function(v) { return !renderedSet.has(v); });
+                    let toRemove = _renderedValues.filter(function(v) { return !currentSet.has(v); });
 
                     // If changes are simple (only additions or only removals), do incremental
                     if (toAdd.length > 0 && toRemove.length === 0) {
                         // Only additions - append new items
                         toAdd.forEach(function(val) {
-                            var item = _selection.find(function(s) { return s[cfg.valueField] === val; });
+                            let item = _selection.find(function(s) { return s[cfg.valueField] === val; });
                             if (item) {
-                                var idx = currentValues.indexOf(val);
-                                var el = self._createSelectionItem(item, idx, false, currentValues.length);
+                                let idx = currentValues.indexOf(val);
+                                let el = self._createSelectionItem(item, idx, false, currentValues.length);
                                 // Insert before input or at end
                                 if (ms.input.parent()[0] === ms.selectionContainer[0]) {
                                     el.insertBefore(ms.input);
@@ -1228,7 +1228,7 @@
 
                 if (needsFullRender) {
                     // Full re-render
-                    var items = [];
+                    let items = [];
                     ms.selectionContainer.find('.ms-sel-item').remove();
                     if (ms._valueContainer !== undefined) {
                         ms._valueContainer.remove();
@@ -1304,23 +1304,23 @@
              * @private
              */
             _sortAndTrim: function (data) {
-                var q = ms.getRawValue();
-                var qLower = q.toLowerCase();
-                var selectedValues = ms.getValue();
+                let q = ms.getRawValue();
+                let qLower = q.toLowerCase();
+                let selectedValues = ms.getValue();
                 // Use Set for O(1) lookup instead of $.inArray O(n)
-                var selectedSet = new Set(selectedValues);
+                let selectedSet = new Set(selectedValues);
 
                 // Combined filter and dedup in single pass for better performance
-                var newSuggestions = data.filter(function(obj) {
+                let newSuggestions = data.filter(function(obj) {
                     // Skip if already selected (unless duplicates allowed)
                     if (!cfg.allowDuplicates && selectedSet.has(obj[cfg.valueField])) {
                         return false;
                     }
                     // Filter by query if present
                     if (q.length > 0) {
-                        var name = obj[cfg.displayField];
-                        var nameLower = name.toLowerCase();
-                        var matchIndex = cfg.matchCase ? name.indexOf(q) : nameLower.indexOf(qLower);
+                        let name = obj[cfg.displayField];
+                        let nameLower = name.toLowerCase();
+                        let matchIndex = cfg.matchCase ? name.indexOf(q) : nameLower.indexOf(qLower);
                         if (matchIndex === -1) {
                             return false;
                         }
@@ -1356,8 +1356,8 @@
                     _groups = {};
 
                     $.each(data, function (index, value) {
-                        var props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
-                        var prop = value[cfg.groupBy];
+                        let props = cfg.groupBy.indexOf('.') > -1 ? cfg.groupBy.split('.') : cfg.groupBy;
+                        let prop = value[cfg.groupBy];
                         if (typeof (props) !== 'string') {
                             prop = value;
                             while (props.length > 0) {
@@ -1410,7 +1410,7 @@
             }
         };
 
-        var handlers = {
+        let handlers = {
             /**
              * Triggered when blurring out of the component
              * @private
@@ -1420,7 +1420,7 @@
                 ms.collapse();
                 _hasFocus = false;
                 if (ms.getRawValue() !== '' && cfg.allowFreeEntries === true) {
-                    var obj = {};
+                    let obj = {};
                     obj[cfg.displayField] = obj[cfg.valueField] = ms.getRawValue().trim();
                     ms.addToSelection(obj);
                 }
@@ -1441,7 +1441,7 @@
              * @private
              */
             _onComboItemMouseOver: function (e) {
-                var target = $(e.currentTarget);
+                let target = $(e.currentTarget);
                 if (!target.hasClass('ms-res-item-disabled')) {
                     ms.combobox.children().removeClass('ms-res-item-active');
                     target.addClass('ms-res-item-active');
@@ -1454,7 +1454,7 @@
              * @private
              */
             _onComboItemSelected: function (e) {
-                var target = $(e.currentTarget);
+                let target = $(e.currentTarget);
                 if (!target.hasClass('ms-res-item-disabled')) {
                     self._selectItem($(e.currentTarget));
                 }
@@ -1494,7 +1494,7 @@
                     ms.container.addClass('ms-ctn-focus');
                     ms.container.removeClass(cfg.invalidCls);
 
-                    var curLength = ms.getRawValue().length;
+                    let curLength = ms.getRawValue().length;
                     if (cfg.expandOnFocus === true) {
                         ms.expand();
                     }
@@ -1519,7 +1519,7 @@
              */
             _onKeyDown: function (e) {
                 // check how tab should be handled
-                var active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
+                let active = ms.combobox.find('.ms-res-item-active:not(.ms-res-item-disabled):first'),
                     freeInput = ms.input.val();
                 $(ms).trigger('keydown', [ms, e]);
 
@@ -1578,7 +1578,7 @@
              * @private
              */
             _onKeyUp: function (e) {
-                var freeInput = ms.getRawValue(),
+                let freeInput = ms.getRawValue(),
                     inputValid = ms.input.val().trim().length > 0 &&
                         (!cfg.maxEntryLength || ms.input.val().trim().length <= cfg.maxEntryLength),
                     selected,
@@ -1678,7 +1678,7 @@
                     if (cfg.expanded === true) {
                         ms.collapse();
                     } else {
-                        var curLength = ms.getRawValue().length;
+                        let curLength = ms.getRawValue().length;
                         if (curLength >= cfg.minChars) {
                             ms.input.trigger('focus');
                             ms.expand();
@@ -1705,7 +1705,7 @@
     };
 
     $.fn.magicSuggest = function (options) {
-        var obj = $(this);
+        let obj = $(this);
 
         if (obj.length === 1 && obj.data('magicSuggest')) {
             return obj.data('magicSuggest');
@@ -1713,7 +1713,7 @@
 
         obj.each(function () {
             // assume $(this) is an element
-            var cntr = $(this);
+            let cntr = $(this);
 
             // Return early if this element already has a plugin instance
             if (cntr.data('magicSuggest')) {
@@ -1733,13 +1733,13 @@
                 });
             }
 
-            var def = {};
+            let def = {};
             // set values from DOM container element
             $.each(this.attributes, function (i, att) {
                 def[att.name] = att.name === 'value' && att.value !== '' ? JSON.parse(att.value) : att.value;
             });
 
-            var field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
+            let field = new MagicSuggest(this, $.extend([], $.fn.magicSuggest.defaults, options, def));
             cntr.data('magicSuggest', field);
             field.container.data('magicSuggest', field);
         });
