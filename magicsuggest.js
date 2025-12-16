@@ -383,33 +383,30 @@
          * @param isSilent - (optional) set to true to suppress 'selectionchange' event from being triggered
          */
         this.addToSelection = function (items, isSilent) {
-            if (!cfg.maxSelection || _selection.length < cfg.maxSelection) {
+            if (cfg.maxSelection && _selection.length >= cfg.maxSelection) {
+                return;
+            }
 
-                // Cache current values for performance (avoid repeated getValue() calls)
-                let currentValues = ms.getValue();
-                let valueChanged = false;
+            const itemsArray = Array.isArray(items) ? items : [items];
+            const currentValues = ms.getValue();
+            let valueChanged = false;
 
-                // If the items is not an array, convert it to an array
-                if (!Array.isArray(items)) {
-                    items = [items];
+            for (const item of itemsArray) {
+                if (cfg.maxSelection && _selection.length >= cfg.maxSelection) {
+                    break;
                 }
+                if (cfg.allowDuplicates || !currentValues.includes(item[cfg.valueField])) {
+                    _selection.push(item);
+                    currentValues.push(item[cfg.valueField]);
+                    valueChanged = true;
+                }
+            }
 
-                // Add the items to the selection
-                items.forEach((selection) => {
-                    if (cfg.allowDuplicates || $.inArray(selection[cfg.valueField], currentValues) === -1) {
-                        _selection.push(selection);
-                        currentValues.push(selection[cfg.valueField]); // Keep cache in sync
-                        valueChanged = true;
-                    }
-                });
-
-                // If the selection changed, re-render and trigger event
-                if (valueChanged === true) {
-                    self._renderSelection();
-                    this.empty();
-                    if (isSilent !== true) {
-                        $(this).trigger('selectionchange', [this, this.getSelection()]);
-                    }
+            if (valueChanged) {
+                self._renderSelection();
+                this.empty();
+                if (!isSilent) {
+                    $(this).trigger('selectionchange', [this, this.getSelection()]);
                 }
             }
 
