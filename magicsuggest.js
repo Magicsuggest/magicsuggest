@@ -441,9 +441,12 @@
          * Set the component in a disabled state.
          */
         this.disable = function () {
+            if (cfg.disabled) {
+                return;
+            }
             this.container.addClass('ms-ctn-disabled');
             cfg.disabled = true;
-            ms.input.attr('disabled', true);
+            ms.input.prop('disabled', true);
         };
 
         /**
@@ -457,9 +460,12 @@
          * Set the component in a enable state.
          */
         this.enable = function () {
+            if (!cfg.disabled) {
+                return;
+            }
             this.container.removeClass('ms-ctn-disabled');
             cfg.disabled = false;
-            ms.input.attr('disabled', false);
+            ms.input.prop('disabled', false);
         };
 
         /**
