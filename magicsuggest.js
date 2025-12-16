@@ -261,7 +261,7 @@
             renderer: null,
 
             /**
-             * Whether or not this field should be required
+             * Whether this field should be required
              */
             required: false,
 
