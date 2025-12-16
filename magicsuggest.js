@@ -756,8 +756,7 @@
                 ms.combobox.show();
                 ms.combobox.empty();
 
-                let resHeight = 0, // total height taken by displayed results.
-                    nbGroups = 0;
+                let resHeight, nbGroups = 0;
 
                 if (_groups === null) {
                     self._renderComboItems(data);
